@@ -11,19 +11,25 @@ export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   const member = await getMemberById(id);
 
-  const imageUrl = member?.photo?.url || "/default-og-image.jpg";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.mediamahasangha.in";
+
+  const imageUrl =
+    member?.photo?.url || `${siteUrl}/default-og-image.jpg`;
+
+  const description = member
+    ? `${member.name} - ${member.designation}, ${member.district}`
+    : "ODMM Member Profile";
 
   return {
     title: member?.name || "ODMM Member",
-    description: member
-      ? `${member.name} - ${member.designation}, ${member.district}`
-      : "ODMM Member Profile",
+    description,
 
     openGraph: {
       title: member?.name || "ODMM Member",
-      description: member
-        ? `${member.name} - ${member.designation}, ${member.district}`
-        : "ODMM Member Profile",
+      description,
+      url: `${siteUrl}/members/${id}`,
+      siteName: "ODMM - Odisha Digital Media Mahasangha",
       images: [
         {
           url: imageUrl,
@@ -38,9 +44,7 @@ export async function generateMetadata({ params }: PageProps) {
     twitter: {
       card: "summary_large_image",
       title: member?.name || "ODMM Member",
-      description: member
-        ? `${member.name} - ${member.designation}, ${member.district}`
-        : "ODMM Member Profile",
+      description,
       images: [imageUrl],
     },
   };

@@ -11,6 +11,52 @@ function getYouTubeEmbedUrl(youtubeId: string) {
   return `https://www.youtube.com/embed/${youtubeId}`;
 }
 
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params;
+  const video = await getVideoById(id);
+
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.mediamahasangha.in";
+
+  const imageUrl =
+    video?.thumbnailUrl || `${siteUrl}/default-og-image.jpg`;
+
+  const description =
+    video?.description
+      ?.replace(/<[^>]*>/g, "")
+      ?.replace(/\s+/g, " ")
+      ?.slice(0, 160) ||
+    "Watch latest video message from Odisha Digital Media Mahasangha.";
+
+  return {
+    title: video?.title || "Video Message",
+    description,
+
+    openGraph: {
+      title: video?.title || "Video Message",
+      description,
+      url: `${siteUrl}/videos/${id}`,
+      siteName: "ODMM - Odisha Digital Media Mahasangha",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: video?.title || "Video Message",
+        },
+      ],
+      type: "video.other",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: video?.title || "Video Message",
+      description,
+      images: [imageUrl],
+    },
+  };
+}
+
 export default async function VideoDetailsPage({ params }: PageProps) {
   const { id } = await params;
   const video = await getVideoById(id);
@@ -73,4 +119,4 @@ export default async function VideoDetailsPage({ params }: PageProps) {
       </article>
     </main>
   );
-} 
+}

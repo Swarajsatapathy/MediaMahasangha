@@ -7,6 +7,51 @@ type PageProps = {
   }>;
 };
 
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params;
+  const article = await getArticleById(id);
+
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.mediamahasangha.in";
+
+  const imageUrl =
+    article?.images?.[0]?.url || `${siteUrl}/default-og-image.jpg`;
+
+  const description =
+    article?.content
+      ?.replace(/<[^>]*>/g, "")
+      ?.replace(/\s+/g, " ")
+      ?.slice(0, 160) || "Read latest news from Odisha Digital Media Mahasangha.";
+
+  return {
+    title: article?.title || "Web News",
+    description,
+
+    openGraph: {
+      title: article?.title || "Web News",
+      description,
+      url: `${siteUrl}/articles/${id}`,
+      siteName: "ODMM - Odisha Digital Media Mahasangha",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: article?.title || "Web News",
+        },
+      ],
+      type: "article",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: article?.title || "Web News",
+      description,
+      images: [imageUrl],
+    },
+  };
+}
+
 export default async function ArticleDetailsPage({ params }: PageProps) {
   const { id } = await params;
   const article = await getArticleById(id);

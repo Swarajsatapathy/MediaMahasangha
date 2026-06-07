@@ -14,9 +14,41 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.mediamahasangha.in";
+
 export const metadata: Metadata = {
-  title: "ODMM - Odisha Digital Media Mahasangha",
+  metadataBase: new URL(siteUrl),
+
+  title: {
+    default: "ODMM - Odisha Digital Media Mahasangha",
+    template: "%s | ODMM",
+  },
+
   description: "Odisha Digital Media Mahasangha",
+
+  openGraph: {
+    title: "ODMM - Odisha Digital Media Mahasangha",
+    description: "Odisha Digital Media Mahasangha",
+    url: siteUrl,
+    siteName: "ODMM",
+    images: [
+      {
+        url: "/default-og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ODMM - Odisha Digital Media Mahasangha",
+      },
+    ],
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "ODMM - Odisha Digital Media Mahasangha",
+    description: "Odisha Digital Media Mahasangha",
+    images: ["/default-og-image.jpg"],
+  },
 };
 
 export default function RootLayout({
