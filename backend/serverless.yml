@@ -1,0 +1,49 @@
+service: odmm-backend
+
+frameworkVersion: "3"
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-2
+  stage: prod
+  timeout: 28
+  memorySize: 512
+  environment:
+    MONGODB_URI: ${env:MONGODB_URI}
+    FRONTEND_URL: ${env:FRONTEND_URL}
+    ADMIN_URL: ${env:ADMIN_URL}
+    JWT_SECRET: ${env:JWT_SECRET}
+    AWS_BUCKET_NAME: ${env:AWS_BUCKET_NAME}
+    AWS_BUCKET_REGION: ${env:AWS_BUCKET_REGION}
+    ADMIN_USERNAME: ${env:ADMIN_USERNAME}
+    ADMIN_PASSWORD: ${env:ADMIN_PASSWORD}
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource:
+            - arn:aws:s3:::${env:AWS_BUCKET_NAME}/*
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::${env:AWS_BUCKET_NAME}
+
+functions:
+  api:
+    handler: lambda.handler
+    events:
+      - httpApi:
+          path: /
+          method: ANY
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
