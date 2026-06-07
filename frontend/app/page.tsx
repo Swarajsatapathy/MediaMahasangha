@@ -171,7 +171,7 @@ export default async function HomePage() {
 
       <div className="overlay">
         <span>SRB</span>
-        <h3>{mainPick?.title || "No President’s Pick available"}</h3>
+        <h3>{mainPick?.title || "No SRB available"}</h3>
       </div>
     </Link>
   </section>
