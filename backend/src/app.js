@@ -20,6 +20,9 @@ const allowedOrigins = [
   "http://localhost:3001",
   process.env.FRONTEND_URL,
   process.env.ADMIN_URL,
+  process.env.FRONTEND_DOMAIN,
+  process.env.FRONTEND_WWW_DOMAIN,
+  process.env.ADMIN_DOMAIN,
 ].filter(Boolean);
 
 app.use(

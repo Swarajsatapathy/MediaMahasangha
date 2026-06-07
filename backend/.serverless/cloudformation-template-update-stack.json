@@ -178,7 +178,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/odmm-backend/prod/1780777533697-2026-06-06T20:25:33.697Z/odmm-backend.zip"
+          "S3Key": "serverless/odmm-backend/prod/1780810230481-2026-06-07T05:30:30.481Z/odmm-backend.zip"
         },
         "Handler": "lambda.handler",
         "Runtime": "nodejs20.x",
@@ -188,8 +188,8 @@
         "Environment": {
           "Variables": {
             "MONGODB_URI": "mongodb+srv://odmmadmin:odmmadmin@odmm-proper.fivq4bp.mongodb.net/?appName=odmm-proper",
-            "FRONTEND_URL": "http://localhost:3001",
-            "ADMIN_URL": "http://localhost:3000",
+            "FRONTEND_URL": "https://media-mahasangha-frontend.vercel.app",
+            "ADMIN_URL": "https://media-mahasangha-adminpage.vercel.app",
             "JWT_SECRET": "odmm_secret_key-123",
             "AWS_BUCKET_NAME": "odmm-proper-images",
             "AWS_BUCKET_REGION": "ap-southeast-2",
@@ -208,14 +208,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionQgi6oZzSUC0Mn97AGrTmG7DPNmIwYiYSreNsURVk": {
+    "ApiLambdaVersion5tIVxqGgKPYxE8oH1c2LqCjoKMlbSdgapbvWqpwclA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "3JrqhjPMcWaThN6cVINSiPL3va0Q2r5DBwPQUdbwQPQ="
+        "CodeSha256": "9QbiJVnetAwalVEQKU2/yANSxeY4f9911jaFhQk7vLM="
       }
     },
     "HttpApi": {
@@ -347,7 +347,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionQgi6oZzSUC0Mn97AGrTmG7DPNmIwYiYSreNsURVk"
+        "Ref": "ApiLambdaVersion5tIVxqGgKPYxE8oH1c2LqCjoKMlbSdgapbvWqpwclA"
       },
       "Export": {
         "Name": "sls-odmm-backend-prod-ApiLambdaFunctionQualifiedArn"
