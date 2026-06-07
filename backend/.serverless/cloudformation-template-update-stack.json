@@ -178,7 +178,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/odmm-backend/prod/1780810230481-2026-06-07T05:30:30.481Z/odmm-backend.zip"
+          "S3Key": "serverless/odmm-backend/prod/1780812394471-2026-06-07T06:06:34.471Z/odmm-backend.zip"
         },
         "Handler": "lambda.handler",
         "Runtime": "nodejs20.x",
@@ -194,7 +194,10 @@
             "AWS_BUCKET_NAME": "odmm-proper-images",
             "AWS_BUCKET_REGION": "ap-southeast-2",
             "ADMIN_USERNAME": "odmm",
-            "ADMIN_PASSWORD": "admin@1234"
+            "ADMIN_PASSWORD": "admin@1234",
+            "FRONTEND_DOMAIN": "https://mediamahasangha.in",
+            "FRONTEND_WWW_DOMAIN": "https://www.mediamahasangha.in",
+            "ADMIN_DOMAIN": "https://admin.mediamahasangha.in"
           }
         },
         "Role": {
@@ -208,14 +211,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersion5tIVxqGgKPYxE8oH1c2LqCjoKMlbSdgapbvWqpwclA": {
+    "ApiLambdaVersionFL0AVj7pJS68yq2CrE0L0eIfNHu1W4JpY4yWhHlvG9U": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "9QbiJVnetAwalVEQKU2/yANSxeY4f9911jaFhQk7vLM="
+        "CodeSha256": "DG/CIngf7jUWr0szXSQrRBQ3NY6nPVUS/Pb4yyDfS/Y="
       }
     },
     "HttpApi": {
@@ -347,7 +350,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersion5tIVxqGgKPYxE8oH1c2LqCjoKMlbSdgapbvWqpwclA"
+        "Ref": "ApiLambdaVersionFL0AVj7pJS68yq2CrE0L0eIfNHu1W4JpY4yWhHlvG9U"
       },
       "Export": {
         "Name": "sls-odmm-backend-prod-ApiLambdaFunctionQualifiedArn"
