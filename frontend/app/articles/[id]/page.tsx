@@ -1,4 +1,5 @@
 import { getArticleById } from "../../../lib/api";
+import SocialShare from "../../components/SocialShare";
 
 type PageProps = {
   params: Promise<{
@@ -41,6 +42,8 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
             </span>
           )}
         </div>
+
+        <SocialShare title={article.title} />
 
         {article.images?.[0]?.url && (
           <img

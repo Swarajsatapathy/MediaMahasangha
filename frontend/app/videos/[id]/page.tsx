@@ -1,4 +1,5 @@
 import { getVideoById } from "../../../lib/api";
+import SocialShare from "../../components/SocialShare";
 
 type PageProps = {
   params: Promise<{
@@ -45,6 +46,8 @@ export default async function VideoDetailsPage({ params }: PageProps) {
             </span>
           )}
         </div>
+
+        <SocialShare title={video.title} />
 
         {video.youtubeId && (
           <div className="videoFrame">

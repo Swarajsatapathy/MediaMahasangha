@@ -502,15 +502,29 @@ a {
   position: relative;
 }
 
-.tickerTrack span::after {
+.flashTicker:hover .tickerTrack {
+  animation-play-state: paused;
+}
+
+.flashLink {
+  position: relative;
+  color: var(--navy);
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.flashLink:hover {
+  color: var(--red);
+  text-decoration: underline;
+}
+
+.flashLink::after {
   content: "•";
   color: var(--red);
   font-weight: 900;
   margin-left: 34px;
-}
-
-.flashTicker:hover .tickerTrack {
-  animation-play-state: paused;
 }
 
 @keyframes flashScroll {
@@ -573,26 +587,42 @@ a {
 
 .arrows {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 50;
 }
 
 .arrows button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--border);
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid #dce3ea;
   background: #ffffff;
-  color: var(--navy);
-  border-radius: 10px;
-  font-size: 21px;
-  line-height: 1;
-  cursor: pointer;
+  color: #003366;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 30px;
   font-weight: 900;
+  line-height: 1;
+  padding: 0;
+
+  cursor: pointer;
+  position: relative;
+  z-index: 60;
+  pointer-events: auto;
   transition: 0.2s ease;
+
+  transform: translateY(-2px);
 }
 
 .arrows button:hover {
-  background: var(--navy);
-  color: var(--yellow);
+  background: #003366;
+  color: #ffffff;
 }
 
 /* Big news cards */
@@ -616,6 +646,7 @@ a {
   object-fit: cover;
   display: block;
   transition: 0.35s ease;
+  pointer-events: none;
 }
 
 .bigNewsCard:hover img {
@@ -690,11 +721,9 @@ a {
 /* Member cards */
 
 .memberGridHome {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
   width: 100%;
   padding: 16px 0 0;
+  overflow: hidden;
 }
 
 .memberHomeCard {
@@ -869,6 +898,99 @@ a {
   height: 100%;
   border: none;
   display: block;
+}
+
+.shareRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 22px 0 26px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.shareText {
+  color: #334155;
+  font-size: 16px;
+  font-weight: 900;
+  margin-right: 4px;
+}
+
+.shareIcon,
+.shareMore {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 19px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.25s ease;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+}
+
+.shareIcon:hover,
+.shareMore:hover {
+  transform: translateY(-3px) scale(1.04);
+  filter: brightness(1.08);
+}
+
+.shareIcon.facebook {
+  background: #1877f2;
+}
+
+.shareIcon.twitter {
+  background: #000000;
+}
+
+.shareIcon.whatsapp {
+  background: #25d366;
+}
+
+.shareIcon.telegram {
+  background: #0088cc;
+}
+
+.shareIcon.linkedin {
+  background: #0a66c2;
+}
+
+.shareIcon.email {
+  background: #475569;
+}
+
+.shareIcon.copy {
+  background: #e5e7eb;
+  color: var(--navy);
+}
+
+.shareMore {
+  background: #fff5f5;
+  color: var(--red);
+  border: 2px solid var(--red);
+  border-radius: 8px;
+}
+
+@media (max-width: 520px) {
+  .shareRow {
+    gap: 9px;
+  }
+
+  .shareIcon,
+  .shareMore {
+    width: 40px;
+    height: 40px;
+    font-size: 17px;
+  }
+
+  .shareText {
+    width: 100%;
+  }
 }
 
 /* Legacy sections kept safe */
@@ -1911,5 +2033,70 @@ a {
     width: 50px;
     height: 50px;
     font-size: 22px;
+  }
+}
+
+
+/* Homepage slider animation */
+
+.sliderStage {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  position: relative;
+}
+
+.sliderAnimatedCard {
+  animation-duration: 1.15s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
+}
+
+.sliderAnimatedCard.next {
+  animation-name: premiumSlideFromRight;
+}
+
+.sliderAnimatedCard.prev {
+  animation-name: premiumSlideFromLeft;
+}
+
+@keyframes premiumSlideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(120px) scale(0.96);
+    filter: blur(3px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateX(-8px) scale(1.01);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes premiumSlideFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-120px) scale(0.96);
+    filter: blur(3px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateX(8px) scale(1.01);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
   }
 }
