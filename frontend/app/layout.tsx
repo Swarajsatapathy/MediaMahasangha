@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ODMM News",
+  title: "ODMM - Odisha Digital Media Mahasangha",
   description: "Odisha Digital Media Mahasangha",
 };
 

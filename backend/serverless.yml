@@ -11,6 +11,29 @@ provider:
   stage: prod
   timeout: 28
   memorySize: 512
+
+  httpApi:
+    cors:
+      allowedOrigins:
+        - https://admin.mediamahasangha.in
+        - https://mediamahasangha.in
+        - https://www.mediamahasangha.in
+        - https://media-mahasangha-adminpage.vercel.app
+        - https://media-mahasangha-frontend.vercel.app
+        - http://localhost:3000
+        - http://localhost:3001
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - OPTIONS
+      allowCredentials: true
+
   environment:
     MONGODB_URI: ${env:MONGODB_URI}
     FRONTEND_URL: ${env:FRONTEND_URL}
