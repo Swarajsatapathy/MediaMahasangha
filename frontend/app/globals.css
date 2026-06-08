@@ -1654,7 +1654,7 @@ a {
 .memberListingId {
   display: inline-block;
   background: var(--navy);
-  color: var(--yellow);
+  color: var(--yellow) !important;
   padding: 5px 9px;
   border-radius: 6px;
   font-size: 12px;
