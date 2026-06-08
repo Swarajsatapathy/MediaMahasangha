@@ -814,6 +814,20 @@ a {
   word-break: break-word;
 }
 
+.memberListingPhone {
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #003366;
+}
+
+.memberPhone {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #003366;
+}
+
 /* Details pages */
 
 .detailsPage {

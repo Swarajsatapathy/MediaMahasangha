@@ -17,7 +17,7 @@ export default function MobileNav() {
         <div className="mobileMenuOverlay">
           <div className="mobileMenuPanel">
             <div className="mobileMenuTop">
-              <h3>ODMM News</h3>
+              <h3>ODMM</h3>
               <button onClick={() => setOpen(false)}>
                 <FaTimes />
               </button>

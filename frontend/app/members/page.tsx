@@ -11,7 +11,7 @@ export default async function MembersPage() {
     <main className="listingPage">
       <section className="listingHeader">
         <h1>Members</h1>
-        <p>Meet the ODMM News members and district representatives.</p>
+        <p>Our Members</p>
       </section>
 
       <section className="membersListingGrid">
@@ -31,11 +31,17 @@ export default async function MembersPage() {
               </div>
 
               <div className="memberListingInfo">
-                <p className="memberListingId">ID: {member.memberId}</p>
-                <h2>{member.name}</h2>
-                <p>{member.designation}</p>
-                <span>{member.district}</span>
-              </div>
+  <p className="memberListingId">ID: {member.memberId}</p>
+  <h2>{member.name}</h2>
+  <p>{member.designation}</p>
+  <span>{member.district}</span>
+
+  {member.phone && (
+    <p className="memberListingPhone">
+      📞 {member.phone}
+    </p>
+  )}
+</div>
             </Link>
           ))
         ) : (

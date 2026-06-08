@@ -75,11 +75,17 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
                 </div>
 
                 <div className="memberInfo">
-                  <p className="memberId">ID: {item.memberId}</p>
-                  <h3>{item.name}</h3>
-                  <p>{item.designation}</p>
-                  <span>{item.district}</span>
-                </div>
+  <p className="memberId">ID: {item.memberId}</p>
+  <h3>{item.name}</h3>
+  <p>{item.designation}</p>
+  <span>{item.district}</span>
+
+  {item.mobileNumber && (
+    <p className="memberPhone">
+      📞 {item.mobileNumber}
+    </p>
+  )}
+</div>
               </Link>
             ) : (
               <p>No members available</p>
