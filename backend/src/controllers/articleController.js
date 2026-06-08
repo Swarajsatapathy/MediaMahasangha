@@ -148,7 +148,11 @@ const getArticles = asyncHandler(async (req, res) => {
 
 // GET SINGLE ARTICLE
 const getArticleById = asyncHandler(async (req, res) => {
-  const article = await Article.findById(req.params.id);
+  const article = await Article.findByIdAndUpdate(
+  req.params.id,
+  { $inc: { views: 1 } },
+  { new: true }
+);
 
   if (!article) {
     throw new ApiError(404, "Article not found");

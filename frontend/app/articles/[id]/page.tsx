@@ -74,6 +74,8 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
 
         <h1>{article.title}</h1>
 
+        <p className="viewsCount">👁 {article.views || 0} views</p>
+
         <div className="detailsMeta">
           <span>{article.district}</span>
           <span>{article.reporter}</span>
