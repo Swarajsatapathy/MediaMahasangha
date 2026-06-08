@@ -5,7 +5,9 @@ import { getMembers } from "../../lib/api";
 
 export default async function MembersPage() {
   const membersData = await getMembers();
-  const members = membersData?.members || [];
+  const members = (membersData?.members || []).sort(
+  (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
+);
 
   return (
     <main className="listingPage">

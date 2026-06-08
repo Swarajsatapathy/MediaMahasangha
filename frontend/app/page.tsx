@@ -20,7 +20,9 @@ export default async function HomePage() {
 
   const articles = articlesData?.articles || [];
   const videos = videosData?.videos || [];
-  const members = membersData?.members || [];
+  const members = (membersData?.members || []).sort(
+  (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
+);
 
   return (
     <main className="site">

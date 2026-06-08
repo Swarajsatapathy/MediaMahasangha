@@ -3,6 +3,13 @@ import DISTRICTS from "../constants/districts.js";
 
 const memberSchema = new mongoose.Schema(
   {
+    serialNumber: {
+      type: Number,
+      required: true,
+      unique: true,
+      min: 1,
+    },
+
     memberId: {
       type: String,
       required: true,

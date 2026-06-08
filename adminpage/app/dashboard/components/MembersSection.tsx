@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 type Member = {
   _id: string;
+  serialNumber: number;
   memberId: string;
   name: string;
   designation: string;
@@ -20,6 +21,7 @@ export default function MembersSection() {
   const [members, setMembers] = useState<Member[]>([]);
   const [districts, setDistricts] = useState<string[]>([]);
 
+  const [serialNumber, setSerialNumber] = useState("");
   const [memberId, setMemberId] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
@@ -67,6 +69,7 @@ export default function MembersSection() {
   };
 
   const resetForm = () => {
+    setSerialNumber("");
     setMemberId("");
     setName("");
     setDesignation("");
@@ -81,25 +84,26 @@ export default function MembersSection() {
   };
 
   const handleEditClick = (member: Member) => {
-  setEditingMemberId(member._id);
-  setMemberId(member.memberId || "");
-  setName(member.name || "");
-  setDesignation(member.designation || "");
-  setDistrict(member.district || "");
-  setMobileNumber(member.mobileNumber || "");
-  setIsActive(member.isActive ?? true);
-  setPhoto(null);
+    setEditingMemberId(member._id);
+    setSerialNumber(String(member.serialNumber || ""));
+    setMemberId(member.memberId || "");
+    setName(member.name || "");
+    setDesignation(member.designation || "");
+    setDistrict(member.district || "");
+    setMobileNumber(member.mobileNumber || "");
+    setIsActive(member.isActive ?? true);
+    setPhoto(null);
 
-  const fileInput = document.getElementById("photo") as HTMLInputElement;
-  if (fileInput) fileInput.value = "";
+    const fileInput = document.getElementById("photo") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
-  const handleSubmitMember = async (e: React.FormEvent<HTMLFormElement>) => { 
+  const handleSubmitMember = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const token = localStorage.getItem("odmm_admin_token");
@@ -109,7 +113,14 @@ export default function MembersSection() {
       return;
     }
 
-    if (!memberId || !name || !designation || !district || !mobileNumber) {
+    if (
+      !serialNumber ||
+      !memberId ||
+      !name ||
+      !designation ||
+      !district ||
+      !mobileNumber
+    ) {
       setMessage("All required fields must be filled.");
       return;
     }
@@ -120,6 +131,7 @@ export default function MembersSection() {
 
       const formData = new FormData();
 
+      formData.append("serialNumber", serialNumber);
       formData.append("memberId", memberId);
       formData.append("name", name);
       formData.append("designation", designation);
@@ -132,28 +144,29 @@ export default function MembersSection() {
       }
 
       const url = editingMemberId
-  ? `${API_URL}/api/members/${editingMemberId}`
-  : `${API_URL}/api/members`;
+        ? `${API_URL}/api/members/${editingMemberId}`
+        : `${API_URL}/api/members`;
 
-const res = await fetch(url, {
-  method: editingMemberId ? "PUT" : "POST",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  body: formData,
-});
+      const res = await fetch(url, {
+        method: editingMemberId ? "PUT" : "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.message || "Failed to create member");
+        throw new Error(data.message || "Failed to save member");
       }
 
-     setMessage(
-  editingMemberId
-    ? "Member updated successfully."
-    : "Member created successfully."
-);
+      setMessage(
+        editingMemberId
+          ? "Member updated successfully."
+          : "Member created successfully."
+      );
+
       resetForm();
       fetchMembers();
     } catch (error) {
@@ -212,6 +225,14 @@ const res = await fetch(url, {
       <div className="grid">
         <form className="card" onSubmit={handleSubmitMember}>
           <h2>{editingMemberId ? "Edit Member" : "Create Member"}</h2>
+
+          <input
+            type="number"
+            placeholder="Serial Number e.g. 1"
+            value={serialNumber}
+            onChange={(e) => setSerialNumber(e.target.value)}
+            required
+          />
 
           <input
             type="text"
@@ -278,21 +299,20 @@ const res = await fetch(url, {
           </div>
 
           <button className="submit" type="submit" disabled={loading}>
-           {loading
-  ? editingMemberId
-    ? "Updating..."
-    : "Creating..."
-  : editingMemberId
-  ? "Update Member"
-  : "Create Member"}
+            {loading
+              ? editingMemberId
+                ? "Updating..."
+                : "Creating..."
+              : editingMemberId
+              ? "Update Member"
+              : "Create Member"}
           </button>
 
           {editingMemberId && (
-  <button className="cancel" type="button" onClick={resetForm}>
-    Cancel Edit
-  </button>
-)}
-
+            <button className="cancel" type="button" onClick={resetForm}>
+              Cancel Edit
+            </button>
+          )}
         </form>
 
         <div className="card">
@@ -312,29 +332,37 @@ const res = await fetch(url, {
                     )}
                   </div>
 
-                    <div className="details">
-                        <h3>{member.name}</h3>
-                        <p>
-                        {member.designation} • {member.district}
-                        </p>
-                        <p>{member.mobileNumber}</p>
+                  <div className="details">
+                    <h3>
+                      SL {member.serialNumber} - {member.name}
+                    </h3>
+                    <p>
+                      ID: {member.memberId}
+                    </p>
+                    <p>
+                      {member.designation} • {member.district}
+                    </p>
+                    <p>{member.mobileNumber}</p>
 
-                        <div className="actions">
-  <span className={member.isActive ? "active" : "inactive"}>
-    {member.isActive ? "Active" : "Inactive"}
-  </span>
+                    <div className="actions">
+                      <span className={member.isActive ? "active" : "inactive"}>
+                        {member.isActive ? "Active" : "Inactive"}
+                      </span>
 
-  <button className="edit" onClick={() => handleEditClick(member)}>
-    Edit
-  </button>
+                      <button
+                        className="edit"
+                        onClick={() => handleEditClick(member)}
+                      >
+                        Edit
+                      </button>
 
-  <button
-    className="delete"
-    onClick={() => handleDeleteMember(member._id)}
-  >
-    Delete
-  </button>
-</div>          
+                      <button
+                        className="delete"
+                        onClick={() => handleDeleteMember(member._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -449,21 +477,21 @@ const res = await fetch(url, {
         }
 
         .cancel {
-  width: 100%;
-  margin-top: 10px;
-  background: transparent;
-  color: #8ea2c4;
-  border: 1px solid #2a3a58;
-  padding: 13px;
-  border-radius: 10px;
-  font-weight: 800;
-  cursor: pointer;
-}
+          width: 100%;
+          margin-top: 10px;
+          background: transparent;
+          color: #8ea2c4;
+          border: 1px solid #2a3a58;
+          padding: 13px;
+          border-radius: 10px;
+          font-weight: 800;
+          cursor: pointer;
+        }
 
-.cancel:hover {
-  color: #00d5ff;
-  border-color: #00d5ff;
-}
+        .cancel:hover {
+          color: #00d5ff;
+          border-color: #00d5ff;
+        }
 
         .list {
           max-height: 650px;
@@ -521,48 +549,48 @@ const res = await fetch(url, {
           font-size: 14px;
         }
 
-       .actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
+        .actions {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-top: 12px;
+          flex-wrap: wrap;
+        }
 
-.active,
-.inactive,
-.edit,
-.delete {
-  border: none;
-  padding: 9px 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 800;
-}
+        .active,
+        .inactive,
+        .edit,
+        .delete {
+          border: none;
+          padding: 9px 14px;
+          border-radius: 10px;
+          font-size: 13px;
+          font-weight: 800;
+        }
 
-.active {
-  background: rgba(0, 213, 255, 0.12);
-  color: #00d5ff;
-  border: 1px solid rgba(0, 213, 255, 0.25);
-}
+        .active {
+          background: rgba(0, 213, 255, 0.12);
+          color: #00d5ff;
+          border: 1px solid rgba(0, 213, 255, 0.25);
+        }
 
-.inactive {
-  background: rgba(251, 191, 36, 0.12);
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, 0.25);
-}
+        .inactive {
+          background: rgba(251, 191, 36, 0.12);
+          color: #fbbf24;
+          border: 1px solid rgba(251, 191, 36, 0.25);
+        }
 
-.edit {
-  background: #07364b;
-  color: #00d5ff;
-  cursor: pointer;
-}
+        .edit {
+          background: #07364b;
+          color: #00d5ff;
+          cursor: pointer;
+        }
 
-.delete {
-  background: #351125;
-  color: #ff4d7d;
-  cursor: pointer;
-}
+        .delete {
+          background: #351125;
+          color: #ff4d7d;
+          cursor: pointer;
+        }
 
         .empty {
           color: #8ea2c4;

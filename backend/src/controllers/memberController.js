@@ -8,20 +8,48 @@ const toBoolean = (value) => value === "true" || value === true;
 
 // CREATE MEMBER
 const createMember = asyncHandler(async (req, res) => {
-  const { memberId, name, designation, district, mobileNumber, isActive } =
-    req.body;
+  const {
+    serialNumber,
+    memberId,
+    name,
+    designation,
+    district,
+    mobileNumber,
+    isActive,
+  } = req.body;
 
-  if (!memberId || !name || !designation || !district || !mobileNumber) {
+  if (
+    !serialNumber ||
+    !memberId ||
+    !name ||
+    !designation ||
+    !district ||
+    !mobileNumber
+  ) {
     throw new ApiError(
       400,
-      "memberId, name, designation, district and mobileNumber are required"
+      "serialNumber, memberId, name, designation, district and mobileNumber are required"
     );
+  }
+
+  const parsedSerialNumber = Number(serialNumber);
+
+  if (Number.isNaN(parsedSerialNumber) || parsedSerialNumber < 1) {
+    throw new ApiError(400, "serialNumber must be a valid number greater than 0");
   }
 
   const existingMember = await Member.findOne({ memberId });
 
   if (existingMember) {
     throw new ApiError(409, "Member ID already exists");
+  }
+
+  const existingSerialNumber = await Member.findOne({
+    serialNumber: parsedSerialNumber,
+  });
+
+  if (existingSerialNumber) {
+    throw new ApiError(409, "Serial number already exists");
   }
 
   let photo = {
@@ -43,6 +71,7 @@ const createMember = asyncHandler(async (req, res) => {
   }
 
   const member = await Member.create({
+    serialNumber: parsedSerialNumber,
     memberId,
     name,
     designation,
@@ -66,8 +95,8 @@ const getMembers = asyncHandler(async (req, res) => {
     designation,
     search,
     active,
-    sortBy = "createdAt",
-    order = "desc",
+    sortBy = "serialNumber",
+    order = "asc",
   } = req.query;
 
   const filter = {};
@@ -88,7 +117,7 @@ const getMembers = asyncHandler(async (req, res) => {
 
   const pageNum = Math.max(1, parseInt(page, 10));
   const pageSize = Math.min(100, Math.max(1, parseInt(limit, 10)));
-  const sortOrder = order === "asc" ? 1 : -1;
+  const sortOrder = order === "desc" ? -1 : 1;
 
   const [members, total] = await Promise.all([
     Member.find(filter)
@@ -132,11 +161,45 @@ const updateMember = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Member not found");
   }
 
-  const { memberId, name, designation, district, mobileNumber, isActive } =
-    req.body;
+  const {
+    serialNumber,
+    memberId,
+    name,
+    designation,
+    district,
+    mobileNumber,
+    isActive,
+  } = req.body;
+
+  if (serialNumber !== undefined) {
+    const parsedSerialNumber = Number(serialNumber);
+
+    if (Number.isNaN(parsedSerialNumber) || parsedSerialNumber < 1) {
+      throw new ApiError(
+        400,
+        "serialNumber must be a valid number greater than 0"
+      );
+    }
+
+    if (parsedSerialNumber !== member.serialNumber) {
+      const existingSerialNumber = await Member.findOne({
+        serialNumber: parsedSerialNumber,
+        _id: { $ne: member._id },
+      });
+
+      if (existingSerialNumber) {
+        throw new ApiError(409, "Serial number already exists");
+      }
+
+      member.serialNumber = parsedSerialNumber;
+    }
+  }
 
   if (memberId !== undefined && memberId !== member.memberId) {
-    const existingMember = await Member.findOne({ memberId });
+    const existingMember = await Member.findOne({
+      memberId,
+      _id: { $ne: member._id },
+    });
 
     if (existingMember) {
       throw new ApiError(409, "Member ID already exists");
