@@ -89,8 +89,6 @@ const createMember = asyncHandler(async (req, res) => {
 // GET ALL MEMBERS
 const getMembers = asyncHandler(async (req, res) => {
   const {
-    page = 1,
-    limit = 20,
     district,
     designation,
     search,
@@ -101,9 +99,17 @@ const getMembers = asyncHandler(async (req, res) => {
 
   const filter = {};
 
-  if (district) filter.district = district;
-  if (designation) filter.designation = { $regex: designation, $options: "i" };
-  if (active !== undefined) filter.isActive = active === "true";
+  if (district) {
+    filter.district = district;
+  }
+
+  if (designation) {
+    filter.designation = { $regex: designation, $options: "i" };
+  }
+
+  if (active !== undefined) {
+    filter.isActive = active === "true";
+  }
 
   if (search) {
     filter.$or = [
@@ -115,30 +121,23 @@ const getMembers = asyncHandler(async (req, res) => {
     ];
   }
 
-  const pageNum = Math.max(1, parseInt(page, 10));
-  const pageSize = Math.min(100, Math.max(1, parseInt(limit, 10)));
   const sortOrder = order === "desc" ? -1 : 1;
 
-  const [members, total] = await Promise.all([
-    Member.find(filter)
-      .sort({ [sortBy]: sortOrder })
-      .skip((pageNum - 1) * pageSize)
-      .limit(pageSize)
-      .lean(),
+  const members = await Member.find(filter)
+    .sort({ [sortBy]: sortOrder })
+    .lean();
 
-    Member.countDocuments(filter),
-  ]);
+  const total = await Member.countDocuments(filter);
 
   return res.status(200).json(
-    new ApiResponse(200, {
-      members,
-      pagination: {
+    new ApiResponse(
+      200,
+      {
+        members,
         total,
-        page: pageNum,
-        limit: pageSize,
-        totalPages: Math.ceil(total / pageSize),
       },
-    })
+      "Members fetched successfully"
+    )
   );
 });
 
