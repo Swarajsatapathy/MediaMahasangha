@@ -492,7 +492,7 @@ a {
   align-items: center;
   gap: 34px;
   white-space: nowrap;
-  animation: flashScroll 22s linear infinite;
+  animation: flashScroll 75s linear infinite;
   color: var(--navy);
   font-weight: 900;
   padding-left: 100%;
@@ -1136,7 +1136,18 @@ a {
 }
 
 .footerBottom p:last-child {
-  color: var(--yellow);
+  color: #ffffff;
+}
+
+.footerBottom a.footerPhone,
+.footerBottom a.footerPhone:link,
+.footerBottom a.footerPhone:visited {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.footerBottom a.footerPhone:hover {
+  color: var(--yellow) !important;
 }
 
 /* Desktop social sidebar */

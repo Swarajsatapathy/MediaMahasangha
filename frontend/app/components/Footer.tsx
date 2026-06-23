@@ -40,7 +40,10 @@ return (
   <div className="footerBottom">
     <p>© 2026 ODMM . All rights reserved.</p>
     <p>
-      Designed &amp; Developed by Swaraj Satapathy | Contact: +91 8260190379
+      Designed &amp; Developed by S Swaraj |  Contact:{" "}
+  <a href="tel:+918260190379" className="footerPhone">
+    +91 8260190379
+  </a>
     </p>
   </div>
 </footer>
