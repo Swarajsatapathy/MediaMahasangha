@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 type Props = {
   title: string;
   items: any[];
-  type: "members" | "articles" | "videos";
+  type: "members" | "mentors" | "articles" | "videos";
   badge?: string;
 };
 
@@ -50,12 +51,13 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
           <h2>{title}</h2>
 
           <div className="arrows">
-            <button type="button" onClick={prev}>
-              ‹
-            </button>
-            <button type="button" onClick={next}>
-              ›
-            </button>
+            <button type="button" onClick={prev} aria-label="Previous">
+    <FaChevronLeft />
+  </button>
+
+  <button type="button" onClick={next} aria-label="Next">
+    <FaChevronRight />
+  </button>
           </div>
         </div>
 
@@ -96,6 +98,57 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
     );
   }
 
+  if (type === "mentors") {
+  return (
+    <section className="homeBlock">
+      <div className="blockHeader">
+        <h2>{title}</h2>
+
+        <div className="arrows">
+          <button type="button" onClick={prev} aria-label="Previous">
+    <FaChevronLeft />
+  </button>
+
+  <button type="button" onClick={next} aria-label="Next">
+    <FaChevronRight />
+  </button>
+        </div>
+      </div>
+
+      <div className="sliderStage">
+        <div
+          key={item?._id || index}
+          className={`sliderAnimatedCard ${direction}`}
+        >
+          {item ? (
+            <Link href={`/mentors/${item._id}`} className="memberHomeCard">
+              <div className="memberPhotoBox">
+                {item.photo?.url ? (
+                  <img src={item.photo.url} alt={item.name} />
+                ) : (
+                  <span>{item.name?.charAt(0) || "M"}</span>
+                )}
+              </div>
+
+              <div className="memberInfo">
+                <h3>{item.name}</h3>
+
+                <p>{item.description}</p>
+
+                {item.mobileNumber && (
+                  <p className="memberPhone">📞 {item.mobileNumber}</p>
+                )}
+              </div>
+            </Link>
+          ) : (
+            <p>No mentors available</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
   const href =
     type === "videos"
       ? item?._id
@@ -114,12 +167,13 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
         <h2>{title}</h2>
 
         <div className="arrows">
-          <button type="button" onClick={prev}>
-            ‹
-          </button>
-          <button type="button" onClick={next}>
-            ›
-          </button>
+          <button type="button" onClick={prev} aria-label="Previous">
+    <FaChevronLeft />
+  </button>
+
+  <button type="button" onClick={next} aria-label="Next">
+    <FaChevronRight />
+  </button>
         </div>
       </div>
 

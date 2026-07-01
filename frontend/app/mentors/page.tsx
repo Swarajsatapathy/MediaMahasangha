@@ -1,0 +1,56 @@
+export const dynamic = "force-dynamic";
+
+import Link from "next/link";
+import { getMentors } from "../../lib/api";
+
+export const metadata = {
+  title: "Mentors | ODMM",
+  description: "Mentors of Odisha Digital Media Mahasangha",
+};
+
+export default async function MentorsPage() {
+  const mentorsData = await getMentors();
+
+  const mentors = (mentorsData?.mentors || mentorsData || []).sort(
+    (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
+  );
+
+  return (
+    <main className="listingPage">
+      <section className="listingHeader">
+        <h1>Mentors</h1>
+        <p>Our Mentors</p>
+      </section>
+
+      <section className="membersListingGrid">
+        {mentors.length > 0 ? (
+          mentors.map((mentor: any) => (
+            <Link
+              href={`/mentors/${mentor._id}`}
+              className="memberListingCard"
+              key={mentor._id}
+            >
+              <div className="memberListingPhoto">
+                {mentor.photo?.url ? (
+                  <img src={mentor.photo.url} alt={mentor.name} />
+                ) : (
+                  <span>{mentor.name?.charAt(0) || "M"}</span>
+                )}
+              </div>
+
+              <div className="memberListingInfo">
+                
+                <h2>{mentor.name}</h2>
+
+                <p>{mentor.description}</p>
+
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className="emptyListing">No mentors available.</p>
+        )}
+      </section>
+    </main>
+  );
+}

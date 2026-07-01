@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ArticlesSection from "./components/ArticlesSection";
 import VideosSection from "./components/VideosSection";
 import MembersSection from "./components/MembersSection";
+import MentorsSection from "./components/MentorsSection";
 
 type Admin = {
   id: string;
@@ -12,7 +13,7 @@ type Admin = {
   email: string;
 };
 
-type ActiveTab = "articles" | "videos" | "members";
+type ActiveTab = "articles" | "videos" | "members" | "mentors";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -111,6 +112,13 @@ export default function DashboardPage() {
           >
             Members
           </button>
+
+          <button
+            className={activeTab === "mentors" ? "active" : ""}
+            onClick={() => setActiveTab("mentors")}
+          >
+            Mentors
+          </button>
         </nav>
 
         <div className="section">
@@ -119,6 +127,8 @@ export default function DashboardPage() {
           {activeTab === "videos" && <VideosSection />}
 
           {activeTab === "members" && <MembersSection />}
+
+          {activeTab === "mentors" && <MentorsSection />}
         </div>
       </section>
 

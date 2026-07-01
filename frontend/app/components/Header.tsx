@@ -58,6 +58,7 @@ export default function Header() {
       <nav className="navBar">
         <Link href="/">Home</Link>
         <Link href="/about-us">About Us</Link>
+        <Link href="/mentors">Mentors</Link>
         <Link href="/members">Members</Link>
         <Link href="/web-news">Web News</Link>
         <Link href="/messages">Messages</Link>

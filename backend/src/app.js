@@ -9,6 +9,7 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import articleRoutes from "./routes/articleRoutes.js";
 import videoRoutes from "./routes/videoRoutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
+import mentorRoutes from "./routes/mentorRoutes.js";
 
 dotenv.config();
 
@@ -103,6 +104,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/members", memberRoutes);
+app.use("/api/mentors", mentorRoutes);
 app.use("/api/locations", locationRoutes);
 
 export default app;

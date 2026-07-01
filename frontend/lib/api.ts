@@ -2,6 +2,10 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function fetchFromAPI(endpoint: string) {
   try {
+    if (!API_URL) {
+      throw new Error("NEXT_PUBLIC_API_URL is missing");
+    }
+
     const res = await fetch(`${API_URL}${endpoint}`, {
       cache: "no-store",
     });
@@ -76,4 +80,13 @@ export async function getMembers() {
 
 export async function getMemberById(id: string) {
   return await fetchFromAPI(`/api/members/${id}`);
+}
+
+// Mentors
+export async function getMentors() {
+  return await fetchFromAPI("/api/mentors");
+}
+
+export async function getMentorById(id: string) {
+  return await fetchFromAPI(`/api/mentors/${id}`);
 }

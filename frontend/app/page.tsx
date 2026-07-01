@@ -8,7 +8,9 @@ import {
   getPresidentPicks,
   getVideos,
   getMembers,
+  getMentors,
 } from "../lib/api";
+
 import Link from "next/link";
 
 export default async function HomePage() {
@@ -17,53 +19,65 @@ export default async function HomePage() {
   const presidentPicks = await getPresidentPicks();
   const videosData = await getVideos();
   const membersData = await getMembers();
+  const mentorsData = await getMentors();
 
   const articles = articlesData?.articles || [];
   const videos = videosData?.videos || [];
+
+  const mentors = (mentorsData?.mentors || []).sort(
+    (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
+  );
+
   const members = (membersData?.members || []).sort(
-  (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
-);
+    (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
+  );
 
   return (
     <main className="site">
-  <section className="flashTicker">
-    <div className="flashBadge">
-      <span className="flashDot"></span>
-      <strong>FLASH</strong>
-    </div>
+      <section className="flashTicker">
+        <div className="flashBadge">
+          <span className="flashDot"></span>
+          <strong>FLASH</strong>
+        </div>
 
-    <div className="tickerWrap">
-      <div className="tickerTrack">
-        {flashArticles?.length ? (
-          <>
-            {flashArticles.map((item: any) => (
-              <Link
-                key={item._id}
-                href={`/articles/${item._id}`}
-                className="flashLink"
-              >
-                {item.title}
-              </Link>
-            ))}
+        <div className="tickerWrap">
+          <div className="tickerTrack">
+            {flashArticles?.length ? (
+              <>
+                {flashArticles.map((item: any) => (
+                  <Link
+                    key={item._id}
+                    href={`/articles/${item._id}`}
+                    className="flashLink"
+                  >
+                    {item.title}
+                  </Link>
+                ))}
 
-            {flashArticles.map((item: any) => (
-              <Link
-                key={`${item._id}-duplicate`}
-                href={`/articles/${item._id}`}
-                className="flashLink"
-              >
-                {item.title}
-              </Link>
-            ))}
-          </>
-        ) : (
-          <span>No flash news available</span>
-        )}
-      </div>
-    </div>
-  </section>
+                {flashArticles.map((item: any) => (
+                  <Link
+                    key={`${item._id}-duplicate`}
+                    href={`/articles/${item._id}`}
+                    className="flashLink"
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </>
+            ) : (
+              <span>No flash news available</span>
+            )}
+          </div>
+        </div>
+      </section>
 
       <section className="homeGrid">
+        <HomeSectionSlider
+          title="Mentors"
+          items={mentors}
+          type="mentors"
+        />
+
         <HomeSectionSlider
           title="Members"
           items={members}
