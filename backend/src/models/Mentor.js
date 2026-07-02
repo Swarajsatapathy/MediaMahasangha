@@ -6,6 +6,7 @@ const mentorSchema = new mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
+      min: 1,
     },
 
     name: {
@@ -14,13 +15,13 @@ const mentorSchema = new mongoose.Schema(
       trim: true,
     },
 
-    description: {
+    designation: {
       type: String,
       required: true,
       trim: true,
     },
 
-    mobileNumber: {
+    district: {
       type: String,
       required: true,
       trim: true,
@@ -42,9 +43,9 @@ const mentorSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-const Mentor = mongoose.model("Mentor", mentorSchema);
-
-export default Mentor;
+export default mongoose.model("Mentor", mentorSchema);

@@ -6,8 +6,8 @@ type Mentor = {
   _id: string;
   serialNumber: number;
   name: string;
-  description: string;
-  mobileNumber: string;
+  designation: string;
+  district: string;
   photo?: {
     url: string;
     key: string;
@@ -17,11 +17,12 @@ type Mentor = {
 
 export default function MentorsSection() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [districts, setDistricts] = useState<string[]>([]);
 
   const [serialNumber, setSerialNumber] = useState("");
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [district, setDistrict] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
 
@@ -34,16 +35,13 @@ export default function MentorsSection() {
 
   useEffect(() => {
     fetchMentors();
+    fetchDistricts();
   }, []);
 
   const fetchMentors = async () => {
     try {
       const res = await fetch(`${API_URL}/api/mentors`);
       const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || "Failed to fetch mentors");
-      }
 
       if (data?.data?.mentors) {
         setMentors(data.data.mentors);
@@ -58,11 +56,24 @@ export default function MentorsSection() {
     }
   };
 
+  const fetchDistricts = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/locations/districts`);
+      const data = await res.json();
+
+      if (data?.data) {
+        setDistricts(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch districts:", error);
+    }
+  };
+
   const resetForm = () => {
     setSerialNumber("");
     setName("");
-    setDescription("");
-    setMobileNumber("");
+    setDesignation("");
+    setDistrict("");
     setPhoto(null);
     setIsActive(true);
     setEditingMentorId(null);
@@ -75,8 +86,8 @@ export default function MentorsSection() {
     setEditingMentorId(mentor._id);
     setSerialNumber(String(mentor.serialNumber || ""));
     setName(mentor.name || "");
-    setDescription(mentor.description || "");
-    setMobileNumber(mentor.mobileNumber || "");
+    setDesignation(mentor.designation || "");
+    setDistrict(mentor.district || "");
     setIsActive(mentor.isActive ?? true);
     setPhoto(null);
 
@@ -99,13 +110,8 @@ export default function MentorsSection() {
       return;
     }
 
-    if (!serialNumber || !name || !description || !mobileNumber) {
-      setMessage("Serial number, name, description and mobile number are required.");
-      return;
-    }
-
-    if (!editingMentorId && !photo) {
-      setMessage("Please select a mentor photo.");
+    if (!serialNumber || !name || !designation || !district) {
+      setMessage("Serial number, name, designation and district are required.");
       return;
     }
 
@@ -117,8 +123,8 @@ export default function MentorsSection() {
 
       formData.append("serialNumber", serialNumber);
       formData.append("name", name);
-      formData.append("description", description);
-      formData.append("mobileNumber", mobileNumber);
+      formData.append("designation", designation);
+      formData.append("district", district);
       formData.append("isActive", String(isActive));
 
       if (photo) {
@@ -140,8 +146,7 @@ export default function MentorsSection() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        console.log("Mentor save error:", data);
-        throw new Error(data.message || data.error || "Failed to save mentor");
+        throw new Error(data.message || "Failed to save mentor");
       }
 
       setMessage(
@@ -230,20 +235,26 @@ export default function MentorsSection() {
             required
           />
 
-          <textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+          <input
+            type="text"
+            placeholder="Designation"
+            value={designation}
+            onChange={(e) => setDesignation(e.target.value)}
             required
           />
 
-          <input
-            type="text"
-            placeholder="Mobile number"
-            value={mobileNumber}
-            onChange={(e) => setMobileNumber(e.target.value)}
+          <select
+            value={district}
+            onChange={(e) => setDistrict(e.target.value)}
             required
-          />
+          >
+            <option value="">Select District</option>
+            {districts.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
 
           <label className="label">
             Photo {editingMentorId ? "(leave empty to keep old photo)" : ""}
@@ -306,13 +317,8 @@ export default function MentorsSection() {
                       SL {mentor.serialNumber} - {mentor.name}
                     </h3>
 
-                    <p>{mentor.description}</p>
-
-                    <p className="mobile">
-                      Mobile:{" "}
-                      <a href={`tel:${mentor.mobileNumber}`}>
-                        {mentor.mobileNumber}
-                      </a>
+                    <p>
+                      {mentor.designation} • {mentor.district}
                     </p>
 
                     <div className="actions">
@@ -393,7 +399,7 @@ export default function MentorsSection() {
         }
 
         input,
-        textarea {
+        select {
           width: 100%;
           background: #080f1d;
           border: 1px solid #223047;
@@ -406,13 +412,8 @@ export default function MentorsSection() {
           font-family: inherit;
         }
 
-        textarea {
-          min-height: 120px;
-          resize: vertical;
-        }
-
         input:focus,
-        textarea:focus {
+        select:focus {
           border-color: #00d5ff;
         }
 
@@ -531,21 +532,6 @@ export default function MentorsSection() {
           margin: 0 0 6px;
           color: #8ea2c4;
           font-size: 14px;
-          line-height: 1.5;
-        }
-
-        .mobile {
-          color: #b8c7e6 !important;
-        }
-
-        .mobile a {
-          color: #00d5ff;
-          text-decoration: none;
-          font-weight: 700;
-        }
-
-        .mobile a:hover {
-          color: #fbbf24;
         }
 
         .actions {
@@ -593,7 +579,6 @@ export default function MentorsSection() {
 
         .empty {
           color: #8ea2c4;
-          font-size: 14px;
         }
 
         @media (max-width: 950px) {

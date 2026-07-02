@@ -8,12 +8,12 @@ const toBoolean = (value) => value === "true" || value === true;
 
 // CREATE MENTOR
 const createMentor = asyncHandler(async (req, res) => {
-  const { serialNumber, name, description, mobileNumber, isActive } = req.body;
+  const { serialNumber, name, designation, district, isActive } = req.body;
 
-  if (!serialNumber || !name || !description || !mobileNumber) {
+  if (!serialNumber || !name || !designation || !district) {
     throw new ApiError(
       400,
-      "serialNumber, name, description and mobileNumber are required"
+      "serialNumber, name, designation and district are required"
     );
   }
 
@@ -50,15 +50,13 @@ const createMentor = asyncHandler(async (req, res) => {
       url: uploaded.url,
       key: uploaded.key,
     };
-  } else {
-    throw new ApiError(400, "Mentor photo is required");
   }
 
   const mentor = await Mentor.create({
     serialNumber: parsedSerialNumber,
     name,
-    description,
-    mobileNumber,
+    designation,
+    district,
     photo,
     isActive: isActive === undefined ? true : toBoolean(isActive),
   });
@@ -71,6 +69,8 @@ const createMentor = asyncHandler(async (req, res) => {
 // GET ALL MENTORS
 const getMentors = asyncHandler(async (req, res) => {
   const {
+    district,
+    designation,
     search,
     active,
     sortBy = "serialNumber",
@@ -79,6 +79,14 @@ const getMentors = asyncHandler(async (req, res) => {
 
   const filter = {};
 
+  if (district) {
+    filter.district = district;
+  }
+
+  if (designation) {
+    filter.designation = { $regex: designation, $options: "i" };
+  }
+
   if (active !== undefined) {
     filter.isActive = active === "true";
   }
@@ -86,8 +94,8 @@ const getMentors = asyncHandler(async (req, res) => {
   if (search) {
     filter.$or = [
       { name: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
-      { mobileNumber: { $regex: search, $options: "i" } },
+      { district: { $regex: search, $options: "i" } },
+      { designation: { $regex: search, $options: "i" } },
     ];
   }
 
@@ -130,7 +138,7 @@ const updateMentor = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Mentor not found");
   }
 
-  const { serialNumber, name, description, mobileNumber, isActive } = req.body;
+  const { serialNumber, name, designation, district, isActive } = req.body;
 
   if (serialNumber !== undefined) {
     const parsedSerialNumber = Number(serialNumber);
@@ -157,8 +165,8 @@ const updateMentor = asyncHandler(async (req, res) => {
   }
 
   if (name !== undefined) mentor.name = name;
-  if (description !== undefined) mentor.description = description;
-  if (mobileNumber !== undefined) mentor.mobileNumber = mobileNumber;
+  if (designation !== undefined) mentor.designation = designation;
+  if (district !== undefined) mentor.district = district;
   if (isActive !== undefined) mentor.isActive = toBoolean(isActive);
 
   if (req.file) {

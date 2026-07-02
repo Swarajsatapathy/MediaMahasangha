@@ -80,7 +80,7 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
   <p className="memberId">ID: {item.memberId}</p>
   <h3>{item.name}</h3>
   <p>{item.designation}</p>
-  <span>{item.district}</span>
+  <span className="mentorDistrict">{item.district}</span>
 
   {item.mobileNumber && (
     <p className="memberPhone">
@@ -98,7 +98,7 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
     );
   }
 
-  if (type === "mentors") {
+ if (type === "mentors") {
   return (
     <section className="homeBlock">
       <div className="blockHeader">
@@ -106,12 +106,12 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
 
         <div className="arrows">
           <button type="button" onClick={prev} aria-label="Previous">
-    <FaChevronLeft />
-  </button>
+            <FaChevronLeft />
+          </button>
 
-  <button type="button" onClick={next} aria-label="Next">
-    <FaChevronRight />
-  </button>
+          <button type="button" onClick={next} aria-label="Next">
+            <FaChevronRight />
+          </button>
         </div>
       </div>
 
@@ -126,18 +126,16 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
                 {item.photo?.url ? (
                   <img src={item.photo.url} alt={item.name} />
                 ) : (
-                  <span>{item.name?.charAt(0) || "M"}</span>
+                  <span>{item.name?.charAt(0)?.toUpperCase() || "M"}</span>
                 )}
               </div>
 
               <div className="memberInfo">
                 <h3>{item.name}</h3>
 
-                <p>{item.description}</p>
+                <p>{item.designation}</p>
 
-                {item.mobileNumber && (
-                  <p className="memberPhone">📞 {item.mobileNumber}</p>
-                )}
+                <span>{item.district}</span>
               </div>
             </Link>
           ) : (

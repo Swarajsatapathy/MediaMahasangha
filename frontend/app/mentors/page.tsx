@@ -11,9 +11,12 @@ export const metadata = {
 export default async function MentorsPage() {
   const mentorsData = await getMentors();
 
-  const mentors = (mentorsData?.mentors || mentorsData || []).sort(
-    (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
-  );
+  const mentors = (mentorsData?.mentors || mentorsData || [])
+    .filter((mentor: any) => mentor.isActive !== false)
+    .sort(
+      (a: any, b: any) =>
+        (a.serialNumber || 9999) - (b.serialNumber || 9999)
+    );
 
   return (
     <main className="listingPage">
@@ -34,16 +37,16 @@ export default async function MentorsPage() {
                 {mentor.photo?.url ? (
                   <img src={mentor.photo.url} alt={mentor.name} />
                 ) : (
-                  <span>{mentor.name?.charAt(0) || "M"}</span>
+                  <span>{mentor.name?.charAt(0)?.toUpperCase() || "M"}</span>
                 )}
               </div>
 
               <div className="memberListingInfo">
-                
                 <h2>{mentor.name}</h2>
 
-                <p>{mentor.description}</p>
+                <p>{mentor.designation}</p>
 
+                <span className="mentorDistrict">{mentor.district}</span>
               </div>
             </Link>
           ))

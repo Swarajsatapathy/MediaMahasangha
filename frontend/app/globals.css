@@ -2171,3 +2171,11 @@ a {
 .memberDetailsRows a:hover {
   color: var(--yellow);
 }
+
+.mentorDistrict {
+  color: #d71920 !important;
+  font-weight: 800;
+  font-size: 16px;
+  display: inline-block;
+  margin-top: 4px;
+}

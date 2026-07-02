@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps) {
   const imageUrl = mentor?.photo?.url || `${siteUrl}/default-og-image.jpg`;
 
   const description = mentor
-    ? `${mentor.name} - Mentor, Odisha Digital Media Mahasangha`
+    ? `${mentor.name} - ${mentor.designation}, ${mentor.district}`
     : "ODMM Mentor Profile";
 
   return {
@@ -71,7 +71,7 @@ export default async function MentorDetailsPage({ params }: PageProps) {
           {mentor.photo?.url ? (
             <img src={mentor.photo.url} alt={mentor.name} />
           ) : (
-            <span>{mentor.name?.charAt(0) || "M"}</span>
+            <span>{mentor.name?.charAt(0)?.toUpperCase() || "M"}</span>
           )}
         </div>
 
@@ -85,11 +85,11 @@ export default async function MentorDetailsPage({ params }: PageProps) {
           <div className="memberDetailsRows">
 
             <p>
-              <strong>Description:</strong> {mentor.description}
+              <strong>Designation:</strong> {mentor.designation}
             </p>
 
             <p>
-              <strong>Mobile:</strong> {mentor.mobileNumber}
+              <strong>District:</strong> {mentor.district}
             </p>
 
             <p>
