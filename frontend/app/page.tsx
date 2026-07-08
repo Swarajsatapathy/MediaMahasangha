@@ -9,6 +9,7 @@ import {
   getVideos,
   getMembers,
   getMentors,
+  getMemberNewsChannels,
 } from "../lib/api";
 
 import Link from "next/link";
@@ -20,9 +21,10 @@ export default async function HomePage() {
   const videosData = await getVideos();
   const membersData = await getMembers();
   const mentorsData = await getMentors();
-
+  const memberNewsChannelsData = await getMemberNewsChannels();
   const articles = articlesData?.articles || [];
   const videos = videosData?.videos || [];
+  const memberNewsChannels = memberNewsChannelsData?.memberNewsChannels || [];
 
   const mentors = (mentorsData?.mentors || []).sort(
     (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
@@ -73,6 +75,13 @@ export default async function HomePage() {
 
       <section className="homeGrid">
         <HomeSectionSlider
+          title="Member News Channels"
+          items={memberNewsChannels}
+          type="memberNewsChannels"
+          badge="Latest"
+        />
+
+        <HomeSectionSlider
           title="Mentors"
           items={mentors}
           type="mentors"
@@ -96,13 +105,6 @@ export default async function HomePage() {
           items={videos}
           type="videos"
           badge="Video"
-        />
-
-        <HomeSectionSlider
-          title="SRB"
-          items={presidentPicks || []}
-          type="articles"
-          badge="SRB"
         />
       </section>
     </main>

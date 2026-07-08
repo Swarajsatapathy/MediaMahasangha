@@ -12,7 +12,7 @@ export default function AboutUsPage() {
           <h2>About Odisha Digital Media Mahasangha</h2>
 
           <p>
-            Odisha Digital Media Mahasangha (ODMM) is a pioneering association
+            Odisha Digital Media Mahasangha (ODMM) is an Odisha Government Registered (Regd. No: <b>41712300864</b>, Dated: 10th May 2023) pioneering association
             dedicated to uniting, empowering, and representing digital media
             activists, independent journalists, content creators, and online
             media professionals across Odisha.

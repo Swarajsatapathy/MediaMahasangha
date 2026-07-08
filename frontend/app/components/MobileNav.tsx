@@ -43,14 +43,14 @@ export default function MobileNav() {
               <Link href="/members" onClick={() => setOpen(false)}>
   Members
 </Link>
+              <Link href="/member-news-channels" onClick={() => setOpen(false)}>
+  Member News Channels
+</Link>
               <Link href="/web-news" onClick={() => setOpen(false)}>
   Web News
 </Link>
               <Link href="/messages" onClick={() => setOpen(false)}>
     Messages
-</Link>
-              <Link href="/presidents-pick" onClick={() => setOpen(false)}>
-  SRB
 </Link>
               <Link href="/contact-us" onClick={() => setOpen(false)}>
   Contact Us

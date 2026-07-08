@@ -90,3 +90,12 @@ export async function getMentors() {
 export async function getMentorById(id: string) {
   return await fetchFromAPI(`/api/mentors/${id}`);
 }
+
+// Member News Channels
+export async function getMemberNewsChannels() {
+  return await fetchFromAPI("/api/member-news-channels");
+}
+
+export async function getMemberNewsChannelById(id: string) {
+  return await fetchFromAPI(`/api/member-news-channels/${id}`);
+}

@@ -10,6 +10,7 @@ import articleRoutes from "./routes/articleRoutes.js";
 import videoRoutes from "./routes/videoRoutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
 import mentorRoutes from "./routes/mentorRoutes.js";
+import memberNewsChannelRoutes from "./routes/memberNewsChannelRoutes.js";
 
 dotenv.config();
 
@@ -106,5 +107,6 @@ app.use("/api/videos", videoRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/mentors", mentorRoutes);
 app.use("/api/locations", locationRoutes);
+app.use("/api/member-news-channels", memberNewsChannelRoutes);
 
 export default app;

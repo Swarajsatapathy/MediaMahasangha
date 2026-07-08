@@ -7,7 +7,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 type Props = {
   title: string;
   items: any[];
-  type: "members" | "mentors" | "articles" | "videos";
+  type: "members" | "memberNewsChannels" | "mentors" | "articles" | "videos";
   badge?: string;
 };
 
@@ -97,6 +97,73 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
       </section>
     );
   }
+
+  if (type === "memberNewsChannels") {
+  return (
+    <section className="homeBlock">
+      <div className="blockHeader">
+        <h2>{title}</h2>
+
+        <div className="arrows">
+          <button type="button" onClick={prev} aria-label="Previous">
+            <FaChevronLeft />
+          </button>
+
+          <button type="button" onClick={next} aria-label="Next">
+            <FaChevronRight />
+          </button>
+        </div>
+      </div>
+
+      <div className="sliderStage">
+        <div
+          key={item?._id || index}
+          className={`sliderAnimatedCard ${direction}`}
+        >
+          {item ? (
+            <Link
+              href={`/member-news-channels/${item._id}`}
+              className="memberHomeCard"
+            >
+              <div className="memberPhotoBox">
+                {item.photo?.url ? (
+                  <img
+                    src={item.photo.url}
+                    alt={item.newsChannelName}
+                  />
+                ) : (
+                  <span>
+                    {item.newsChannelName?.charAt(0)?.toUpperCase() || "N"}
+                  </span>
+                )}
+              </div>
+
+              <div className="memberInfo">
+                <p className="memberId">
+                  ODMM Reg. No: {item.odmmRegistrationNo}
+                </p>
+
+                <h3>{item.newsChannelName}</h3>
+
+                <p>Owner: {item.ownerName}</p>
+
+                <span className="mentorDistrict">{item.district}</span>
+
+                {item.mobileNumber && (
+                  <p className="memberPhone">
+                    📞 {item.mobileNumber}
+                  </p>
+                )}
+              </div>
+            </Link>
+          ) : (
+            <p>No member news channels available</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
 
  if (type === "mentors") {
   return (
