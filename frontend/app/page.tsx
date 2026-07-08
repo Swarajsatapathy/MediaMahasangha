@@ -10,6 +10,7 @@ import {
   getMembers,
   getMentors,
   getMemberNewsChannels,
+  getSrbMembers,
 } from "../lib/api";
 
 import Link from "next/link";
@@ -21,10 +22,12 @@ export default async function HomePage() {
   const videosData = await getVideos();
   const membersData = await getMembers();
   const mentorsData = await getMentors();
+  const srbMembersData = await getSrbMembers();
   const memberNewsChannelsData = await getMemberNewsChannels();
   const articles = articlesData?.articles || [];
   const videos = videosData?.videos || [];
   const memberNewsChannels = memberNewsChannelsData?.memberNewsChannels || [];
+  const srbMembers = srbMembersData?.srbMembers || [];
 
   const mentors = (mentorsData?.mentors || []).sort(
     (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
@@ -85,6 +88,12 @@ export default async function HomePage() {
           title="Mentors"
           items={mentors}
           type="mentors"
+        />
+
+        <HomeSectionSlider
+          title="SRB Members"
+          items={srbMembers}
+          type="srbMembers"
         />
 
         <HomeSectionSlider

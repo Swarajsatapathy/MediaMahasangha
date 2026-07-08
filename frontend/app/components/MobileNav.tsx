@@ -46,6 +46,9 @@ export default function MobileNav() {
               <Link href="/member-news-channels" onClick={() => setOpen(false)}>
   Member News Channels
 </Link>
+              <Link href="/self-regulatory-body" onClick={() => setOpen(false)}>
+  Self Regulatory Body
+</Link>
               <Link href="/web-news" onClick={() => setOpen(false)}>
   Web News
 </Link>

@@ -99,3 +99,12 @@ export async function getMemberNewsChannels() {
 export async function getMemberNewsChannelById(id: string) {
   return await fetchFromAPI(`/api/member-news-channels/${id}`);
 }
+
+// SRB Members
+export async function getSrbMembers() {
+  return await fetchFromAPI("/api/srb-members");
+}
+
+export async function getSrbMemberById(id: string) {
+  return await fetchFromAPI(`/api/srb-members/${id}`);
+}

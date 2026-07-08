@@ -7,7 +7,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 type Props = {
   title: string;
   items: any[];
-  type: "members" | "memberNewsChannels" | "mentors" | "articles" | "videos";
+  type: "members" | "memberNewsChannels" | "mentors" | "articles" | "videos" | "srbMembers";
   badge?: string;
 };
 
@@ -97,6 +97,68 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
       </section>
     );
   }
+
+  if (type === "srbMembers") {
+  return (
+    <section className="homeBlock">
+      <div className="blockHeader">
+        <h2>{title}</h2>
+
+        <div className="arrows">
+          <button type="button" onClick={prev} aria-label="Previous">
+            <FaChevronLeft />
+          </button>
+
+          <button type="button" onClick={next} aria-label="Next">
+            <FaChevronRight />
+          </button>
+        </div>
+      </div>
+
+      <div className="sliderStage">
+        <div
+          key={item?._id || index}
+          className={`sliderAnimatedCard ${direction}`}
+        >
+          {item ? (
+            <Link
+              href={`/self-regulatory-body/${item._id}`}
+              className="memberHomeCard"
+            >
+              <div className="memberPhotoBox">
+                {item.photo?.url ? (
+                  <img src={item.photo.url} alt={item.name} />
+                ) : (
+                  <span>{item.name?.charAt(0)?.toUpperCase() || "S"}</span>
+                )}
+              </div>
+
+              <div className="memberInfo">
+                <p className="memberId">SL No: {item.serialNumber}</p>
+
+                <h3>{item.name}</h3>
+
+                <p>{item.designation}</p>
+
+                <span className="mentorDistrict">{item.district}</span>
+
+                {item.mobileNumber && (
+                  <p className="memberPhone">📞 {item.mobileNumber}</p>
+                )}
+
+                {item.email && (
+                  <p className="memberPhone">✉️ {item.email}</p>
+                )}
+              </div>
+            </Link>
+          ) : (
+            <p>No SRB members available</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
 
   if (type === "memberNewsChannels") {
   return (

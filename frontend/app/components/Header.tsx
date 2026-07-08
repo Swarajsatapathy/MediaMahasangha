@@ -61,6 +61,7 @@ export default function Header() {
         <Link href="/mentors">Mentors</Link>
         <Link href="/members">Members</Link>
         <Link href="/member-news-channels">Member News Channels</Link>
+        <Link href="/self-regulatory-body">Self Regulatory Body</Link>
         <Link href="/web-news">Web News</Link>
         <Link href="/messages">Messages</Link>
         <Link href="/contact-us">Contact Us</Link>
