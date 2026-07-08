@@ -272,12 +272,17 @@ export default function MembersSection() {
           </select>
 
           <input
-            type="text"
-            placeholder="Mobile number"
-            value={mobileNumber}
-            onChange={(e) => setMobileNumber(e.target.value)}
-            required
-          />
+  type="tel"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  placeholder="Mobile number"
+  value={mobileNumber}
+  onChange={(e) => {
+    const onlyNumbers = e.target.value.replace(/\D/g, "");
+    setMobileNumber(onlyNumbers);
+  }}
+  required
+/>
 
           <label className="label">Photo</label>
           <input

@@ -85,15 +85,15 @@ export default async function HomePage() {
         />
 
         <HomeSectionSlider
-          title="Mentors"
-          items={mentors}
-          type="mentors"
-        />
-
-        <HomeSectionSlider
           title="SRB Members"
           items={srbMembers}
           type="srbMembers"
+        />
+
+        <HomeSectionSlider
+          title="Mentors"
+          items={mentors}
+          type="mentors"
         />
 
         <HomeSectionSlider

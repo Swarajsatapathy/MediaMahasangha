@@ -715,17 +715,29 @@ a {
   right: auto !important;
   bottom: auto !important;
   transform: translate(-50%, -50%) !important;
-  background: var(--red) !important;
-  color: #ffffff !important;
-  width: 72px !important;
-  height: 72px !important;
+
+  width: 76px !important;
+  height: 76px !important;
   border-radius: 50% !important;
+
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 2px solid rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+
+  color: #ffffff !important;
+
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+
   font-size: 30px !important;
   line-height: 1 !important;
-  box-shadow: 0 10px 30px rgba(215, 25, 32, 0.35) !important;
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.28),
+    inset 0 0 18px rgba(222, 10, 10, 0.562) !important;
+
   pointer-events: none !important;
 }
 
@@ -734,6 +746,7 @@ a {
   font-size: 30px !important;
   line-height: 1 !important;
   transform: translateX(3px) !important;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.45) !important;
 }
 
 /* Member cards */

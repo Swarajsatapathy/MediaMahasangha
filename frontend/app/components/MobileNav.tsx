@@ -37,17 +37,17 @@ export default function MobileNav() {
               <Link href="/about-us" onClick={() => setOpen(false)}>
   About Us
 </Link>
-              <Link href="/mentors" onClick={() => setOpen(false)}>
-  Mentors
-</Link>
-              <Link href="/members" onClick={() => setOpen(false)}>
-  Members
-</Link>
               <Link href="/member-news-channels" onClick={() => setOpen(false)}>
   Member News Channels
 </Link>
               <Link href="/self-regulatory-body" onClick={() => setOpen(false)}>
   Self Regulatory Body
+</Link>
+              <Link href="/mentors" onClick={() => setOpen(false)}>
+  Mentors
+</Link>
+              <Link href="/members" onClick={() => setOpen(false)}>
+  Members
 </Link>
               <Link href="/web-news" onClick={() => setOpen(false)}>
   Web News
