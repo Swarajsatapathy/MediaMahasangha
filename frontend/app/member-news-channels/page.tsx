@@ -25,7 +25,7 @@ export default async function MemberNewsChannelsPage() {
               className="memberListingCard"
               key={channel._id}
             >
-              <div className="memberListingPhoto">
+              <div className="memberListingPhoto channelListingLogo">
                 {channel.photo?.url ? (
                   <img
                     src={channel.photo.url}
@@ -46,12 +46,6 @@ export default async function MemberNewsChannelsPage() {
                 <p>Owner: {channel.ownerName}</p>
 
                 <span>{channel.district}</span>
-
-                {channel.mobileNumber && (
-                  <p className="memberListingPhone">
-                    📞 {channel.mobileNumber}
-                  </p>
-                )}
 
                 {channel.websiteUrl && (
                   <p className="memberListingPhone">

@@ -72,7 +72,7 @@ export default async function MemberNewsChannelDetailsPage({
   return (
     <main className="detailsPage">
       <section className="memberDetailsCard">
-        <div className="memberDetailsPhoto">
+        <div className="memberDetailsPhoto channelDetailsLogo">
           {channel.photo?.url ? (
             <img src={channel.photo.url} alt={channel.newsChannelName} />
           ) : (
@@ -90,9 +90,6 @@ export default async function MemberNewsChannelDetailsPage({
           />
 
           <div className="memberDetailsRows">
-            <p>
-              <strong>SL No:</strong> {channel.serialNumber}
-            </p>
 
             <p>
               <strong>ODMM Registration No:</strong>{" "}

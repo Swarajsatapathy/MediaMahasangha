@@ -125,7 +125,7 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
               href={`/member-news-channels/${item._id}`}
               className="memberHomeCard"
             >
-              <div className="memberPhotoBox">
+              <div className="memberPhotoBox channelHomeLogo">
                 {item.photo?.url ? (
                   <img
                     src={item.photo.url}
