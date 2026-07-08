@@ -7,7 +7,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 type Props = {
   title: string;
   items: any[];
-  type: "members" | "memberNewsChannels" | "mentors" | "articles" | "videos" | "srbMembers";
+  type: "members" | "memberNewsChannels" | "mentors" | "articles" | "videos" | "srbMembers" | "gallery";
   badge?: string;
 };
 
@@ -271,6 +271,51 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
             <p>No mentors available</p>
           )}
         </div>
+      </div>
+    </section>
+  );
+}
+
+if (type === "gallery") {
+  return (
+    <section className="homeBlock">
+      <div className="blockHeader">
+        <h2>{title}</h2>
+
+        <div className="arrows">
+          <button type="button" onClick={prev} aria-label="Previous">
+            <FaChevronLeft />
+          </button>
+
+          <button type="button" onClick={next} aria-label="Next">
+            <FaChevronRight />
+          </button>
+        </div>
+      </div>
+
+      <div className="sliderStage">
+        {item ? (
+          <Link
+            key={item?._id || index}
+            href={`/gallery/${item._id}`}
+            className={`galleryHomeCard sliderAnimatedCard ${direction}`}
+          >
+            <div className="galleryHomeImage">
+              {item.photo?.url ? (
+                <img src={item.photo.url} alt={item.area} />
+              ) : (
+                <span>Gallery</span>
+              )}
+            </div>
+
+            <div className="galleryHomeOverlay">
+              <span>{item.district}</span>
+              <h3>{item.area}</h3>
+            </div>
+          </Link>
+        ) : (
+          <p>No gallery photos available</p>
+        )}
       </div>
     </section>
   );

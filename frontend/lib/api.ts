@@ -108,3 +108,12 @@ export async function getSrbMembers() {
 export async function getSrbMemberById(id: string) {
   return await fetchFromAPI(`/api/srb-members/${id}`);
 }
+
+// Gallery
+export async function getGalleryItems() {
+  return await fetchFromAPI("/api/gallery");
+}
+
+export async function getGalleryItemById(id: string) {
+  return await fetchFromAPI(`/api/gallery/${id}`);
+}

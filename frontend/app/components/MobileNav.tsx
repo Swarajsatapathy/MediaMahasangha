@@ -55,6 +55,9 @@ export default function MobileNav() {
               <Link href="/messages" onClick={() => setOpen(false)}>
     Messages
 </Link>
+              <Link href="/gallery" onClick={() => setOpen(false)}>
+  Gallery
+</Link>
               <Link href="/contact-us" onClick={() => setOpen(false)}>
   Contact Us
 </Link>

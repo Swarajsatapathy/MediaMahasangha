@@ -12,6 +12,7 @@ import memberRoutes from "./routes/memberRoutes.js";
 import mentorRoutes from "./routes/mentorRoutes.js";
 import memberNewsChannelRoutes from "./routes/memberNewsChannelRoutes.js";
 import srbMemberRoutes from "./routes/srbMemberRoutes.js";
+import galleryRoutes from "./routes/galleryRoutes.js";
 
 dotenv.config();
 
@@ -110,5 +111,6 @@ app.use("/api/mentors", mentorRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/member-news-channels", memberNewsChannelRoutes);
 app.use("/api/srb-members", srbMemberRoutes);
+app.use("/api/gallery", galleryRoutes);
 
 export default app;

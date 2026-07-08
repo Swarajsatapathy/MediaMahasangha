@@ -22,6 +22,7 @@ return (
       <Link href="/members">Members</Link>
       <Link href="/web-news">Web News</Link>
       <Link href="/messages">Messages</Link>
+      <Link href="/gallery">Gallery</Link>
     </div>
 
     <div className="footerContact">

@@ -8,6 +8,7 @@ import MembersSection from "./components/MembersSection";
 import MentorsSection from "./components/MentorsSection";
 import MemberNewsChannelsSection from "./components/MemberNewsChannelSection";
 import SRBMemberSection from "./components/SRBMemberSection";
+import GallerySection from "./components/GallerySection";
 
 type Admin = {
   id: string;
@@ -15,7 +16,7 @@ type Admin = {
   email: string;
 };
 
-type ActiveTab = "articles" | "videos" | "members" | "mentors" | "member-news-channels" | "srb-members";
+type ActiveTab = "articles" | "videos" | "members" | "mentors" | "member-news-channels" | "srb-members" | "gallery";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -135,6 +136,13 @@ export default function DashboardPage() {
           >
             SRB Members
           </button>
+
+          <button
+            className={activeTab === "gallery" ? "active" : ""}
+            onClick={() => setActiveTab("gallery")}
+          >
+            Gallery
+          </button>
         </nav>
 
         <div className="section">
@@ -149,6 +157,8 @@ export default function DashboardPage() {
           {activeTab === "member-news-channels" && <MemberNewsChannelsSection />}
 
           {activeTab === "srb-members" && <SRBMemberSection />}
+
+          {activeTab === "gallery" && <GallerySection />}
         </div>
       </section>
 
