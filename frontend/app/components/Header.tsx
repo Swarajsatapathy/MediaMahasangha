@@ -3,16 +3,16 @@ import LiveClock from "./LiveClock";
 import MobileNav from "./MobileNav";
 import SocialSidebar from "./SocialSidebar";
 
-import {
-  FaFacebookF,
-  FaWhatsapp,
-  FaInstagram,
-  FaYoutube,
-  FaTelegramPlane,
-} from "react-icons/fa";
+import { FaFacebookF, FaWhatsapp, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
 export default function Header() {
+  const phoneNumber = "7852922654";
+
+  const whatsappMessage = encodeURIComponent(
+    "Hello Odisha Digital Media Mahasangha, I want to know more about membership and official updates."
+  );
+
   return (
     <>
       <SocialSidebar />
@@ -23,24 +23,46 @@ export default function Header() {
         </div>
 
         <div className="topSocials">
-          <a className="topFb" href="https://www.facebook.com/share/18nEgqqvQd/" aria-label="Facebook">
+          <a
+            className="topFb"
+            href="https://www.facebook.com/share/18nEgqqvQd/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+          >
             <FaFacebookF />
           </a>
 
-          <a className="topX" href="https://x.com/odmmdigital" aria-label="X">
+          <a
+            className="topX"
+            href="https://x.com/odmmdigital"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X"
+          >
             <FaXTwitter />
           </a>
 
-          <a className="topYt" href="https://youtube.com/@mediamahasangha?si=_W3z9_PIuZR4RyYk" aria-label="YouTube">
+          <a
+            className="topYt"
+            href="https://youtube.com/@mediamahasangha?si=_W3z9_PIuZR4RyYk"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+          >
             <FaYoutube />
           </a>
 
-          <a className="topWa" href="https://wa.me/917852922654" aria-label="WhatsApp">
+          <a
+            className="topWa"
+            href={`https://wa.me/91${phoneNumber}?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp"
+          >
             <FaWhatsapp />
           </a>
         </div>
-
-        <a className="joinMemberBtn">Join as Member</a>
       </div>
 
       <header className="siteHeader bannerHeader">

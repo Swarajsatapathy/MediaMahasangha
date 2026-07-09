@@ -2375,3 +2375,19 @@ a {
   background: #facc15;
   color: #111111;
 }
+
+.footerPhone,
+.footerEmail {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footerPhone:hover,
+.footerEmail:hover {
+  color: #facc15;
+}
+
+.socialLinks a {
+  cursor: pointer;
+}

@@ -63,7 +63,6 @@ export default function MobileNav() {
 </Link>
             </nav>
 
-            <a className="mobileJoinBtn">Join as Member</a>
           </div>
         </div>
       )}
