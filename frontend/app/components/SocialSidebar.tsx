@@ -12,28 +12,20 @@ import { FaXTwitter } from "react-icons/fa6";
 export default function SocialSidebar() {
   return (
     <div className="desktopSocialSidebar">
-      <a className="sideFb" href="#" aria-label="Facebook">
+      <a className="sideFb" href="https://www.facebook.com/share/18nEgqqvQd/" aria-label="Facebook">
         <FaFacebookF />
       </a>
 
-      <a className="sideX" href="#" aria-label="X">
+      <a className="sideX" href="https://x.com/odmmdigital" aria-label="X">
         <FaXTwitter />
       </a>
 
-      <a className="sideWa" href="#" aria-label="WhatsApp">
+      <a className="sideWa" href="https://wa.me/917852922654" aria-label="WhatsApp">
         <FaWhatsapp />
       </a>
 
-      <a className="sideIg" href="#" aria-label="Instagram">
-        <FaInstagram />
-      </a>
-
-      <a className="sideYt" href="#" aria-label="YouTube">
+      <a className="sideYt" href="https://youtube.com/@mediamahasangha?si=_W3z9_PIuZR4RyYk" aria-label="YouTube">
         <FaYoutube />
-      </a>
-
-      <a className="sideTg" href="#" aria-label="Telegram">
-        <FaTelegramPlane />
       </a>
     </div>
   );

@@ -23,28 +23,20 @@ export default function Header() {
         </div>
 
         <div className="topSocials">
-          <a className="topFb" href="#" aria-label="Facebook">
+          <a className="topFb" href="https://www.facebook.com/share/18nEgqqvQd/" aria-label="Facebook">
             <FaFacebookF />
           </a>
 
-          <a className="topX" href="#" aria-label="X">
+          <a className="topX" href="https://x.com/odmmdigital" aria-label="X">
             <FaXTwitter />
           </a>
 
-          <a className="topYt" href="#" aria-label="YouTube">
+          <a className="topYt" href="https://youtube.com/@mediamahasangha?si=_W3z9_PIuZR4RyYk" aria-label="YouTube">
             <FaYoutube />
           </a>
 
-          <a className="topIg" href="#" aria-label="Instagram">
-            <FaInstagram />
-          </a>
-
-          <a className="topWa" href="#" aria-label="WhatsApp">
+          <a className="topWa" href="https://wa.me/917852922654" aria-label="WhatsApp">
             <FaWhatsapp />
-          </a>
-
-          <a className="topTg" href="#" aria-label="Telegram">
-            <FaTelegramPlane />
           </a>
         </div>
 
