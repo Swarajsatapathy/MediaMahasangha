@@ -134,7 +134,6 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
               </div>
 
               <div className="memberInfo">
-                <p className="memberId">SL No: {item.serialNumber}</p>
 
                 <h3>{item.name}</h3>
 
