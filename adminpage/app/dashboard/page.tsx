@@ -16,7 +16,14 @@ type Admin = {
   email: string;
 };
 
-type ActiveTab = "articles" | "videos" | "members" | "mentors" | "member-news-channels" | "srb-members" | "gallery";
+type ActiveTab =
+  | "articles"
+  | "videos"
+  | "members"
+  | "mentors"
+  | "member-news-channels"
+  | "srb-members"
+  | "gallery";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -49,38 +56,38 @@ export default function DashboardPage() {
       <header className="header">
         <div className="brand">
           <div className="logo" aria-label="ODMM logo">
-  <svg
-    width="23"
-    height="23"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M7 3H17C18.1046 3 19 3.89543 19 5V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3Z"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-    <path
-      d="M9 8H15"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M9 12H15"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M9 16H13"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-</div>
+            <svg
+              width="23"
+              height="23"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7 3H17C18.1046 3 19 3.89543 19 5V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3Z"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <path
+                d="M9 8H15"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <path
+                d="M9 12H15"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <path
+                d="M9 16H13"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
           <div>
             <h1>ODMM</h1>
             <p>Admin Dashboard</p>
@@ -154,7 +161,9 @@ export default function DashboardPage() {
 
           {activeTab === "mentors" && <MentorsSection />}
 
-          {activeTab === "member-news-channels" && <MemberNewsChannelsSection />}
+          {activeTab === "member-news-channels" && (
+            <MemberNewsChannelsSection />
+          )}
 
           {activeTab === "srb-members" && <SRBMemberSection />}
 
@@ -186,16 +195,16 @@ export default function DashboardPage() {
         }
 
         .logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: #00d5ff;
-  color: #06111f;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 18px rgba(0, 213, 255, 0.25);
-}
+          width: 42px;
+          height: 42px;
+          border-radius: 10px;
+          background: #00d5ff;
+          color: #06111f;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 18px rgba(0, 213, 255, 0.25);
+        }
 
         .brand h1 {
           margin: 0;
