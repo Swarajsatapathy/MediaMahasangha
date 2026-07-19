@@ -10,11 +10,14 @@ type Member = {
   designation: string;
   district: string;
   mobileNumber: string;
+  validUpto: string;
   photo?: {
     url: string;
     key: string;
   };
   isActive: boolean;
+  membershipStatus?: "Valid" | "Expired" | "Inactive" | "Validity not set";
+  isMembershipValid?: boolean;
 };
 
 export default function MembersSection() {
@@ -27,6 +30,7 @@ export default function MembersSection() {
   const [designation, setDesignation] = useState("");
   const [district, setDistrict] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
+  const [validUpto, setValidUpto] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
 
@@ -44,7 +48,10 @@ export default function MembersSection() {
 
   const fetchMembers = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/members`);
+      const res = await fetch(`${API_URL}/api/members`, {
+        cache: "no-store",
+      });
+
       const data = await res.json();
 
       if (data?.data?.members) {
@@ -75,12 +82,88 @@ export default function MembersSection() {
     setDesignation("");
     setDistrict("");
     setMobileNumber("");
+    setValidUpto("");
     setPhoto(null);
     setIsActive(true);
     setEditingMemberId(null);
 
     const fileInput = document.getElementById("photo") as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
+
+    if (fileInput) {
+      fileInput.value = "";
+    }
+  };
+
+  const convertDateForInput = (dateValue?: string) => {
+    if (!dateValue) {
+      return "";
+    }
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatDisplayDate = (dateValue?: string) => {
+    if (!dateValue) {
+      return "Not set";
+    }
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+      return "Invalid date";
+    }
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const getMembershipStatus = (member: Member) => {
+    if (!member.isActive) {
+      return "Inactive";
+    }
+
+    if (!member.validUpto) {
+      return "Validity not set";
+    }
+
+    if (member.membershipStatus) {
+      return member.membershipStatus;
+    }
+
+    const expiryDate = new Date(member.validUpto);
+    const today = new Date();
+
+    expiryDate.setHours(23, 59, 59, 999);
+    today.setHours(0, 0, 0, 0);
+
+    return expiryDate >= today ? "Valid" : "Expired";
+  };
+
+  const getStatusClass = (member: Member) => {
+    const status = getMembershipStatus(member);
+
+    if (status === "Valid") {
+      return "valid";
+    }
+
+    if (status === "Expired") {
+      return "expired";
+    }
+
+    return "inactive";
   };
 
   const handleEditClick = (member: Member) => {
@@ -91,11 +174,15 @@ export default function MembersSection() {
     setDesignation(member.designation || "");
     setDistrict(member.district || "");
     setMobileNumber(member.mobileNumber || "");
+    setValidUpto(convertDateForInput(member.validUpto));
     setIsActive(member.isActive ?? true);
     setPhoto(null);
 
     const fileInput = document.getElementById("photo") as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
+
+    if (fileInput) {
+      fileInput.value = "";
+    }
 
     window.scrollTo({
       top: 0,
@@ -103,7 +190,9 @@ export default function MembersSection() {
     });
   };
 
-  const handleSubmitMember = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitMember = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
 
     const token = localStorage.getItem("odmm_admin_token");
@@ -115,13 +204,29 @@ export default function MembersSection() {
 
     if (
       !serialNumber ||
-      !memberId ||
-      !name ||
-      !designation ||
+      !memberId.trim() ||
+      !name.trim() ||
+      !designation.trim() ||
       !district ||
-      !mobileNumber
+      !mobileNumber.trim() ||
+      !validUpto
     ) {
-      setMessage("All required fields must be filled.");
+      setMessage("All required fields, including Valid Upto, must be filled.");
+      return;
+    }
+
+    const parsedSerialNumber = Number(serialNumber);
+
+    if (
+      Number.isNaN(parsedSerialNumber) ||
+      parsedSerialNumber < 1
+    ) {
+      setMessage("Serial number must be greater than 0.");
+      return;
+    }
+
+    if (mobileNumber.length !== 10) {
+      setMessage("Mobile number must contain exactly 10 digits.");
       return;
     }
 
@@ -132,11 +237,12 @@ export default function MembersSection() {
       const formData = new FormData();
 
       formData.append("serialNumber", serialNumber);
-      formData.append("memberId", memberId);
-      formData.append("name", name);
-      formData.append("designation", designation);
+      formData.append("memberId", memberId.trim());
+      formData.append("name", name.trim());
+      formData.append("designation", designation.trim());
       formData.append("district", district);
-      formData.append("mobileNumber", mobileNumber);
+      formData.append("mobileNumber", mobileNumber.trim());
+      formData.append("validUpto", validUpto);
       formData.append("isActive", String(isActive));
 
       if (photo) {
@@ -164,11 +270,11 @@ export default function MembersSection() {
       setMessage(
         editingMemberId
           ? "Member updated successfully."
-          : "Member created successfully."
+          : "Member created successfully.",
       );
 
       resetForm();
-      fetchMembers();
+      await fetchMembers();
     } catch (error) {
       if (error instanceof Error) {
         setMessage(error.message);
@@ -181,10 +287,20 @@ export default function MembersSection() {
   };
 
   const handleDeleteMember = async (id: string) => {
-    const confirmDelete = confirm("Are you sure you want to delete this member?");
-    if (!confirmDelete) return;
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this member?",
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
 
     const token = localStorage.getItem("odmm_admin_token");
+
+    if (!token) {
+      setMessage("Login token missing. Please login again.");
+      return;
+    }
 
     try {
       const res = await fetch(`${API_URL}/api/members/${id}`, {
@@ -201,7 +317,7 @@ export default function MembersSection() {
       }
 
       setMessage("Member deleted successfully.");
-      fetchMembers();
+      await fetchMembers();
     } catch (error) {
       if (error instanceof Error) {
         setMessage(error.message);
@@ -216,7 +332,7 @@ export default function MembersSection() {
       <div className="sectionTop">
         <div>
           <h1>Members</h1>
-          <p>Create and manage reporters/members</p>
+          <p>Create and manage ODMM members and membership validity</p>
         </div>
       </div>
 
@@ -226,15 +342,26 @@ export default function MembersSection() {
         <form className="card" onSubmit={handleSubmitMember}>
           <h2>{editingMemberId ? "Edit Member" : "Create Member"}</h2>
 
+          <label className="label" htmlFor="serialNumber">
+            Serial Number
+          </label>
+
           <input
+            id="serialNumber"
             type="number"
+            min="1"
             placeholder="Serial Number e.g. 1"
             value={serialNumber}
             onChange={(e) => setSerialNumber(e.target.value)}
             required
           />
 
+          <label className="label" htmlFor="memberId">
+            Member ID
+          </label>
+
           <input
+            id="memberId"
             type="text"
             placeholder="Member ID e.g. ODMM001"
             value={memberId}
@@ -242,7 +369,12 @@ export default function MembersSection() {
             required
           />
 
+          <label className="label" htmlFor="name">
+            Full Name
+          </label>
+
           <input
+            id="name"
             type="text"
             placeholder="Full name"
             value={name}
@@ -250,7 +382,12 @@ export default function MembersSection() {
             required
           />
 
+          <label className="label" htmlFor="designation">
+            Designation
+          </label>
+
           <input
+            id="designation"
             type="text"
             placeholder="Designation"
             value={designation}
@@ -258,12 +395,18 @@ export default function MembersSection() {
             required
           />
 
+          <label className="label" htmlFor="district">
+            District
+          </label>
+
           <select
+            id="district"
             value={district}
             onChange={(e) => setDistrict(e.target.value)}
             required
           >
             <option value="">Select District</option>
+
             {districts.map((item) => (
               <option key={item} value={item}>
                 {item}
@@ -271,20 +414,48 @@ export default function MembersSection() {
             ))}
           </select>
 
-          <input
-  type="tel"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  placeholder="Mobile number"
-  value={mobileNumber}
-  onChange={(e) => {
-    const onlyNumbers = e.target.value.replace(/\D/g, "");
-    setMobileNumber(onlyNumbers);
-  }}
-  required
-/>
+          <label className="label" htmlFor="mobileNumber">
+            Mobile Number
+          </label>
 
-          <label className="label">Photo</label>
+          <input
+            id="mobileNumber"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]{10}"
+            maxLength={10}
+            placeholder="10-digit mobile number"
+            value={mobileNumber}
+            onChange={(e) => {
+              const onlyNumbers = e.target.value
+                .replace(/\D/g, "")
+                .slice(0, 10);
+
+              setMobileNumber(onlyNumbers);
+            }}
+            required
+          />
+
+          <label className="label" htmlFor="validUpto">
+            Valid Upto
+          </label>
+
+          <input
+            id="validUpto"
+            type="date"
+            value={validUpto}
+            onChange={(e) => setValidUpto(e.target.value)}
+            required
+          />
+
+          <p className="dateHelp">
+            The member will remain valid until the end of the selected date.
+          </p>
+
+          <label className="label" htmlFor="photo">
+            Photo
+          </label>
+
           <input
             id="photo"
             type="file"
@@ -299,7 +470,7 @@ export default function MembersSection() {
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
               />
-              Active
+              Active member
             </label>
           </div>
 
@@ -309,8 +480,8 @@ export default function MembersSection() {
                 ? "Updating..."
                 : "Creating..."
               : editingMemberId
-              ? "Update Member"
-              : "Create Member"}
+                ? "Update Member"
+                : "Create Member"}
           </button>
 
           {editingMemberId && (
@@ -327,50 +498,68 @@ export default function MembersSection() {
             {members.length === 0 ? (
               <p className="empty">No members found.</p>
             ) : (
-              members.map((member) => (
-                <div className="item" key={member._id}>
-                  <div className="avatar">
-                    {member.photo?.url ? (
-                      <img src={member.photo.url} alt={member.name} />
-                    ) : (
-                      <span>{member.name.charAt(0).toUpperCase()}</span>
-                    )}
-                  </div>
+              members.map((member) => {
+                const membershipStatus = getMembershipStatus(member);
 
-                  <div className="details">
-                    <h3>
-                      SL {member.serialNumber} - {member.name}
-                    </h3>
-                    <p>
-                      ID: {member.memberId}
-                    </p>
-                    <p>
-                      {member.designation} • {member.district}
-                    </p>
-                    <p>{member.mobileNumber}</p>
+                return (
+                  <div className="item" key={member._id}>
+                    <div className="avatar">
+                      {member.photo?.url ? (
+                        <img src={member.photo.url} alt={member.name} />
+                      ) : (
+                        <span>
+                          {member.name?.charAt(0).toUpperCase() || "M"}
+                        </span>
+                      )}
+                    </div>
 
-                    <div className="actions">
-                      <span className={member.isActive ? "active" : "inactive"}>
-                        {member.isActive ? "Active" : "Inactive"}
-                      </span>
+                    <div className="details">
+                      <h3>
+                        SL {member.serialNumber} - {member.name}
+                      </h3>
 
-                      <button
-                        className="edit"
-                        onClick={() => handleEditClick(member)}
-                      >
-                        Edit
-                      </button>
+                      <p>
+                        <strong>ID:</strong> {member.memberId}
+                      </p>
 
-                      <button
-                        className="delete"
-                        onClick={() => handleDeleteMember(member._id)}
-                      >
-                        Delete
-                      </button>
+                      <p>
+                        {member.designation} • {member.district}
+                      </p>
+
+                      <p>
+                        <strong>Mobile:</strong> {member.mobileNumber}
+                      </p>
+
+                      <p>
+                        <strong>Valid Upto:</strong>{" "}
+                        {formatDisplayDate(member.validUpto)}
+                      </p>
+
+                      <div className="actions">
+                        <span className={getStatusClass(member)}>
+                          {membershipStatus}
+                        </span>
+
+                        <button
+                          type="button"
+                          className="edit"
+                          onClick={() => handleEditClick(member)}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="delete"
+                          onClick={() => handleDeleteMember(member._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
@@ -435,6 +624,11 @@ export default function MembersSection() {
           margin-bottom: 16px;
           outline: none;
           font-size: 14px;
+          box-sizing: border-box;
+        }
+
+        input[type="date"] {
+          color-scheme: dark;
         }
 
         input:focus,
@@ -444,9 +638,17 @@ export default function MembersSection() {
 
         .label {
           display: block;
-          color: #8ea2c4;
+          color: #b8c7e6;
           margin-bottom: 8px;
           font-size: 13px;
+          font-weight: 700;
+        }
+
+        .dateHelp {
+          color: #7285a6;
+          font-size: 12px;
+          line-height: 1.5;
+          margin: -8px 0 16px;
         }
 
         .checks {
@@ -469,16 +671,23 @@ export default function MembersSection() {
         .submit {
           width: 100%;
           background: #14798b;
-          color: #06111f;
+          color: #ffffff;
           border: none;
           padding: 13px;
           border-radius: 10px;
           font-weight: 800;
           cursor: pointer;
+          transition: 0.2s ease;
         }
 
-        .submit:hover {
+        .submit:hover:not(:disabled) {
           background: #00d5ff;
+          color: #06111f;
+        }
+
+        .submit:disabled {
+          cursor: not-allowed;
+          opacity: 0.65;
         }
 
         .cancel {
@@ -499,7 +708,7 @@ export default function MembersSection() {
         }
 
         .list {
-          max-height: 650px;
+          max-height: 720px;
           overflow-y: auto;
           padding-right: 8px;
         }
@@ -515,8 +724,8 @@ export default function MembersSection() {
         }
 
         .avatar {
-          width: 58px;
-          height: 58px;
+          width: 64px;
+          height: 64px;
           border-radius: 12px;
           background: #07364b;
           display: flex;
@@ -540,10 +749,11 @@ export default function MembersSection() {
 
         .details {
           flex: 1;
+          min-width: 0;
         }
 
         .details h3 {
-          margin: 0 0 6px;
+          margin: 0 0 8px;
           font-size: 16px;
           line-height: 1.4;
         }
@@ -552,6 +762,11 @@ export default function MembersSection() {
           margin: 0 0 6px;
           color: #8ea2c4;
           font-size: 14px;
+          overflow-wrap: anywhere;
+        }
+
+        .details strong {
+          color: #b8c7e6;
         }
 
         .actions {
@@ -562,7 +777,8 @@ export default function MembersSection() {
           flex-wrap: wrap;
         }
 
-        .active,
+        .valid,
+        .expired,
         .inactive,
         .edit,
         .delete {
@@ -573,10 +789,16 @@ export default function MembersSection() {
           font-weight: 800;
         }
 
-        .active {
-          background: rgba(0, 213, 255, 0.12);
-          color: #00d5ff;
-          border: 1px solid rgba(0, 213, 255, 0.25);
+        .valid {
+          background: rgba(34, 197, 94, 0.12);
+          color: #4ade80;
+          border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .expired {
+          background: rgba(239, 68, 68, 0.12);
+          color: #fb7185;
+          border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         .inactive {
@@ -597,6 +819,11 @@ export default function MembersSection() {
           cursor: pointer;
         }
 
+        .edit:hover,
+        .delete:hover {
+          filter: brightness(1.2);
+        }
+
         .empty {
           color: #8ea2c4;
         }
@@ -604,6 +831,38 @@ export default function MembersSection() {
         @media (max-width: 950px) {
           .grid {
             grid-template-columns: 1fr;
+          }
+
+          .list {
+            max-height: none;
+          }
+        }
+
+        @media (max-width: 540px) {
+          .card {
+            padding: 16px;
+          }
+
+          .item {
+            align-items: flex-start;
+          }
+
+          .avatar {
+            width: 54px;
+            height: 54px;
+          }
+
+          .actions {
+            gap: 7px;
+          }
+
+          .valid,
+          .expired,
+          .inactive,
+          .edit,
+          .delete {
+            padding: 8px 10px;
+            font-size: 12px;
           }
         }
       `}</style>

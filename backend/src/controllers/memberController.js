@@ -6,6 +6,34 @@ import { uploadToS3, deleteFromS3 } from "../utils/s3Upload.js";
 
 const toBoolean = (value) => value === "true" || value === true;
 
+/*
+  Converts an HTML date input such as:
+  2027-07-20
+
+  into a valid JavaScript Date.
+
+  The time is set to the end of the selected day so that
+  the membership remains valid throughout that date.
+*/
+const parseValidUptoDate = (value) => {
+  if (!value) {
+    throw new ApiError(400, "Valid upto date is required");
+  }
+
+  const parsedDate = new Date(value);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    throw new ApiError(
+      400,
+      "Valid upto must be a valid date in YYYY-MM-DD format"
+    );
+  }
+
+  parsedDate.setHours(23, 59, 59, 999);
+
+  return parsedDate;
+};
+
 // CREATE MEMBER
 const createMember = asyncHandler(async (req, res) => {
   const {
@@ -15,6 +43,7 @@ const createMember = asyncHandler(async (req, res) => {
     designation,
     district,
     mobileNumber,
+    validUpto,
     isActive,
   } = req.body;
 
@@ -24,21 +53,29 @@ const createMember = asyncHandler(async (req, res) => {
     !name ||
     !designation ||
     !district ||
-    !mobileNumber
+    !mobileNumber ||
+    !validUpto
   ) {
     throw new ApiError(
       400,
-      "serialNumber, memberId, name, designation, district and mobileNumber are required"
+      "serialNumber, memberId, name, designation, district, mobileNumber and validUpto are required"
     );
   }
 
   const parsedSerialNumber = Number(serialNumber);
 
   if (Number.isNaN(parsedSerialNumber) || parsedSerialNumber < 1) {
-    throw new ApiError(400, "serialNumber must be a valid number greater than 0");
+    throw new ApiError(
+      400,
+      "serialNumber must be a valid number greater than 0"
+    );
   }
 
-  const existingMember = await Member.findOne({ memberId });
+  const parsedValidUpto = parseValidUptoDate(validUpto);
+
+  const existingMember = await Member.findOne({
+    memberId: memberId.trim(),
+  });
 
   if (existingMember) {
     throw new ApiError(409, "Member ID already exists");
@@ -72,11 +109,12 @@ const createMember = asyncHandler(async (req, res) => {
 
   const member = await Member.create({
     serialNumber: parsedSerialNumber,
-    memberId,
-    name,
-    designation,
+    memberId: memberId.trim(),
+    name: name.trim(),
+    designation: designation.trim(),
     district,
-    mobileNumber,
+    mobileNumber: mobileNumber.trim(),
+    validUpto: parsedValidUpto,
     photo,
     isActive: isActive === undefined ? true : toBoolean(isActive),
   });
@@ -93,6 +131,7 @@ const getMembers = asyncHandler(async (req, res) => {
     designation,
     search,
     active,
+    validity,
     sortBy = "serialNumber",
     order = "asc",
   } = req.query;
@@ -104,28 +143,104 @@ const getMembers = asyncHandler(async (req, res) => {
   }
 
   if (designation) {
-    filter.designation = { $regex: designation, $options: "i" };
+    filter.designation = {
+      $regex: designation,
+      $options: "i",
+    };
   }
 
   if (active !== undefined) {
     filter.isActive = active === "true";
   }
 
+  /*
+    Supported query parameters:
+
+    ?validity=valid
+    ?validity=expired
+  */
+  if (validity) {
+    const normalizedValidity = validity.toLowerCase();
+
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (normalizedValidity === "valid") {
+      filter.isActive = true;
+      filter.validUpto = {
+        $gte: now,
+      };
+    } else if (normalizedValidity === "expired") {
+      filter.validUpto = {
+        $lt: now,
+      };
+    } else {
+      throw new ApiError(
+        400,
+        "validity must be either valid or expired"
+      );
+    }
+  }
+
   if (search) {
     filter.$or = [
-      { memberId: { $regex: search, $options: "i" } },
-      { name: { $regex: search, $options: "i" } },
-      { district: { $regex: search, $options: "i" } },
-      { designation: { $regex: search, $options: "i" } },
-      { mobileNumber: { $regex: search, $options: "i" } },
+      {
+        memberId: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        name: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        district: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        designation: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        mobileNumber: {
+          $regex: search,
+          $options: "i",
+        },
+      },
     ];
   }
 
+  const allowedSortFields = [
+    "serialNumber",
+    "memberId",
+    "name",
+    "designation",
+    "district",
+    "validUpto",
+    "createdAt",
+    "updatedAt",
+  ];
+
+  const selectedSortField = allowedSortFields.includes(sortBy)
+    ? sortBy
+    : "serialNumber";
+
   const sortOrder = order === "desc" ? -1 : 1;
 
-  const members = await Member.find(filter)
-    .sort({ [sortBy]: sortOrder })
-    .lean();
+  /*
+    Do not use .lean() here because membershipStatus and
+    isMembershipValid are Mongoose virtual fields.
+  */
+  const members = await Member.find(filter).sort({
+    [selectedSortField]: sortOrder,
+  });
 
   const total = await Member.countDocuments(filter);
 
@@ -149,7 +264,9 @@ const getMemberById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Member not found");
   }
 
-  return res.status(200).json(new ApiResponse(200, member));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, member, "Member fetched successfully"));
 });
 
 // UPDATE MEMBER
@@ -167,6 +284,7 @@ const updateMember = asyncHandler(async (req, res) => {
     designation,
     district,
     mobileNumber,
+    validUpto,
     isActive,
   } = req.body;
 
@@ -183,7 +301,9 @@ const updateMember = asyncHandler(async (req, res) => {
     if (parsedSerialNumber !== member.serialNumber) {
       const existingSerialNumber = await Member.findOne({
         serialNumber: parsedSerialNumber,
-        _id: { $ne: member._id },
+        _id: {
+          $ne: member._id,
+        },
       });
 
       if (existingSerialNumber) {
@@ -194,27 +314,67 @@ const updateMember = asyncHandler(async (req, res) => {
     }
   }
 
-  if (memberId !== undefined && memberId !== member.memberId) {
-    const existingMember = await Member.findOne({
-      memberId,
-      _id: { $ne: member._id },
-    });
+  if (memberId !== undefined) {
+    const trimmedMemberId = memberId.trim();
 
-    if (existingMember) {
-      throw new ApiError(409, "Member ID already exists");
+    if (!trimmedMemberId) {
+      throw new ApiError(400, "Member ID cannot be empty");
     }
 
-    member.memberId = memberId;
+    if (trimmedMemberId !== member.memberId) {
+      const existingMember = await Member.findOne({
+        memberId: trimmedMemberId,
+        _id: {
+          $ne: member._id,
+        },
+      });
+
+      if (existingMember) {
+        throw new ApiError(409, "Member ID already exists");
+      }
+
+      member.memberId = trimmedMemberId;
+    }
   }
 
-  if (name !== undefined) member.name = name;
-  if (designation !== undefined) member.designation = designation;
-  if (district !== undefined) member.district = district;
-  if (mobileNumber !== undefined) member.mobileNumber = mobileNumber;
-  if (isActive !== undefined) member.isActive = toBoolean(isActive);
+  if (name !== undefined) {
+    if (!name.trim()) {
+      throw new ApiError(400, "Name cannot be empty");
+    }
+
+    member.name = name.trim();
+  }
+
+  if (designation !== undefined) {
+    if (!designation.trim()) {
+      throw new ApiError(400, "Designation cannot be empty");
+    }
+
+    member.designation = designation.trim();
+  }
+
+  if (district !== undefined) {
+    member.district = district;
+  }
+
+  if (mobileNumber !== undefined) {
+    if (!mobileNumber.trim()) {
+      throw new ApiError(400, "Mobile number cannot be empty");
+    }
+
+    member.mobileNumber = mobileNumber.trim();
+  }
+
+  if (validUpto !== undefined) {
+    member.validUpto = parseValidUptoDate(validUpto);
+  }
+
+  if (isActive !== undefined) {
+    member.isActive = toBoolean(isActive);
+  }
 
   if (req.file) {
-    if (member.photo && member.photo.key) {
+    if (member.photo?.key) {
       await deleteFromS3(member.photo.key);
     }
 
@@ -245,7 +405,7 @@ const deleteMember = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Member not found");
   }
 
-  if (member.photo && member.photo.key) {
+  if (member.photo?.key) {
     await deleteFromS3(member.photo.key);
   }
 

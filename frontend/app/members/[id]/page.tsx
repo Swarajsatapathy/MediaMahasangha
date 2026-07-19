@@ -1,11 +1,30 @@
 import { getMemberById } from "../../../lib/api";
 import SocialShare from "../../components/SocialShare";
+import MemberIdCardDownload from "../../components/MemberIdCardDownload";
 
 type PageProps = {
   params: Promise<{
     id: string;
   }>;
 };
+
+function formatValidUpto(dateValue?: string) {
+  if (!dateValue) {
+    return "Not Set";
+  }
+
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Not Set";
+  }
+
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
@@ -14,8 +33,7 @@ export async function generateMetadata({ params }: PageProps) {
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.mediamahasangha.in";
 
-  const imageUrl =
-    member?.photo?.url || `${siteUrl}/default-og-image.jpg`;
+  const imageUrl = member?.photo?.url || `${siteUrl}/default-og-image.jpg`;
 
   const description = member
     ? `${member.name} - ${member.designation}, ${member.district}`
@@ -59,6 +77,7 @@ export default async function MemberDetailsPage({ params }: PageProps) {
       <main className="detailsPage">
         <div className="detailsContainer">
           <h1>Member not found</h1>
+
           <p>The member profile may have been deleted or is unavailable.</p>
         </div>
       </main>
@@ -72,12 +91,16 @@ export default async function MemberDetailsPage({ params }: PageProps) {
           {member.photo?.url ? (
             <img src={member.photo.url} alt={member.name} />
           ) : (
-            <span>{member.name?.charAt(0) || "M"}</span>
+            <span>{member.name?.charAt(0).toUpperCase() || "M"}</span>
           )}
         </div>
 
         <div className="memberDetailsInfo">
-          <span className="memberDetailsBadge">ODMM Member</span>
+          <div className="memberDetailsTopRow">
+            <span className="memberDetailsBadge">ODMM Member</span>
+
+            <MemberIdCardDownload member={member} />
+          </div>
 
           <h1>{member.name}</h1>
 
@@ -101,8 +124,19 @@ export default async function MemberDetailsPage({ params }: PageProps) {
             </p>
 
             <p>
-              <strong>Status:</strong>{" "}
-              {member.isActive ? "Active" : "Inactive"}
+              <strong>Valid Upto:</strong>{" "}
+              {member.validUpto
+                ? new Date(member.validUpto).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    timeZone: "UTC",
+                  })
+                : "Not specified"}
+            </p>
+
+            <p>
+              <strong>Status:</strong> {member.isActive ? "Active" : "Inactive"}
             </p>
           </div>
         </div>

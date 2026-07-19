@@ -42,6 +42,12 @@ const memberSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Date until which the ODMM membership remains valid
+    validUpto: {
+      type: Date,
+      required: true,
+    },
+
     photo: {
       url: {
         type: String,
@@ -53,6 +59,7 @@ const memberSchema = new mongoose.Schema(
       },
     },
 
+    // Manual control from admin panel
     isActive: {
       type: Boolean,
       default: true,
@@ -60,8 +67,53 @@ const memberSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
   }
 );
+
+/*
+  Computed membership status.
+
+  A member is valid only when:
+  1. isActive is true
+  2. validUpto has not passed
+*/
+memberSchema.virtual("membershipStatus").get(function () {
+  if (!this.isActive) {
+    return "Inactive";
+  }
+
+  if (!this.validUpto) {
+    return "Validity not set";
+  }
+
+  const today = new Date();
+  const validUpto = new Date(this.validUpto);
+
+  today.setHours(0, 0, 0, 0);
+  validUpto.setHours(23, 59, 59, 999);
+
+  return validUpto >= today ? "Valid" : "Expired";
+});
+
+memberSchema.virtual("isMembershipValid").get(function () {
+  if (!this.isActive || !this.validUpto) {
+    return false;
+  }
+
+  const today = new Date();
+  const validUpto = new Date(this.validUpto);
+
+  today.setHours(0, 0, 0, 0);
+  validUpto.setHours(23, 59, 59, 999);
+
+  return validUpto >= today;
+});
 
 const Member = mongoose.model("Member", memberSchema);
 

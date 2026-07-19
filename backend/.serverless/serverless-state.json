@@ -243,7 +243,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/odmm-backend/prod/1784296404578-2026-07-17T13:53:24.578Z/odmm-backend.zip"
+                "S3Key": "serverless/odmm-backend/prod/1784488545149-2026-07-19T19:15:45.149Z/odmm-backend.zip"
               },
               "Handler": "lambda.handler",
               "Runtime": "nodejs20.x",
@@ -276,14 +276,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionhxn1fheRGW7vY8e5dfhekNMMOpxrLZPZj9SSa3QDHM": {
+          "ApiLambdaVersionWU1yaao5syLn0r4JnHNrRfgoRnBjOfpYejUFK3MaSc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "D7FL/2wksWxTednv8DlQGM4tzYVg673ji+Itp5rf6Nw="
+              "CodeSha256": "jtyHPl8p0/PdSiJQhU/vY8JtfO+q90AoDE7LJRlD2yo="
             }
           },
           "HttpApi": {
@@ -436,7 +436,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionhxn1fheRGW7vY8e5dfhekNMMOpxrLZPZj9SSa3QDHM"
+              "Ref": "ApiLambdaVersionWU1yaao5syLn0r4JnHNrRfgoRnBjOfpYejUFK3MaSc"
             },
             "Export": {
               "Name": "sls-odmm-backend-prod-ApiLambdaFunctionQualifiedArn"
@@ -590,7 +590,7 @@
         "timeout": 28,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionhxn1fheRGW7vY8e5dfhekNMMOpxrLZPZj9SSa3QDHM"
+        "versionLogicalId": "ApiLambdaVersionWU1yaao5syLn0r4JnHNrRfgoRnBjOfpYejUFK3MaSc"
       }
     },
     "configValidationMode": "warn",
@@ -611,7 +611,7 @@
     "artifact": "E:\\ODMM-Proper\\backend\\.serverless\\odmm-backend.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/odmm-backend/prod/1784296404578-2026-07-17T13:53:24.578Z",
+    "artifactDirectoryName": "serverless/odmm-backend/prod/1784488545149-2026-07-19T19:15:45.149Z",
     "artifact": "odmm-backend.zip"
   }
 }

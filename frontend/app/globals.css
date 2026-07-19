@@ -2391,3 +2391,346 @@ a {
 .socialLinks a {
   cursor: pointer;
 }
+
+/* =========================================
+   MEMBER DETAILS TOP ROW + DOWNLOAD BUTTON
+========================================= */
+
+.memberDetailsTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.memberDetailsTopRow .memberDetailsBadge {
+  margin-bottom: 0;
+}
+
+.memberIdDownloadSection {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.memberIdDownloadButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-width: 190px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #a81418, #cf282d);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 7px 16px rgba(168, 20, 24, 0.22);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.memberIdDownloadButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 21px rgba(168, 20, 24, 0.3);
+}
+
+.memberIdDownloadButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.memberIdDownloadButton:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+/* =========================================
+   PRINTABLE ATM-SIZE MEMBER ID CARD
+   CR80: 85.60 mm × 53.98 mm
+   Export: 1011 × 638 pixels
+========================================= */
+
+.memberIdCardCaptureArea {
+  position: fixed;
+  top: 0;
+  left: -20000px;
+  z-index: -9999;
+  width: 1011px;
+  height: 638px;
+  pointer-events: none;
+}
+
+.memberAtmIdCard {
+  position: relative;
+  width: 1011px;
+  height: 638px;
+  overflow: hidden;
+  border: 8px solid #97171b;
+  border-radius: 38px;
+  background:
+    radial-gradient(
+      circle at 92% 28%,
+      rgba(244, 196, 35, 0.14),
+      transparent 23%
+    ),
+    #ffffff;
+  color: #222222;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+
+/* ID card header */
+
+.memberAtmCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  height: 160px;
+  padding: 18px 40px;
+  background: linear-gradient(135deg, #9d1015, #c62228);
+  box-sizing: border-box;
+}
+
+.memberAtmLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 125px;
+  width: 125px;
+  height: 125px;
+  padding: 5px;
+  overflow: hidden;
+  border: 4px solid #f4c529;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+}
+
+.memberAtmLogo img {
+  display: block;
+  width: 108%;
+  height: 108%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+}
+
+.memberAtmOrganization {
+  flex: 1;
+  min-width: 0;
+}
+
+.memberAtmOrganization h2 {
+  margin: 0 0 9px;
+  color: #ffffff;
+  font-size: 37px;
+  font-weight: 900;
+  line-height: 1.08;
+  white-space: nowrap;
+}
+
+.memberAtmOrganization p {
+  margin: 0;
+  color: #ffd447;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+/* ID card body */
+
+.memberAtmCardBody {
+  display: flex;
+  align-items: center;
+  gap: 37px;
+  height: 330px;
+  padding: 28px 45px 18px;
+  box-sizing: border-box;
+}
+
+.memberAtmPhoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 205px;
+  width: 205px;
+  height: 255px;
+  overflow: hidden;
+  border: 5px solid #ffffff;
+  border-radius: 20px;
+  outline: 3px solid #a6151a;
+  background: #eeeeee;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+}
+
+.memberAtmPhoto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.memberAtmPhoto span {
+  color: #9c1519;
+  font-size: 85px;
+  font-weight: 900;
+}
+
+.memberAtmInformation {
+  flex: 1;
+  min-width: 0;
+}
+
+.memberAtmInformation h3 {
+  margin: 0 0 12px;
+  color: #063f7a;
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.memberAtmDetails {
+  display: grid;
+  gap: 0;
+}
+
+.memberAtmDetails div {
+  display: grid;
+  grid-template-columns: 175px minmax(0, 1fr);
+  align-items: center;
+  min-height: 43px;
+  border-bottom: 1px solid #d4d4d4;
+  font-size: 20px;
+}
+
+.memberAtmDetails div:last-child {
+  border-bottom: 0;
+}
+
+.memberAtmDetails strong {
+  color: #8f1115;
+  font-weight: 800;
+}
+
+.memberAtmDetails span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #222222;
+  font-weight: 700;
+}
+
+/* ID card validity and president */
+
+.memberAtmFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 92px;
+  padding: 6px 46px 12px;
+  box-sizing: border-box;
+}
+
+.memberAtmValidity {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 190px;
+  min-height: 52px;
+  padding: 7px 20px;
+  border: 2px solid #b51c21;
+  border-radius: 12px;
+  background: #fff4f4;
+  box-sizing: border-box;
+}
+
+.memberAtmValidity small {
+  margin-bottom: 3px;
+  color: #777777;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.memberAtmValidity strong {
+  color: #063f7a;
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.memberAtmPresident {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 235px;
+  text-align: center;
+}
+
+.memberAtmPresident strong {
+  color: #8e1115;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.memberAtmPresident small {
+  margin-top: 4px;
+  color: #555555;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ID card contact footer */
+
+.memberAtmContactFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  width: 100%;
+  height: 48px;
+  padding: 0 20px;
+  background: #f5c42b;
+  color: #770b0e;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.memberAtmFooterDivider {
+  color: #a7191d;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Mobile member-details layout */
+
+@media (max-width: 700px) {
+  .memberDetailsTopRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .memberDetailsTopRow .memberDetailsBadge {
+    align-self: center;
+  }
+
+  .memberIdDownloadButton {
+    width: 100%;
+  }
+}
