@@ -244,7 +244,7 @@ export default function MemberIdCardDownload({
             </div>
 
             <div className="memberAtmPresident">
-              <span className="memberAtmSignatureMark">Sd/-</span>
+              <span className="memberAtmSignatureMark">-Sd-</span>
               <strong>Manoj Satapathy</strong>
               <small>State President</small>
             </div>
