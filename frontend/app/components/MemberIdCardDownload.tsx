@@ -273,13 +273,13 @@ export default function MemberIdCardDownload({
           </div>
 
           <div className="memberAtmContactFooter">
-            <span>+91 XXXXX XXXXX</span>
+            <span>+91 78529 22654</span>
 
             <span className="memberAtmFooterDivider">
               |
             </span>
 
-            <span>odmm@example.com</span>
+            <span>odmmdigital@gmail.com</span>
 
             <span className="memberAtmFooterDivider">
               |
