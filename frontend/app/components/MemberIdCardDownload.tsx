@@ -28,69 +28,187 @@ function createSafeFileName(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function formatValidUpto(value?: string) {
+  if (!value) {
+    return "Not specified";
+  }
+
+  const dateOnly = value.split("T")[0];
+  const [year, month, day] = dateOnly.split("-").map(Number);
+
+  if (!year || !month || !day) {
+    return "Not specified";
+  }
+
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+async function convertImageToDataUrl(imageUrl: string) {
+  const response = await fetch(imageUrl, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Unable to load member photo: ${response.status}`,
+    );
+  }
+
+  const blob = await response.blob();
+
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("Unable to convert member photo"));
+      }
+    };
+
+    reader.onerror = () => {
+      reject(new Error("Unable to read member photo"));
+    };
+
+    reader.readAsDataURL(blob);
+  });
+}
+
 export default function MemberIdCardDownload({
   member,
 }: MemberIdCardDownloadProps) {
   const idCardRef = useRef<HTMLDivElement>(null);
+
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadPhotoUrl, setDownloadPhotoUrl] = useState(
+    member.photo?.url || "",
+  );
+
+  const waitForImages = async (element: HTMLElement) => {
+    const images = Array.from(element.querySelectorAll("img"));
+
+    await Promise.all(
+      images.map((image) => {
+        if (image.complete && image.naturalWidth > 0) {
+          return Promise.resolve();
+        }
+
+        return new Promise<void>((resolve) => {
+          image.onload = () => resolve();
+          image.onerror = () => resolve();
+        });
+      }),
+    );
+  };
 
   const downloadIdCard = async () => {
-    if (!idCardRef.current || isDownloading) return;
+    if (!idCardRef.current || isDownloading) {
+      return;
+    }
 
     try {
       setIsDownloading(true);
 
-      // Wait for custom fonts and images to finish loading.
+      let preparedPhotoUrl = member.photo?.url || "";
+
+      if (member.photo?.url) {
+        try {
+          preparedPhotoUrl = await convertImageToDataUrl(
+            member.photo.url,
+          );
+
+          setDownloadPhotoUrl(preparedPhotoUrl);
+
+          // Allow React to update the hidden card image.
+          await new Promise<void>((resolve) => {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => resolve());
+            });
+          });
+        } catch (photoError) {
+          console.error(
+            "Member photo could not be converted:",
+            photoError,
+          );
+
+          /*
+           * Continue without the external photo instead of failing
+           * the entire ID-card download.
+           */
+          preparedPhotoUrl = "";
+          setDownloadPhotoUrl("");
+
+          await new Promise<void>((resolve) => {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => resolve());
+            });
+          });
+        }
+      }
+
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
 
-      const image = idCardRef.current.querySelector("img");
-
-      if (image && !image.complete) {
-        await new Promise<void>((resolve) => {
-          image.onload = () => resolve();
-          image.onerror = () => resolve();
-        });
-      }
+      await waitForImages(idCardRef.current);
 
       const dataUrl = await toPng(idCardRef.current, {
         quality: 1,
-        pixelRatio: 3,
-        cacheBust: true,
+        pixelRatio: 1,
+        cacheBust: false,
         backgroundColor: "#ffffff",
+        width: 1011,
+        height: 638,
+        skipAutoScale: true,
       });
 
       const safeName =
-        createSafeFileName(member.name || member.memberId) || "member";
+        createSafeFileName(member.name || member.memberId) ||
+        "member";
 
       const downloadLink = document.createElement("a");
 
-      downloadLink.download = `${safeName}-odmm-id-card.png`;
+      downloadLink.download = `${safeName}-odmm-atm-id-card.png`;
       downloadLink.href = dataUrl;
 
       document.body.appendChild(downloadLink);
       downloadLink.click();
-      document.body.removeChild(downloadLink);
+      downloadLink.remove();
     } catch (error) {
-      console.error("Unable to download ID card:", error);
+      console.error("ID card download failed:", error);
 
       alert(
-        "The ID card could not be downloaded. Please check the member photo or try again.",
+        "The ID card could not be downloaded. Please try again.",
       );
     } finally {
+      setDownloadPhotoUrl(member.photo?.url || "");
       setIsDownloading(false);
     }
   };
 
   return (
     <div className="memberIdDownloadSection">
-      {/* This is the card converted into an image */}
-      <div className="memberIdCardCaptureArea">
+      <div
+        className="memberIdCardCaptureArea"
+        aria-hidden="true"
+      >
         <div ref={idCardRef} className="memberAtmIdCard">
           <div className="memberAtmCardHeader">
             <div className="memberAtmLogo">
-              <img src="/odmm-logo.png" alt="Odisha Digital Media Mahasangha" />
+              <img
+                src="/odmm-logo.png"
+                alt="Odisha Digital Media Mahasangha"
+              />
             </div>
 
             <div className="memberAtmOrganization">
@@ -101,14 +219,15 @@ export default function MemberIdCardDownload({
 
           <div className="memberAtmCardBody">
             <div className="memberAtmPhoto">
-              {member.photo?.url ? (
+              {downloadPhotoUrl ? (
                 <img
-                  src={member.photo.url}
+                  src={downloadPhotoUrl}
                   alt={member.name}
-                  crossOrigin="anonymous"
                 />
               ) : (
-                <span>{member.name?.charAt(0).toUpperCase() || "M"}</span>
+                <span>
+                  {member.name?.charAt(0).toUpperCase() || "M"}
+                </span>
               )}
             </div>
 
@@ -117,13 +236,13 @@ export default function MemberIdCardDownload({
 
               <div className="memberAtmDetails">
                 <div>
-                  <strong>Designation</strong>
-                  <span>{member.designation}</span>
+                  <strong>Member ID</strong>
+                  <span>{member.memberId}</span>
                 </div>
 
                 <div>
-                  <strong>Member ID</strong>
-                  <span>{member.memberId}</span>
+                  <strong>Designation</strong>
+                  <span>{member.designation}</span>
                 </div>
 
                 <div>
@@ -142,16 +261,8 @@ export default function MemberIdCardDownload({
           <div className="memberAtmFooter">
             <div className="memberAtmValidity">
               <small>VALID UPTO</small>
-
               <strong>
-                {member.validUpto
-                  ? new Date(member.validUpto).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                      timeZone: "UTC",
-                    })
-                  : "Not specified"}
+                {formatValidUpto(member.validUpto)}
               </strong>
             </div>
 
@@ -162,10 +273,18 @@ export default function MemberIdCardDownload({
           </div>
 
           <div className="memberAtmContactFooter">
-            <span>+91 78529 22654</span>
-            <span className="memberAtmFooterDivider">|</span>
-            <span>odmmdigital@gmail.com</span>
-            <span className="memberAtmFooterDivider">|</span>
+            <span>+91 XXXXX XXXXX</span>
+
+            <span className="memberAtmFooterDivider">
+              |
+            </span>
+
+            <span>odmm@example.com</span>
+
+            <span className="memberAtmFooterDivider">
+              |
+            </span>
+
             <span>www.mediamahasangha.in</span>
           </div>
         </div>
@@ -177,14 +296,21 @@ export default function MemberIdCardDownload({
         onClick={downloadIdCard}
         disabled={isDownloading}
       >
-        <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          width="21"
+          height="21"
+          aria-hidden="true"
+        >
           <path
             fill="currentColor"
             d="M12 3a1 1 0 0 1 1 1v9.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1ZM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Z"
           />
         </svg>
 
-        {isDownloading ? "Preparing ID Card..." : "Download ID Card"}
+        {isDownloading
+          ? "Preparing ID Card..."
+          : "Download ID Card"}
       </button>
     </div>
   );
