@@ -2724,24 +2724,31 @@ a {
   text-align: center;
 }
 
-/* =========================================================
+/* =========================================
    RESPONSIVE HEADER BANNER
-========================================================= */
+========================================= */
 
 .siteHeader.bannerHeader {
   width: 100%;
+  height: auto;
+  min-height: 0;
   margin: 0;
   padding: 0;
   display: block;
   overflow: hidden;
   background: #ffffff;
-  border-bottom: 1px solid var(--border);
+  border: 0;
   line-height: 0;
 }
 
 .bannerHeader picture {
   display: block;
   width: 100%;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
 }
 
 .bannerHeader img,
@@ -2749,7 +2756,12 @@ a {
   display: block;
   width: 100%;
   height: auto;
+  min-height: 0;
+  max-height: none;
   max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
   object-fit: contain;
   object-position: center;
 }
@@ -2757,15 +2769,21 @@ a {
 /* Mobile */
 @media (max-width: 768px) {
   .siteHeader.bannerHeader {
-    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 0;
     padding: 0;
   }
 
+  .bannerHeader picture,
   .bannerHeader img,
   .headerBannerImage {
     width: 100%;
     height: auto;
-    object-fit: contain;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    padding: 0;
   }
 }
 

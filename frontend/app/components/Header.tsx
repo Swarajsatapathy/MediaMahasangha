@@ -76,6 +76,7 @@ export default function Header() {
     <img
       src="/banner.png"
       alt="Odisha Digital Media Mahasangha Banner"
+      className="headerBannerImage"
     />
   </picture>
 </header>
