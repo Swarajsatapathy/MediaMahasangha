@@ -1,7 +1,7 @@
-export const dynamic = "force-dynamic";
-
 import Link from "next/link";
 import { getMentors } from "../../lib/api";
+
+export const revalidate = 600;
 
 export const metadata = {
   title: "Mentors | ODMM",
@@ -11,11 +11,15 @@ export const metadata = {
 export default async function MentorsPage() {
   const mentorsData = await getMentors();
 
-  const mentors = (mentorsData?.mentors || mentorsData || [])
+  const rawMentors: any[] = Array.isArray(mentorsData)
+    ? mentorsData
+    : mentorsData?.mentors ?? [];
+
+  const mentors = rawMentors
     .filter((mentor: any) => mentor.isActive !== false)
     .sort(
       (a: any, b: any) =>
-        (a.serialNumber || 9999) - (b.serialNumber || 9999)
+        (a.serialNumber ?? 9999) - (b.serialNumber ?? 9999)
     );
 
   return (
@@ -32,21 +36,33 @@ export default async function MentorsPage() {
               href={`/mentors/${mentor._id}`}
               className="memberListingCard"
               key={mentor._id}
+              prefetch={false}
             >
               <div className="memberListingPhoto">
                 {mentor.photo?.url ? (
-                  <img src={mentor.photo.url} alt={mentor.name} />
+                  <img
+                    src={mentor.photo.url}
+                    alt={mentor.name || "ODMM Mentor"}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 ) : (
-                  <span>{mentor.name?.charAt(0)?.toUpperCase() || "M"}</span>
+                  <span>
+                    {mentor.name?.charAt(0)?.toUpperCase() || "M"}
+                  </span>
                 )}
               </div>
 
               <div className="memberListingInfo">
                 <h2>{mentor.name}</h2>
 
-                <p>{mentor.designation}</p>
+                {mentor.designation && <p>{mentor.designation}</p>}
 
-                <span className="mentorDistrict">{mentor.district}</span>
+                {mentor.district && (
+                  <span className="mentorDistrict">
+                    {mentor.district}
+                  </span>
+                )}
               </div>
             </Link>
           ))

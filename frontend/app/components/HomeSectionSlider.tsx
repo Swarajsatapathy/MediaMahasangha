@@ -7,11 +7,23 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 type Props = {
   title: string;
   items: any[];
-  type: "members" | "memberNewsChannels" | "mentors" | "articles" | "videos" | "srbMembers" | "gallery";
+  type:
+    | "members"
+    | "memberNewsChannels"
+    | "mentors"
+    | "articles"
+    | "videos"
+    | "srbMembers"
+    | "gallery";
   badge?: string;
 };
 
-export default function HomeSectionSlider({ title, items, type, badge }: Props) {
+export default function HomeSectionSlider({
+  title,
+  items,
+  type,
+  badge,
+}: Props) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "prev">("next");
 
@@ -52,12 +64,12 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
 
           <div className="arrows">
             <button type="button" onClick={prev} aria-label="Previous">
-    <FaChevronLeft />
-  </button>
+              <FaChevronLeft />
+            </button>
 
-  <button type="button" onClick={next} aria-label="Next">
-    <FaChevronRight />
-  </button>
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
           </div>
         </div>
 
@@ -77,17 +89,15 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
                 </div>
 
                 <div className="memberInfo">
-  <p className="memberId">ID: {item.memberId}</p>
-  <h3>{item.name}</h3>
-  <p>{item.designation}</p>
-  <span className="mentorDistrict">{item.district}</span>
+                  <p className="memberId">ID: {item.memberId}</p>
+                  <h3>{item.name}</h3>
+                  <p>{item.designation}</p>
+                  <span className="mentorDistrict">{item.district}</span>
 
-  {item.mobileNumber && (
-    <p className="memberPhone">
-      📞 {item.mobileNumber}
-    </p>
-  )}
-</div>
+                  {item.mobileNumber && (
+                    <p className="memberPhone">📞 {item.mobileNumber}</p>
+                  )}
+                </div>
               </Link>
             ) : (
               <p>No members available</p>
@@ -99,226 +109,218 @@ export default function HomeSectionSlider({ title, items, type, badge }: Props) 
   }
 
   if (type === "srbMembers") {
-  return (
-    <section className="homeBlock">
-      <div className="blockHeader">
-        <h2>{title}</h2>
+    return (
+      <section className="homeBlock">
+        <div className="blockHeader">
+          <h2>{title}</h2>
 
-        <div className="arrows">
-          <button type="button" onClick={prev} aria-label="Previous">
-            <FaChevronLeft />
-          </button>
+          <div className="arrows">
+            <button type="button" onClick={prev} aria-label="Previous">
+              <FaChevronLeft />
+            </button>
 
-          <button type="button" onClick={next} aria-label="Next">
-            <FaChevronRight />
-          </button>
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="sliderStage">
-        <div
-          key={item?._id || index}
-          className={`sliderAnimatedCard ${direction}`}
-        >
-          {item ? (
-            <Link
-              href={`/self-regulatory-body/${item._id}`}
-              className="memberHomeCard"
-            >
-              <div className="memberPhotoBox">
-                {item.photo?.url ? (
-                  <img src={item.photo.url} alt={item.name} />
-                ) : (
-                  <span>{item.name?.charAt(0)?.toUpperCase() || "S"}</span>
-                )}
-              </div>
+        <div className="sliderStage">
+          <div
+            key={item?._id || index}
+            className={`sliderAnimatedCard ${direction}`}
+          >
+            {item ? (
+              <Link
+                href={`/self-regulatory-body/${item._id}`}
+                className="memberHomeCard"
+              >
+                <div className="memberPhotoBox">
+                  {item.photo?.url ? (
+                    <img src={item.photo.url} alt={item.name} />
+                  ) : (
+                    <span>{item.name?.charAt(0)?.toUpperCase() || "S"}</span>
+                  )}
+                </div>
 
-              <div className="memberInfo">
+                <div className="memberInfo">
+                  <h3>{item.name}</h3>
 
-                <h3>{item.name}</h3>
+                  <p>{item.designation}</p>
 
-                <p>{item.designation}</p>
+                  <span className="mentorDistrict">{item.district}</span>
 
-                <span className="mentorDistrict">{item.district}</span>
+                  {item.mobileNumber && (
+                    <p className="memberPhone">📞 {item.mobileNumber}</p>
+                  )}
 
-                {item.mobileNumber && (
-                  <p className="memberPhone">📞 {item.mobileNumber}</p>
-                )}
-
-                {item.email && (
-                  <p className="memberPhone">✉️ {item.email}</p>
-                )}
-              </div>
-            </Link>
-          ) : (
-            <p>No SRB members available</p>
-          )}
+                  {item.email && <p className="memberPhone">✉️ {item.email}</p>}
+                </div>
+              </Link>
+            ) : (
+              <p>No SRB members available</p>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
+    );
+  }
 
   if (type === "memberNewsChannels") {
-  return (
-    <section className="homeBlock">
-      <div className="blockHeader">
-        <h2>{title}</h2>
+    return (
+      <section className="homeBlock">
+        <div className="blockHeader">
+          <h2>{title}</h2>
 
-        <div className="arrows">
-          <button type="button" onClick={prev} aria-label="Previous">
-            <FaChevronLeft />
-          </button>
+          <div className="arrows">
+            <button type="button" onClick={prev} aria-label="Previous">
+              <FaChevronLeft />
+            </button>
 
-          <button type="button" onClick={next} aria-label="Next">
-            <FaChevronRight />
-          </button>
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="sliderStage">
-        <div
-          key={item?._id || index}
-          className={`sliderAnimatedCard ${direction}`}
-        >
+        <div className="sliderStage">
+          <div
+            key={item?._id || index}
+            className={`sliderAnimatedCard ${direction}`}
+          >
+            {item ? (
+              <Link
+                href={`/member-news-channels/${item._id}`}
+                className="memberHomeCard"
+              >
+                <div className="memberPhotoBox channelHomeLogo">
+                  {item.photo?.url ? (
+                    <img src={item.photo.url} alt={item.newsChannelName} />
+                  ) : (
+                    <span>
+                      {item.newsChannelName?.charAt(0)?.toUpperCase() || "N"}
+                    </span>
+                  )}
+                </div>
+
+                <div className="memberInfo">
+                  <p className="memberId">
+                    ODMM Reg. No: {item.odmmRegistrationNo}
+                  </p>
+
+                  <h3>{item.newsChannelName}</h3>
+
+                  <p>Owner: {item.ownerName}</p>
+
+                  <span className="mentorDistrict">{item.district}</span>
+
+                  {item.mobileNumber && (
+                    <p className="memberPhone">📞 {item.mobileNumber}</p>
+                  )}
+                </div>
+              </Link>
+            ) : (
+              <p>No member news channels available</p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "mentors") {
+    return (
+      <section className="homeBlock">
+        <div className="blockHeader">
+          <h2>{title}</h2>
+
+          <div className="arrows">
+            <button type="button" onClick={prev} aria-label="Previous">
+              <FaChevronLeft />
+            </button>
+
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
+          </div>
+        </div>
+
+        <div className="sliderStage">
+          <div
+            key={item?._id || index}
+            className={`sliderAnimatedCard ${direction}`}
+          >
+            {item ? (
+              <Link href={`/mentors/${item._id}`} className="memberHomeCard">
+                <div className="memberPhotoBox">
+                  {item.photo?.url ? (
+                    <img src={item.photo.url} alt={item.name} />
+                  ) : (
+                    <span>{item.name?.charAt(0)?.toUpperCase() || "M"}</span>
+                  )}
+                </div>
+
+                <div className="memberInfo">
+                  <h3>{item.name}</h3>
+
+                  <p>{item.designation}</p>
+
+                  <span>{item.district}</span>
+                </div>
+              </Link>
+            ) : (
+              <p>No mentors available</p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "gallery") {
+    return (
+      <section className="homeBlock">
+        <div className="blockHeader">
+          <h2>{title}</h2>
+
+          <div className="arrows">
+            <button type="button" onClick={prev} aria-label="Previous">
+              <FaChevronLeft />
+            </button>
+
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
+          </div>
+        </div>
+
+        <div className="sliderStage">
           {item ? (
             <Link
-              href={`/member-news-channels/${item._id}`}
-              className="memberHomeCard"
+              key={item?._id || index}
+              href={`/gallery/${item._id}`}
+              className={`galleryHomeCard sliderAnimatedCard ${direction}`}
             >
-              <div className="memberPhotoBox channelHomeLogo">
+              <div className="galleryHomeImage">
                 {item.photo?.url ? (
-                  <img
-                    src={item.photo.url}
-                    alt={item.newsChannelName}
-                  />
+                  <img src={item.photo.url} alt={item.area} />
                 ) : (
-                  <span>
-                    {item.newsChannelName?.charAt(0)?.toUpperCase() || "N"}
-                  </span>
+                  <span>Gallery</span>
                 )}
               </div>
 
-              <div className="memberInfo">
-                <p className="memberId">
-                  ODMM Reg. No: {item.odmmRegistrationNo}
-                </p>
-
-                <h3>{item.newsChannelName}</h3>
-
-                <p>Owner: {item.ownerName}</p>
-
-                <span className="mentorDistrict">{item.district}</span>
-
-                {item.mobileNumber && (
-                  <p className="memberPhone">
-                    📞 {item.mobileNumber}
-                  </p>
-                )}
-              </div>
-            </Link>
-          ) : (
-            <p>No member news channels available</p>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-
- if (type === "mentors") {
-  return (
-    <section className="homeBlock">
-      <div className="blockHeader">
-        <h2>{title}</h2>
-
-        <div className="arrows">
-          <button type="button" onClick={prev} aria-label="Previous">
-            <FaChevronLeft />
-          </button>
-
-          <button type="button" onClick={next} aria-label="Next">
-            <FaChevronRight />
-          </button>
-        </div>
-      </div>
-
-      <div className="sliderStage">
-        <div
-          key={item?._id || index}
-          className={`sliderAnimatedCard ${direction}`}
-        >
-          {item ? (
-            <Link href={`/mentors/${item._id}`} className="memberHomeCard">
-              <div className="memberPhotoBox">
-                {item.photo?.url ? (
-                  <img src={item.photo.url} alt={item.name} />
-                ) : (
-                  <span>{item.name?.charAt(0)?.toUpperCase() || "M"}</span>
-                )}
-              </div>
-
-              <div className="memberInfo">
-                <h3>{item.name}</h3>
-
-                <p>{item.designation}</p>
-
+              <div className="galleryHomeOverlay">
                 <span>{item.district}</span>
+                <h3>{item.area}</h3>
               </div>
             </Link>
           ) : (
-            <p>No mentors available</p>
+            <p>No gallery photos available</p>
           )}
         </div>
-      </div>
-    </section>
-  );
-}
-
-if (type === "gallery") {
-  return (
-    <section className="homeBlock">
-      <div className="blockHeader">
-        <h2>{title}</h2>
-
-        <div className="arrows">
-          <button type="button" onClick={prev} aria-label="Previous">
-            <FaChevronLeft />
-          </button>
-
-          <button type="button" onClick={next} aria-label="Next">
-            <FaChevronRight />
-          </button>
-        </div>
-      </div>
-
-      <div className="sliderStage">
-        {item ? (
-          <Link
-            key={item?._id || index}
-            href={`/gallery/${item._id}`}
-            className={`galleryHomeCard sliderAnimatedCard ${direction}`}
-          >
-            <div className="galleryHomeImage">
-              {item.photo?.url ? (
-                <img src={item.photo.url} alt={item.area} />
-              ) : (
-                <span>Gallery</span>
-              )}
-            </div>
-
-            <div className="galleryHomeOverlay">
-              <span>{item.district}</span>
-              <h3>{item.area}</h3>
-            </div>
-          </Link>
-        ) : (
-          <p>No gallery photos available</p>
-        )}
-      </div>
-    </section>
-  );
-}
+      </section>
+    );
+  }
 
   const href =
     type === "videos"
@@ -326,8 +328,8 @@ if (type === "gallery") {
         ? `/videos/${item._id}`
         : "#"
       : item?._id
-      ? `/articles/${item._id}`
-      : "#";
+        ? `/articles/${item._id}`
+        : "#";
 
   const imageUrl =
     type === "videos" ? item?.thumbnailUrl : item?.images?.[0]?.url;
@@ -339,12 +341,12 @@ if (type === "gallery") {
 
         <div className="arrows">
           <button type="button" onClick={prev} aria-label="Previous">
-    <FaChevronLeft />
-  </button>
+            <FaChevronLeft />
+          </button>
 
-  <button type="button" onClick={next} aria-label="Next">
-    <FaChevronRight />
-  </button>
+          <button type="button" onClick={next} aria-label="Next">
+            <FaChevronRight />
+          </button>
         </div>
       </div>
 

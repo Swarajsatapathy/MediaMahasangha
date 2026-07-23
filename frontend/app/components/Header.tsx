@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import LiveClock from "./LiveClock";
 import MobileNav from "./MobileNav";
 import SocialSidebar from "./SocialSidebar";
@@ -65,9 +66,19 @@ export default function Header() {
         </div>
       </div>
 
-      <header className="siteHeader bannerHeader">
-        <img src="/banner.jpg" alt="ODMM News Banner" />
-      </header>
+<header className="siteHeader bannerHeader">
+  <picture>
+    <source
+      media="(max-width: 768px)"
+      srcSet="/banner-mobile.jpg"
+    />
+
+    <img
+      src="/banner.png"
+      alt="Odisha Digital Media Mahasangha Banner"
+    />
+  </picture>
+</header>
 
       <nav className="navBar">
         <Link href="/">Home</Link>

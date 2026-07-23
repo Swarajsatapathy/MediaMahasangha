@@ -174,23 +174,6 @@ a {
   font-size: 15px;
 }
 
-.bannerHeader {
-  background: #ffffff;
-  padding: 12px 8%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid var(--border);
-}
-
-.bannerHeader img {
-  width: min(950px, 94vw);
-  height: auto;
-  max-height: 110px;
-  object-fit: contain;
-  display: block;
-}
-
 /* Desktop nav */
 
 .navBar {
@@ -1305,15 +1288,6 @@ a {
   .joinMemberBtn,
   .topSocials {
     display: none;
-  }
-
-  .bannerHeader {
-    padding: 10px 12px;
-  }
-
-  .bannerHeader img {
-    width: 96vw;
-    height: auto;
   }
 
   .navBar {
@@ -2748,4 +2722,70 @@ a {
   font-weight: 700;
   line-height: 1;
   text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE HEADER BANNER
+========================================================= */
+
+.siteHeader.bannerHeader {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  line-height: 0;
+}
+
+.bannerHeader picture {
+  display: block;
+  width: 100%;
+}
+
+.bannerHeader img,
+.headerBannerImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .siteHeader.bannerHeader {
+    width: 100%;
+    padding: 0;
+  }
+
+  .bannerHeader img,
+  .headerBannerImage {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+/* Laptop and smaller desktop */
+@media (max-width: 1366px) {
+  .siteHeader.bannerHeader {
+    height: 125px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .siteHeader.bannerHeader {
+    height: 115px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .siteHeader.bannerHeader {
+    height: 135px;
+  }
 }

@@ -1,119 +1,290 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
-async function fetchFromAPI(endpoint: string) {
+type APIResponse<T> = {
+  success: boolean;
+  message?: string;
+  data: T;
+};
+
+type FetchOptions = {
+  revalidate?: number;
+  timeout?: number;
+};
+
+async function fetchFromAPI<T>(
+  endpoint: string,
+  options: FetchOptions = {}
+): Promise<T | null> {
+  const { revalidate = 60, timeout = 12000 } = options;
+
+  if (!API_URL) {
+    console.error("API Error: NEXT_PUBLIC_API_URL is missing");
+    return null;
+  }
+
+  const controller = new AbortController();
+
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, timeout);
+
   try {
-    if (!API_URL) {
-      throw new Error("NEXT_PUBLIC_API_URL is missing");
-    }
-
     const res = await fetch(`${API_URL}${endpoint}`, {
-      cache: "no-store",
+      next: {
+        revalidate,
+      },
+      headers: {
+        Accept: "application/json",
+      },
+      signal: controller.signal,
     });
 
-    const data = await res.json();
+    const responseText = await res.text();
 
-    if (!res.ok || !data.success) {
+    let data: APIResponse<T>;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      throw new Error(
+        `Invalid API response. Status: ${res.status} ${res.statusText}`
+      );
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        data?.message ||
+          `API request failed with status ${res.status}`
+      );
+    }
+
+    if (!data.success) {
       throw new Error(data.message || "API request failed");
     }
 
-    return data.data;
-  } catch (error) {
-    console.error(`API Error [${endpoint}]:`, error);
+    return data.data ?? null;
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error(
+        `API Timeout [${endpoint}]: Request exceeded ${timeout}ms`
+      );
+    } else {
+      console.error(`API Error [${endpoint}]:`, error);
+    }
+
     return null;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
-// Articles
+/* ======================================================
+   ARTICLES
+====================================================== */
+
 export async function getArticles() {
-  return await fetchFromAPI("/api/articles");
+  return fetchFromAPI<{
+    articles: any[];
+    total?: number;
+  }>("/api/articles", {
+    revalidate: 60,
+  });
 }
 
 export async function getFlashArticles() {
-  return await fetchFromAPI("/api/articles/flash");
+  return fetchFromAPI<any[]>("/api/articles/flash", {
+    revalidate: 30,
+  });
 }
 
 export async function getPresidentPicks() {
-  return await fetchFromAPI("/api/articles/editors-picks");
+  return fetchFromAPI<any[]>("/api/articles/editors-picks", {
+    revalidate: 60,
+  });
 }
 
 export async function getTrendingArticles() {
-  return await fetchFromAPI("/api/articles?trending=true");
+  return fetchFromAPI<{
+    articles: any[];
+    total?: number;
+  }>("/api/articles?trending=true", {
+    revalidate: 60,
+  });
 }
 
 export async function getFeaturedArticles() {
-  return await fetchFromAPI("/api/articles/featured");
+  return fetchFromAPI<any[]>("/api/articles/featured", {
+    revalidate: 60,
+  });
 }
 
 export async function getArticleById(id: string) {
-  return await fetchFromAPI(`/api/articles/${id}`);
+  return fetchFromAPI<any>(
+    `/api/articles/${encodeURIComponent(id)}`,
+    {
+      revalidate: 60,
+    }
+  );
 }
 
-// Videos
+/* ======================================================
+   VIDEOS
+====================================================== */
+
 export async function getVideos() {
-  return await fetchFromAPI("/api/videos");
+  return fetchFromAPI<{
+    videos: any[];
+    total?: number;
+  }>("/api/videos", {
+    revalidate: 60,
+  });
 }
 
 export async function getFeaturedVideos() {
-  return await fetchFromAPI("/api/videos/featured");
+  return fetchFromAPI<any[]>("/api/videos/featured", {
+    revalidate: 60,
+  });
 }
 
 export async function getFlashVideos() {
-  return await fetchFromAPI("/api/videos/flash");
+  return fetchFromAPI<any[]>("/api/videos/flash", {
+    revalidate: 30,
+  });
 }
 
 export async function getPresidentPickVideos() {
-  return await fetchFromAPI("/api/videos?editorsPick=true");
+  return fetchFromAPI<{
+    videos: any[];
+    total?: number;
+  }>("/api/videos?editorsPick=true", {
+    revalidate: 60,
+  });
 }
 
 export async function getTrendingVideos() {
-  return await fetchFromAPI("/api/videos?trending=true");
+  return fetchFromAPI<{
+    videos: any[];
+    total?: number;
+  }>("/api/videos?trending=true", {
+    revalidate: 60,
+  });
 }
 
 export async function getVideoById(id: string) {
-  return await fetchFromAPI(`/api/videos/${id}`);
+  return fetchFromAPI<any>(
+    `/api/videos/${encodeURIComponent(id)}`,
+    {
+      revalidate: 60,
+    }
+  );
 }
 
-// Members
+/* ======================================================
+   MEMBERS
+====================================================== */
+
 export async function getMembers() {
-  return await fetchFromAPI("/api/members");
+  return fetchFromAPI<{
+    members: any[];
+    total?: number;
+  }>("/api/members", {
+    revalidate: 300,
+  });
 }
 
 export async function getMemberById(id: string) {
-  return await fetchFromAPI(`/api/members/${id}`);
+  return fetchFromAPI<any>(
+    `/api/members/${encodeURIComponent(id)}`,
+    {
+      revalidate: 300,
+    }
+  );
 }
 
-// Mentors
+/* ======================================================
+   MENTORS
+====================================================== */
+
 export async function getMentors() {
-  return await fetchFromAPI("/api/mentors");
+  return fetchFromAPI<{
+    mentors: any[];
+    total?: number;
+  }>("/api/mentors", {
+    revalidate: 600,
+  });
 }
 
 export async function getMentorById(id: string) {
-  return await fetchFromAPI(`/api/mentors/${id}`);
+  return fetchFromAPI<any>(
+    `/api/mentors/${encodeURIComponent(id)}`,
+    {
+      revalidate: 600,
+    }
+  );
 }
 
-// Member News Channels
+/* ======================================================
+   MEMBER NEWS CHANNELS
+====================================================== */
+
 export async function getMemberNewsChannels() {
-  return await fetchFromAPI("/api/member-news-channels");
+  return fetchFromAPI<{
+    memberNewsChannels: any[];
+    total?: number;
+  }>("/api/member-news-channels", {
+    revalidate: 600,
+  });
 }
 
 export async function getMemberNewsChannelById(id: string) {
-  return await fetchFromAPI(`/api/member-news-channels/${id}`);
+  return fetchFromAPI<any>(
+    `/api/member-news-channels/${encodeURIComponent(id)}`,
+    {
+      revalidate: 600,
+    }
+  );
 }
 
-// SRB Members
+/* ======================================================
+   SRB MEMBERS
+====================================================== */
+
 export async function getSrbMembers() {
-  return await fetchFromAPI("/api/srb-members");
+  return fetchFromAPI<{
+    srbMembers: any[];
+    total?: number;
+  }>("/api/srb-members", {
+    revalidate: 600,
+  });
 }
 
 export async function getSrbMemberById(id: string) {
-  return await fetchFromAPI(`/api/srb-members/${id}`);
+  return fetchFromAPI<any>(
+    `/api/srb-members/${encodeURIComponent(id)}`,
+    {
+      revalidate: 600,
+    }
+  );
 }
 
-// Gallery
+/* ======================================================
+   GALLERY
+====================================================== */
+
 export async function getGalleryItems() {
-  return await fetchFromAPI("/api/gallery");
+  return fetchFromAPI<{
+    galleryItems: any[];
+    total?: number;
+  }>("/api/gallery", {
+    revalidate: 120,
+  });
 }
 
 export async function getGalleryItemById(id: string) {
-  return await fetchFromAPI(`/api/gallery/${id}`);
+  return fetchFromAPI<any>(
+    `/api/gallery/${encodeURIComponent(id)}`,
+    {
+      revalidate: 120,
+    }
+  );
 }
