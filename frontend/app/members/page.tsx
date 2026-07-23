@@ -1,13 +1,24 @@
 export const dynamic = "force-dynamic";
 
-import Link from "next/link";
 import { getMembers } from "../../lib/api";
+import MembersDirectory from "./MembersDirectory";
 
 export default async function MembersPage() {
   const membersData = await getMembers();
-  const members = (membersData?.members || []).sort(
-  (a: any, b: any) => (a.serialNumber || 9999) - (b.serialNumber || 9999)
-);
+
+  const receivedMembers = membersData?.members || [];
+
+  const members = Array.isArray(receivedMembers)
+    ? receivedMembers
+        .filter(
+          (member: any) => member.isActive !== false,
+        )
+        .sort(
+          (a: any, b: any) =>
+            (a.serialNumber || 9999) -
+            (b.serialNumber || 9999),
+        )
+    : [];
 
   return (
     <main className="listingPage">
@@ -16,40 +27,7 @@ export default async function MembersPage() {
         <p>Our Members</p>
       </section>
 
-      <section className="membersListingGrid">
-        {members.length > 0 ? (
-          members.map((member: any) => (
-            <Link
-              href={`/members/${member._id}`}
-              className="memberListingCard"
-              key={member._id}
-            >
-              <div className="memberListingPhoto">
-                {member.photo?.url ? (
-                  <img src={member.photo.url} alt={member.name} />
-                ) : (
-                  <span>{member.name?.charAt(0) || "M"}</span>
-                )}
-              </div>
-
-              <div className="memberListingInfo">
-  <p className="memberListingId">ID: {member.memberId}</p>
-  <h2>{member.name}</h2>
-  <p>{member.designation}</p>
-  <span>{member.district}</span>
-
-  {member.phone && (
-    <p className="memberListingPhone">
-      📞 {member.phone}
-    </p>
-  )}
-</div>
-            </Link>
-          ))
-        ) : (
-          <p className="emptyListing">No members available.</p>
-        )}
-      </section>
+      <MembersDirectory members={members} />
     </main>
   );
 }

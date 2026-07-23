@@ -29,10 +29,49 @@ const memberSchema = new mongoose.Schema(
       trim: true,
     },
 
+    /*
+      Member's normal/home district.
+      This field already exists and remains unchanged.
+    */
     district: {
       type: String,
       required: true,
       enum: DISTRICTS,
+      trim: true,
+    },
+
+    /*
+      Committee to which the member belongs.
+
+      null is temporarily permitted so that old members already
+      present in MongoDB continue working until the admin assigns
+      their committee.
+    */
+    committeeType: {
+      type: String,
+      enum: {
+        values: ["state", "district", null],
+        message: "Committee type must be state or district",
+      },
+      default: null,
+    },
+
+    /*
+      Required only when committeeType is district.
+
+      Stored value:
+      "Angul"
+
+      Frontend label:
+      "Angul District Committee"
+    */
+    committeeDistrict: {
+      type: String,
+      enum: {
+        values: ["", ...DISTRICTS],
+        message: "Invalid committee district",
+      },
+      default: "",
       trim: true,
     },
 
@@ -67,14 +106,48 @@ const memberSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+
     toJSON: {
       virtuals: true,
     },
+
     toObject: {
       virtuals: true,
     },
   }
 );
+
+/*
+  Committee validation:
+
+  State members must not have a committeeDistrict.
+
+  District members must have a valid committeeDistrict.
+*/
+memberSchema.pre("validate", function () {
+  if (this.committeeType === "state") {
+    this.committeeDistrict = "";
+  }
+
+  if (
+    this.committeeType === "district" &&
+    !this.committeeDistrict
+  ) {
+    this.invalidate(
+      "committeeDistrict",
+      "Committee district is required for a district committee member"
+    );
+  }
+});
+
+/*
+  Helps MongoDB filter committee members efficiently.
+*/
+memberSchema.index({
+  committeeType: 1,
+  committeeDistrict: 1,
+  serialNumber: 1,
+});
 
 /*
   Computed membership status.

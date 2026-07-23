@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+type CommitteeType = "" | "state" | "district";
+
 type Member = {
   _id: string;
   serialNumber: number;
@@ -9,14 +11,26 @@ type Member = {
   name: string;
   designation: string;
   district: string;
+
+  committeeType?: "state" | "district" | null;
+  committeeDistrict?: string;
+
   mobileNumber: string;
   validUpto: string;
+
   photo?: {
     url: string;
     key: string;
   };
+
   isActive: boolean;
-  membershipStatus?: "Valid" | "Expired" | "Inactive" | "Validity not set";
+
+  membershipStatus?:
+    | "Valid"
+    | "Expired"
+    | "Inactive"
+    | "Validity not set";
+
   isMembershipValid?: boolean;
 };
 
@@ -29,12 +43,20 @@ export default function MembersSection() {
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
   const [district, setDistrict] = useState("");
+
+  const [committeeType, setCommitteeType] =
+    useState<CommitteeType>("");
+
+  const [committeeDistrict, setCommitteeDistrict] =
+    useState("");
+
   const [mobileNumber, setMobileNumber] = useState("");
   const [validUpto, setValidUpto] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
 
-  const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
+  const [editingMemberId, setEditingMemberId] =
+    useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -54,6 +76,12 @@ export default function MembersSection() {
 
       const data = await res.json();
 
+      if (!res.ok) {
+        throw new Error(
+          data?.message || "Failed to fetch members",
+        );
+      }
+
       if (data?.data?.members) {
         setMembers(data.data.members);
       }
@@ -64,10 +92,22 @@ export default function MembersSection() {
 
   const fetchDistricts = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/locations/districts`);
+      const res = await fetch(
+        `${API_URL}/api/locations/districts`,
+        {
+          cache: "no-store",
+        },
+      );
+
       const data = await res.json();
 
-      if (data?.data) {
+      if (!res.ok) {
+        throw new Error(
+          data?.message || "Failed to fetch districts",
+        );
+      }
+
+      if (Array.isArray(data?.data)) {
         setDistricts(data.data);
       }
     } catch (error) {
@@ -81,19 +121,29 @@ export default function MembersSection() {
     setName("");
     setDesignation("");
     setDistrict("");
+
+    setCommitteeType("");
+    setCommitteeDistrict("");
+
     setMobileNumber("");
     setValidUpto("");
     setPhoto(null);
     setIsActive(true);
     setEditingMemberId(null);
 
-    const fileInput = document.getElementById("photo") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "photo",
+    ) as HTMLInputElement | null;
 
     if (fileInput) {
       fileInput.value = "";
     }
   };
 
+  /*
+    Using UTC values prevents the date from changing because
+    of browser timezone conversion.
+  */
   const convertDateForInput = (dateValue?: string) => {
     if (!dateValue) {
       return "";
@@ -105,9 +155,11 @@ export default function MembersSection() {
       return "";
     }
 
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    const month = String(
+      date.getUTCMonth() + 1,
+    ).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   };
@@ -127,6 +179,7 @@ export default function MembersSection() {
       day: "2-digit",
       month: "short",
       year: "numeric",
+      timeZone: "UTC",
     });
   };
 
@@ -166,6 +219,68 @@ export default function MembersSection() {
     return "inactive";
   };
 
+  const getCommitteeLabel = (member: Member) => {
+    if (member.committeeType === "state") {
+      return "State Committee";
+    }
+
+    if (
+      member.committeeType === "district" &&
+      member.committeeDistrict
+    ) {
+      return `${member.committeeDistrict} District Committee`;
+    }
+
+    return "Committee not assigned";
+  };
+
+  const handleDistrictChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const selectedDistrict = event.target.value;
+
+    setDistrict(selectedDistrict);
+
+    /*
+      When District Committee has already been selected,
+      use the member's district as the initial committee
+      district. The admin can still change it afterwards.
+    */
+    if (
+      committeeType === "district" &&
+      !committeeDistrict
+    ) {
+      setCommitteeDistrict(selectedDistrict);
+    }
+  };
+
+  const handleCommitteeTypeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const selectedType = event.target
+      .value as CommitteeType;
+
+    setCommitteeType(selectedType);
+
+    if (selectedType === "state") {
+      setCommitteeDistrict("");
+      return;
+    }
+
+    if (
+      selectedType === "district" &&
+      !committeeDistrict &&
+      district
+    ) {
+      setCommitteeDistrict(district);
+      return;
+    }
+
+    if (!selectedType) {
+      setCommitteeDistrict("");
+    }
+  };
+
   const handleEditClick = (member: Member) => {
     setEditingMemberId(member._id);
     setSerialNumber(String(member.serialNumber || ""));
@@ -173,12 +288,28 @@ export default function MembersSection() {
     setName(member.name || "");
     setDesignation(member.designation || "");
     setDistrict(member.district || "");
+
+    setCommitteeType(
+      member.committeeType === "state" ||
+        member.committeeType === "district"
+        ? member.committeeType
+        : "",
+    );
+
+    setCommitteeDistrict(
+      member.committeeDistrict || "",
+    );
+
     setMobileNumber(member.mobileNumber || "");
-    setValidUpto(convertDateForInput(member.validUpto));
+    setValidUpto(
+      convertDateForInput(member.validUpto),
+    );
     setIsActive(member.isActive ?? true);
     setPhoto(null);
 
-    const fileInput = document.getElementById("photo") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "photo",
+    ) as HTMLInputElement | null;
 
     if (fileInput) {
       fileInput.value = "";
@@ -191,14 +322,18 @@ export default function MembersSection() {
   };
 
   const handleSubmitMember = async (
-    e: React.FormEvent<HTMLFormElement>,
+    event: React.FormEvent<HTMLFormElement>,
   ) => {
-    e.preventDefault();
+    event.preventDefault();
 
-    const token = localStorage.getItem("odmm_admin_token");
+    const token = localStorage.getItem(
+      "odmm_admin_token",
+    );
 
     if (!token) {
-      setMessage("Login token missing. Please login again.");
+      setMessage(
+        "Login token missing. Please login again.",
+      );
       return;
     }
 
@@ -208,10 +343,23 @@ export default function MembersSection() {
       !name.trim() ||
       !designation.trim() ||
       !district ||
+      !committeeType ||
       !mobileNumber.trim() ||
       !validUpto
     ) {
-      setMessage("All required fields, including Valid Upto, must be filled.");
+      setMessage(
+        "Please fill all required member and committee fields.",
+      );
+      return;
+    }
+
+    if (
+      committeeType === "district" &&
+      !committeeDistrict
+    ) {
+      setMessage(
+        "Please select the member's district committee.",
+      );
       return;
     }
 
@@ -221,12 +369,16 @@ export default function MembersSection() {
       Number.isNaN(parsedSerialNumber) ||
       parsedSerialNumber < 1
     ) {
-      setMessage("Serial number must be greater than 0.");
+      setMessage(
+        "Serial number must be greater than 0.",
+      );
       return;
     }
 
-    if (mobileNumber.length !== 10) {
-      setMessage("Mobile number must contain exactly 10 digits.");
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      setMessage(
+        "Mobile number must contain exactly 10 digits.",
+      );
       return;
     }
 
@@ -236,14 +388,52 @@ export default function MembersSection() {
 
       const formData = new FormData();
 
-      formData.append("serialNumber", serialNumber);
-      formData.append("memberId", memberId.trim());
+      formData.append(
+        "serialNumber",
+        String(parsedSerialNumber),
+      );
+
+      formData.append(
+        "memberId",
+        memberId.trim(),
+      );
+
       formData.append("name", name.trim());
-      formData.append("designation", designation.trim());
+
+      formData.append(
+        "designation",
+        designation.trim(),
+      );
+
       formData.append("district", district);
-      formData.append("mobileNumber", mobileNumber.trim());
+
+      formData.append(
+        "committeeType",
+        committeeType,
+      );
+
+      /*
+        State Committee members send an empty
+        committeeDistrict.
+      */
+      formData.append(
+        "committeeDistrict",
+        committeeType === "district"
+          ? committeeDistrict
+          : "",
+      );
+
+      formData.append(
+        "mobileNumber",
+        mobileNumber.trim(),
+      );
+
       formData.append("validUpto", validUpto);
-      formData.append("isActive", String(isActive));
+
+      formData.append(
+        "isActive",
+        String(isActive),
+      );
 
       if (photo) {
         formData.append("photo", photo);
@@ -255,16 +445,20 @@ export default function MembersSection() {
 
       const res = await fetch(url, {
         method: editingMemberId ? "PUT" : "POST",
+
         headers: {
           Authorization: `Bearer ${token}`,
         },
+
         body: formData,
       });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.message || "Failed to save member");
+        throw new Error(
+          data.message || "Failed to save member",
+        );
       }
 
       setMessage(
@@ -286,8 +480,10 @@ export default function MembersSection() {
     }
   };
 
-  const handleDeleteMember = async (id: string) => {
-    const confirmDelete = confirm(
+  const handleDeleteMember = async (
+    id: string,
+  ) => {
+    const confirmDelete = window.confirm(
       "Are you sure you want to delete this member?",
     );
 
@@ -295,25 +491,37 @@ export default function MembersSection() {
       return;
     }
 
-    const token = localStorage.getItem("odmm_admin_token");
+    const token = localStorage.getItem(
+      "odmm_admin_token",
+    );
 
     if (!token) {
-      setMessage("Login token missing. Please login again.");
+      setMessage(
+        "Login token missing. Please login again.",
+      );
       return;
     }
 
     try {
-      const res = await fetch(`${API_URL}/api/members/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      setMessage("");
+
+      const res = await fetch(
+        `${API_URL}/api/members/${id}`,
+        {
+          method: "DELETE",
+
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.message || "Failed to delete member");
+        throw new Error(
+          data.message || "Failed to delete member",
+        );
       }
 
       setMessage("Member deleted successfully.");
@@ -332,17 +540,33 @@ export default function MembersSection() {
       <div className="sectionTop">
         <div>
           <h1>Members</h1>
-          <p>Create and manage ODMM members and membership validity</p>
+
+          <p>
+            Create and manage ODMM members, committees
+            and membership validity
+          </p>
         </div>
       </div>
 
-      {message && <div className="message">{message}</div>}
+      {message && (
+        <div className="message">{message}</div>
+      )}
 
       <div className="grid">
-        <form className="card" onSubmit={handleSubmitMember}>
-          <h2>{editingMemberId ? "Edit Member" : "Create Member"}</h2>
+        <form
+          className="card"
+          onSubmit={handleSubmitMember}
+        >
+          <h2>
+            {editingMemberId
+              ? "Edit Member"
+              : "Create Member"}
+          </h2>
 
-          <label className="label" htmlFor="serialNumber">
+          <label
+            className="label"
+            htmlFor="serialNumber"
+          >
             Serial Number
           </label>
 
@@ -352,11 +576,16 @@ export default function MembersSection() {
             min="1"
             placeholder="Serial Number e.g. 1"
             value={serialNumber}
-            onChange={(e) => setSerialNumber(e.target.value)}
+            onChange={(event) =>
+              setSerialNumber(event.target.value)
+            }
             required
           />
 
-          <label className="label" htmlFor="memberId">
+          <label
+            className="label"
+            htmlFor="memberId"
+          >
             Member ID
           </label>
 
@@ -365,7 +594,9 @@ export default function MembersSection() {
             type="text"
             placeholder="Member ID e.g. ODMM001"
             value={memberId}
-            onChange={(e) => setMemberId(e.target.value)}
+            onChange={(event) =>
+              setMemberId(event.target.value)
+            }
             required
           />
 
@@ -378,11 +609,16 @@ export default function MembersSection() {
             type="text"
             placeholder="Full name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(event) =>
+              setName(event.target.value)
+            }
             required
           />
 
-          <label className="label" htmlFor="designation">
+          <label
+            className="label"
+            htmlFor="designation"
+          >
             Designation
           </label>
 
@@ -391,21 +627,28 @@ export default function MembersSection() {
             type="text"
             placeholder="Designation"
             value={designation}
-            onChange={(e) => setDesignation(e.target.value)}
+            onChange={(event) =>
+              setDesignation(event.target.value)
+            }
             required
           />
 
-          <label className="label" htmlFor="district">
-            District
+          <label
+            className="label"
+            htmlFor="district"
+          >
+            Member District
           </label>
 
           <select
             id="district"
             value={district}
-            onChange={(e) => setDistrict(e.target.value)}
+            onChange={handleDistrictChange}
             required
           >
-            <option value="">Select District</option>
+            <option value="">
+              Select Member District
+            </option>
 
             {districts.map((item) => (
               <option key={item} value={item}>
@@ -414,7 +657,84 @@ export default function MembersSection() {
             ))}
           </select>
 
-          <label className="label" htmlFor="mobileNumber">
+          <div className="committeeBox">
+            <h3>Committee Membership</h3>
+
+            <p>
+              Every member must belong to either the
+              State Committee or one District Committee.
+            </p>
+
+            <label
+              className="label"
+              htmlFor="committeeType"
+            >
+              Committee Type
+            </label>
+
+            <select
+              id="committeeType"
+              value={committeeType}
+              onChange={handleCommitteeTypeChange}
+              required
+            >
+              <option value="">
+                Select Committee Type
+              </option>
+
+              <option value="state">
+                State Committee
+              </option>
+
+              <option value="district">
+                District Committee
+              </option>
+            </select>
+
+            {committeeType === "district" && (
+              <>
+                <label
+                  className="label"
+                  htmlFor="committeeDistrict"
+                >
+                  District Committee
+                </label>
+
+                <select
+                  id="committeeDistrict"
+                  value={committeeDistrict}
+                  onChange={(event) =>
+                    setCommitteeDistrict(
+                      event.target.value,
+                    )
+                  }
+                  required
+                >
+                  <option value="">
+                    Select District Committee
+                  </option>
+
+                  {districts.map((item) => (
+                    <option key={item} value={item}>
+                      {item} District Committee
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
+
+            {committeeType === "state" && (
+              <div className="committeeNotice">
+                This member will be shown under the State
+                Committee.
+              </div>
+            )}
+          </div>
+
+          <label
+            className="label"
+            htmlFor="mobileNumber"
+          >
             Mobile Number
           </label>
 
@@ -426,17 +746,21 @@ export default function MembersSection() {
             maxLength={10}
             placeholder="10-digit mobile number"
             value={mobileNumber}
-            onChange={(e) => {
-              const onlyNumbers = e.target.value
-                .replace(/\D/g, "")
-                .slice(0, 10);
+            onChange={(event) => {
+              const onlyNumbers =
+                event.target.value
+                  .replace(/\D/g, "")
+                  .slice(0, 10);
 
               setMobileNumber(onlyNumbers);
             }}
             required
           />
 
-          <label className="label" htmlFor="validUpto">
+          <label
+            className="label"
+            htmlFor="validUpto"
+          >
             Valid Upto
           </label>
 
@@ -444,15 +768,21 @@ export default function MembersSection() {
             id="validUpto"
             type="date"
             value={validUpto}
-            onChange={(e) => setValidUpto(e.target.value)}
+            onChange={(event) =>
+              setValidUpto(event.target.value)
+            }
             required
           />
 
           <p className="dateHelp">
-            The member will remain valid until the end of the selected date.
+            The member will remain valid until the end of
+            the selected date.
           </p>
 
-          <label className="label" htmlFor="photo">
+          <label
+            className="label"
+            htmlFor="photo"
+          >
             Photo
           </label>
 
@@ -460,7 +790,11 @@ export default function MembersSection() {
             id="photo"
             type="file"
             accept="image/*"
-            onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+            onChange={(event) =>
+              setPhoto(
+                event.target.files?.[0] || null,
+              )
+            }
           />
 
           <div className="checks">
@@ -468,13 +802,20 @@ export default function MembersSection() {
               <input
                 type="checkbox"
                 checked={isActive}
-                onChange={(e) => setIsActive(e.target.checked)}
+                onChange={(event) =>
+                  setIsActive(event.target.checked)
+                }
               />
+
               Active member
             </label>
           </div>
 
-          <button className="submit" type="submit" disabled={loading}>
+          <button
+            className="submit"
+            type="submit"
+            disabled={loading}
+          >
             {loading
               ? editingMemberId
                 ? "Updating..."
@@ -485,7 +826,11 @@ export default function MembersSection() {
           </button>
 
           {editingMemberId && (
-            <button className="cancel" type="button" onClick={resetForm}>
+            <button
+              className="cancel"
+              type="button"
+              onClick={resetForm}
+            >
               Cancel Edit
             </button>
           )}
@@ -496,54 +841,107 @@ export default function MembersSection() {
 
           <div className="list">
             {members.length === 0 ? (
-              <p className="empty">No members found.</p>
+              <p className="empty">
+                No members found.
+              </p>
             ) : (
               members.map((member) => {
-                const membershipStatus = getMembershipStatus(member);
+                const membershipStatus =
+                  getMembershipStatus(member);
+
+                const committeeAssigned =
+                  member.committeeType === "state" ||
+                  member.committeeType === "district";
 
                 return (
-                  <div className="item" key={member._id}>
+                  <div
+                    className="item"
+                    key={member._id}
+                  >
                     <div className="avatar">
                       {member.photo?.url ? (
-                        <img src={member.photo.url} alt={member.name} />
+                        <img
+                          src={member.photo.url}
+                          alt={member.name}
+                        />
                       ) : (
                         <span>
-                          {member.name?.charAt(0).toUpperCase() || "M"}
+                          {member.name
+                            ?.charAt(0)
+                            .toUpperCase() || "M"}
                         </span>
                       )}
                     </div>
 
                     <div className="details">
                       <h3>
-                        SL {member.serialNumber} - {member.name}
+                        SL {member.serialNumber} -{" "}
+                        {member.name}
                       </h3>
 
                       <p>
-                        <strong>ID:</strong> {member.memberId}
+                        <strong>ID:</strong>{" "}
+                        {member.memberId}
                       </p>
 
                       <p>
-                        {member.designation} • {member.district}
+                        {member.designation} •{" "}
+                        {member.district}
                       </p>
 
                       <p>
-                        <strong>Mobile:</strong> {member.mobileNumber}
+                        <strong>Committee:</strong>{" "}
+                        <span
+                          className={
+                            committeeAssigned
+                              ? "committeeText"
+                              : "committeeMissing"
+                          }
+                        >
+                          {getCommitteeLabel(member)}
+                        </span>
+                      </p>
+
+                      <p>
+                        <strong>Mobile:</strong>{" "}
+                        {member.mobileNumber}
                       </p>
 
                       <p>
                         <strong>Valid Upto:</strong>{" "}
-                        {formatDisplayDate(member.validUpto)}
+                        {formatDisplayDate(
+                          member.validUpto,
+                        )}
                       </p>
 
                       <div className="actions">
-                        <span className={getStatusClass(member)}>
+                        <span
+                          className={getStatusClass(
+                            member,
+                          )}
+                        >
                           {membershipStatus}
                         </span>
+
+                        {committeeAssigned ? (
+                          <span className="committeeBadge">
+                            {member.committeeType ===
+                            "state"
+                              ? "State"
+                              : "District"}
+                          </span>
+                        ) : (
+                          <span className="unassignedBadge">
+                            Committee pending
+                          </span>
+                        )}
 
                         <button
                           type="button"
                           className="edit"
-                          onClick={() => handleEditClick(member)}
+                          onClick={() =>
+                            handleEditClick(member)
+                          }
                         >
                           Edit
                         </button>
@@ -551,7 +949,11 @@ export default function MembersSection() {
                         <button
                           type="button"
                           className="delete"
-                          onClick={() => handleDeleteMember(member._id)}
+                          onClick={() =>
+                            handleDeleteMember(
+                              member._id,
+                            )
+                          }
                         >
                           Delete
                         </button>
@@ -644,6 +1046,41 @@ export default function MembersSection() {
           font-weight: 700;
         }
 
+        .committeeBox {
+          background: #0b1424;
+          border: 1px solid #29405e;
+          border-radius: 14px;
+          padding: 17px;
+          margin: 4px 0 20px;
+        }
+
+        .committeeBox h3 {
+          margin: 0;
+          color: #ffffff;
+          font-size: 16px;
+        }
+
+        .committeeBox > p {
+          margin: 6px 0 16px;
+          color: #8ea2c4;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .committeeBox select:last-child {
+          margin-bottom: 0;
+        }
+
+        .committeeNotice {
+          background: rgba(0, 213, 255, 0.08);
+          border: 1px solid rgba(0, 213, 255, 0.22);
+          color: #7cecff;
+          padding: 11px 13px;
+          border-radius: 9px;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
         .dateHelp {
           color: #7285a6;
           font-size: 12px;
@@ -708,7 +1145,7 @@ export default function MembersSection() {
         }
 
         .list {
-          max-height: 720px;
+          max-height: 800px;
           overflow-y: auto;
           padding-right: 8px;
         }
@@ -769,6 +1206,16 @@ export default function MembersSection() {
           color: #b8c7e6;
         }
 
+        .committeeText {
+          color: #7cecff;
+          font-weight: 700;
+        }
+
+        .committeeMissing {
+          color: #fbbf24;
+          font-weight: 700;
+        }
+
         .actions {
           display: flex;
           align-items: center;
@@ -780,6 +1227,8 @@ export default function MembersSection() {
         .valid,
         .expired,
         .inactive,
+        .committeeBadge,
+        .unassignedBadge,
         .edit,
         .delete {
           border: none;
@@ -803,6 +1252,18 @@ export default function MembersSection() {
 
         .inactive {
           background: rgba(251, 191, 36, 0.12);
+          color: #fbbf24;
+          border: 1px solid rgba(251, 191, 36, 0.25);
+        }
+
+        .committeeBadge {
+          background: rgba(59, 130, 246, 0.12);
+          color: #60a5fa;
+          border: 1px solid rgba(59, 130, 246, 0.28);
+        }
+
+        .unassignedBadge {
+          background: rgba(251, 191, 36, 0.1);
           color: #fbbf24;
           border: 1px solid rgba(251, 191, 36, 0.25);
         }
@@ -843,6 +1304,10 @@ export default function MembersSection() {
             padding: 16px;
           }
 
+          .committeeBox {
+            padding: 14px;
+          }
+
           .item {
             align-items: flex-start;
           }
@@ -859,6 +1324,8 @@ export default function MembersSection() {
           .valid,
           .expired,
           .inactive,
+          .committeeBadge,
+          .unassignedBadge,
           .edit,
           .delete {
             padding: 8px 10px;
