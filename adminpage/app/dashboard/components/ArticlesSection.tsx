@@ -99,25 +99,25 @@ export default function ArticlesSection() {
   };
 
   const handleEditClick = (article: Article) => {
-  setEditingArticleId(article._id);
-  setTitle(article.title || "");
-  setContent(article.content || "");
-  setReporter(article.reporter || "");
-  setDistrict(article.district || "");
-  setTags("");
-  setIsPublished(article.isPublished || false);
-  setIsFlash(article.isFlash || false);
-  setIsFeatured(article.isFeatured || false);
-  setIsTrending(article.isTrending || false);
-  setIsEditorsPick(article.isEditorsPick || false);
+    setEditingArticleId(article._id);
+    setTitle(article.title || "");
+    setContent(article.content || "");
+    setReporter(article.reporter || "");
+    setDistrict(article.district || "");
+    setTags("");
+    setIsPublished(article.isPublished || false);
+    setIsFlash(article.isFlash || false);
+    setIsFeatured(article.isFeatured || false);
+    setIsTrending(article.isTrending || false);
+    setIsEditorsPick(article.isEditorsPick || false);
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-}; 
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
-  const handleSubmitArticle = async (e: React.FormEvent<HTMLFormElement>) => { 
+  const handleSubmitArticle = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const token = localStorage.getItem("odmm_admin_token");
@@ -156,16 +156,16 @@ export default function ArticlesSection() {
       }
 
       const url = editingArticleId
-  ? `${API_URL}/api/articles/${editingArticleId}`
-  : `${API_URL}/api/articles`;
+        ? `${API_URL}/api/articles/${editingArticleId}`
+        : `${API_URL}/api/articles`;
 
-const res = await fetch(url, {
-  method: editingArticleId ? "PUT" : "POST",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  body: formData,
-});
+      const res = await fetch(url, {
+        method: editingArticleId ? "PUT" : "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       const data = await res.json();
 
@@ -174,10 +174,10 @@ const res = await fetch(url, {
       }
 
       setMessage(
-  editingArticleId
-    ? "Article updated successfully."
-    : "Article created successfully."
-);
+        editingArticleId
+          ? "Article updated successfully."
+          : "Article created successfully.",
+      );
       resetForm();
       fetchArticles();
     } catch (error) {
@@ -192,7 +192,9 @@ const res = await fetch(url, {
   };
 
   const handleDeleteArticle = async (id: string) => {
-    const confirmDelete = confirm("Are you sure you want to delete this article?");
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this article?",
+    );
     if (!confirmDelete) return;
 
     const token = localStorage.getItem("odmm_admin_token");
@@ -229,7 +231,6 @@ const res = await fetch(url, {
           <h1>Articles</h1>
           <p>Create and manage web news articles</p>
         </div>
-
       </div>
 
       {message && <div className="message">{message}</div>}
@@ -338,19 +339,19 @@ const res = await fetch(url, {
 
           <button className="submit" type="submit" disabled={loading}>
             {loading
-  ? editingArticleId
-    ? "Updating..."
-    : "Creating..."
-  : editingArticleId
-  ? "Update Article"
-  : "Create Article"}
+              ? editingArticleId
+                ? "Updating..."
+                : "Creating..."
+              : editingArticleId
+                ? "Update Article"
+                : "Create Article"}
           </button>
 
           {editingArticleId && (
-  <button className="cancel" type="button" onClick={resetForm}>
-    Cancel Edit
-  </button>
-)}
+            <button className="cancel" type="button" onClick={resetForm}>
+              Cancel Edit
+            </button>
+          )}
         </form>
 
         <div className="card">
@@ -363,27 +364,37 @@ const res = await fetch(url, {
               articles.map((article) => (
                 <div className="item" key={article._id}>
                   <h3>{article.title}</h3>
-<p>
-  {article.district} • {article.reporter}
-</p>
+                  <p>
+                    {article.district} • {article.reporter}
+                  </p>
 
-<div className="badges">
-  {article.isPublished && <span className="badge published">Published</span>}
-  {article.isFlash && <span className="badge flash">Flash</span>}
-  {article.isFeatured && <span className="badge featured">Featured</span>}
-  {article.isTrending && <span className="badge trending">Trending</span>}
-  {article.isEditorsPick && (
-    <span className="badge president">President&apos;s Pick</span>
-  )}
-</div>
+                  <div className="badges">
+                    {article.isPublished && (
+                      <span className="badge published">Published</span>
+                    )}
+                    {article.isFlash && (
+                      <span className="badge flash">Flash</span>
+                    )}
+                    {article.isFeatured && (
+                      <span className="badge featured">Featured</span>
+                    )}
+                    {article.isTrending && (
+                      <span className="badge trending">Trending</span>
+                    )}
+                    {article.isEditorsPick && (
+                      <span className="badge president">
+                        President&apos;s Pick
+                      </span>
+                    )}
+                  </div>
 
-<div className="actions">
+                  <div className="actions">
                     <button
-  className="edit"
-  onClick={() => handleEditClick(article)}
->
-  Edit
-</button>
+                      className="edit"
+                      onClick={() => handleEditClick(article)}
+                    >
+                      Edit
+                    </button>
                     <button
                       className="delete"
                       onClick={() => handleDeleteArticle(article._id)}
@@ -526,21 +537,21 @@ const res = await fetch(url, {
         }
 
         .cancel {
-  width: 100%;
-  margin-top: 10px;
-  background: transparent;
-  color: #8ea2c4;
-  border: 1px solid #2a3a58;
-  padding: 13px;
-  border-radius: 10px;
-  font-weight: 800;
-  cursor: pointer;
-}
+          width: 100%;
+          margin-top: 10px;
+          background: transparent;
+          color: #8ea2c4;
+          border: 1px solid #2a3a58;
+          padding: 13px;
+          border-radius: 10px;
+          font-weight: 800;
+          cursor: pointer;
+        }
 
-.cancel:hover {
-  color: #00d5ff;
-  border-color: #00d5ff;
-}
+        .cancel:hover {
+          color: #00d5ff;
+          border-color: #00d5ff;
+        }
 
         .list {
           max-height: 650px;
@@ -569,74 +580,74 @@ const res = await fetch(url, {
         }
 
         .actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
 
         .badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0 14px;
-}
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin: 10px 0 14px;
+        }
 
-.badge {
-  font-size: 12px;
-  font-weight: 800;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-}
+        .badge {
+          font-size: 12px;
+          font-weight: 800;
+          padding: 6px 10px;
+          border-radius: 999px;
+          border: 1px solid transparent;
+        }
 
-.published {
-  background: rgba(0, 213, 255, 0.12);
-  color: #00d5ff;
-  border-color: rgba(0, 213, 255, 0.25);
-}
+        .published {
+          background: rgba(0, 213, 255, 0.12);
+          color: #00d5ff;
+          border-color: rgba(0, 213, 255, 0.25);
+        }
 
-.flash {
-  background: rgba(251, 191, 36, 0.12);
-  color: #fbbf24;
-  border-color: rgba(251, 191, 36, 0.25);
-}
+        .flash {
+          background: rgba(251, 191, 36, 0.12);
+          color: #fbbf24;
+          border-color: rgba(251, 191, 36, 0.25);
+        }
 
-.featured {
-  background: rgba(168, 85, 247, 0.12);
-  color: #c084fc;
-  border-color: rgba(168, 85, 247, 0.25);
-}
+        .featured {
+          background: rgba(168, 85, 247, 0.12);
+          color: #c084fc;
+          border-color: rgba(168, 85, 247, 0.25);
+        }
 
-.trending {
-  background: rgba(248, 113, 113, 0.12);
-  color: #f87171;
-  border-color: rgba(248, 113, 113, 0.25);
-}
+        .trending {
+          background: rgba(248, 113, 113, 0.12);
+          color: #f87171;
+          border-color: rgba(248, 113, 113, 0.25);
+        }
 
-.president {
-  background: rgba(34, 197, 94, 0.12);
-  color: #4ade80;
-  border-color: rgba(34, 197, 94, 0.25);
-}
+        .president {
+          background: rgba(34, 197, 94, 0.12);
+          color: #4ade80;
+          border-color: rgba(34, 197, 94, 0.25);
+        }
 
         .actions button {
-  border: none;
-  padding: 9px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 800;
-}
+          border: none;
+          padding: 9px 14px;
+          border-radius: 10px;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 800;
+        }
         .edit {
-  background: #07364b;
-  color: #00d5ff;
-}
+          background: #07364b;
+          color: #00d5ff;
+        }
 
-.delete {
-  background: #351125;
-  color: #ff4d7d;
-}
+        .delete {
+          background: #351125;
+          color: #ff4d7d;
+        }
 
         .empty {
           color: #8ea2c4;
