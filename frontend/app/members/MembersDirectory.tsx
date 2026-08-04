@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import {
+  type ChangeEvent,
+  useMemo,
+  useState,
+} from "react";
 
 const DISTRICTS = [
   "Angul",
@@ -73,37 +77,58 @@ export default function MembersDirectory({
   const [selectedDistrict, setSelectedDistrict] =
     useState("");
 
-  const filteredMembers = useMemo(() => {
-    if (committeeFilter === "all") {
-      return members;
-    }
+  const [searchQuery, setSearchQuery] = useState("");
 
-    if (committeeFilter === "state") {
-      return members.filter(
+  const filteredMembers = useMemo(() => {
+    let committeeMembers: Member[] = [];
+
+    if (committeeFilter === "all") {
+      committeeMembers = members;
+    } else if (committeeFilter === "state") {
+      committeeMembers = members.filter(
         (member) => member.committeeType === "state",
       );
-    }
-
-    if (
+    } else if (
       committeeFilter === "district" &&
       selectedDistrict
     ) {
-      return members.filter(
+      committeeMembers = members.filter(
         (member) =>
           member.committeeType === "district" &&
           member.committeeDistrict === selectedDistrict,
       );
     }
 
-    return [];
+    const normalizedSearch = searchQuery
+      .trim()
+      .toLowerCase();
+
+    if (!normalizedSearch) {
+      return committeeMembers;
+    }
+
+    return committeeMembers.filter((member) => {
+      const name = member.name?.toLowerCase() || "";
+      const district =
+        member.district?.toLowerCase() || "";
+      const designation =
+        member.designation?.toLowerCase() || "";
+
+      return (
+        name.includes(normalizedSearch) ||
+        district.includes(normalizedSearch) ||
+        designation.includes(normalizedSearch)
+      );
+    });
   }, [
     members,
     committeeFilter,
     selectedDistrict,
+    searchQuery,
   ]);
 
   const handleCommitteeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
+    event: ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedValue =
       event.target.value as CommitteeFilter;
@@ -134,10 +159,62 @@ export default function MembersDirectory({
     return "All Members";
   };
 
+  const getEmptyMessage = () => {
+    if (
+      committeeFilter === "district" &&
+      !selectedDistrict
+    ) {
+      return "Please select a district committee.";
+    }
+
+    if (searchQuery.trim()) {
+      return `No member found for "${searchQuery.trim()}".`;
+    }
+
+    return "No members available in this committee.";
+  };
+
   return (
     <>
       <section className="memberFilterSection">
         <div className="memberFilterControls">
+          <div className="memberFilterField memberSearchField">
+            <label htmlFor="memberSearch">
+              Search Members
+            </label>
+
+            <div className="memberSearchInputWrapper">
+              <span
+                className="memberSearchIcon"
+                aria-hidden="true"
+              >
+                🔍
+              </span>
+
+              <input
+                id="memberSearch"
+                type="search"
+                value={searchQuery}
+                onChange={(event) =>
+                  setSearchQuery(event.target.value)
+                }
+                placeholder="Search by name, district or designation"
+                autoComplete="off"
+              />
+
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="clearSearchButton"
+                  onClick={() => setSearchQuery("")}
+                  aria-label="Clear member search"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="memberFilterField">
             <label htmlFor="committeeFilter">
               View Members
@@ -148,9 +225,7 @@ export default function MembersDirectory({
               value={committeeFilter}
               onChange={handleCommitteeChange}
             >
-              <option value="all">
-                All Members
-              </option>
+              <option value="all">All Members</option>
 
               <option value="state">
                 State Committee
@@ -201,11 +276,17 @@ export default function MembersDirectory({
             {committeeFilter === "district" &&
             !selectedDistrict
               ? "Select a district committee to view its members."
-              : `${filteredMembers.length} ${
-                  filteredMembers.length === 1
-                    ? "Member"
-                    : "Members"
-                }`}
+              : searchQuery.trim()
+                ? `${filteredMembers.length} ${
+                    filteredMembers.length === 1
+                      ? "member found"
+                      : "members found"
+                  }`
+                : `${filteredMembers.length} ${
+                    filteredMembers.length === 1
+                      ? "Member"
+                      : "Members"
+                  }`}
           </p>
         </div>
       </section>
@@ -252,10 +333,7 @@ export default function MembersDirectory({
           ))
         ) : (
           <p className="emptyListing">
-            {committeeFilter === "district" &&
-            !selectedDistrict
-              ? "Please select a district committee."
-              : "No members available in this committee."}
+            {getEmptyMessage()}
           </p>
         )}
       </section>
@@ -285,6 +363,11 @@ export default function MembersDirectory({
           min-width: 250px;
         }
 
+        .memberSearchField {
+          flex-basis: 100%;
+          min-width: 100%;
+        }
+
         .memberFilterField label {
           display: block;
           margin-bottom: 8px;
@@ -293,23 +376,72 @@ export default function MembersDirectory({
           font-weight: 700;
         }
 
-        .memberFilterField select {
+        .memberFilterField select,
+        .memberFilterField input {
           width: 100%;
           min-height: 48px;
-          padding: 11px 42px 11px 14px;
           border: 1px solid #ccd5e0;
           border-radius: 9px;
           background: #ffffff;
           color: #182536;
           font-size: 15px;
           outline: none;
+        }
+
+        .memberFilterField select {
+          padding: 11px 42px 11px 14px;
           cursor: pointer;
         }
 
-        .memberFilterField select:focus {
+        .memberFilterField select:focus,
+        .memberFilterField input:focus {
           border-color: #1565c0;
           box-shadow: 0 0 0 3px
             rgba(21, 101, 192, 0.12);
+        }
+
+        .memberSearchInputWrapper {
+          position: relative;
+        }
+
+        .memberSearchInputWrapper input {
+          padding: 11px 48px 11px 45px;
+        }
+
+        .memberSearchInputWrapper input::-webkit-search-cancel-button {
+          display: none;
+        }
+
+        .memberSearchIcon {
+          position: absolute;
+          top: 50%;
+          left: 15px;
+          z-index: 1;
+          transform: translateY(-50%);
+          font-size: 16px;
+          pointer-events: none;
+        }
+
+        .clearSearchButton {
+          position: absolute;
+          top: 50%;
+          right: 12px;
+          width: 30px;
+          height: 30px;
+          padding: 0;
+          transform: translateY(-50%);
+          border: none;
+          border-radius: 50%;
+          background: #edf2f7;
+          color: #415268;
+          font-size: 22px;
+          line-height: 1;
+          cursor: pointer;
+        }
+
+        .clearSearchButton:hover {
+          background: #dfe7f0;
+          color: #172536;
         }
 
         .selectedMemberGroup {
@@ -341,13 +473,19 @@ export default function MembersDirectory({
             padding: 16px;
           }
 
-          .memberFilterField {
+          .memberFilterField,
+          .memberSearchField {
             min-width: 0;
             width: 100%;
           }
 
           .memberFilterField + .memberFilterField {
             margin-top: 16px;
+          }
+
+          .memberSearchInputWrapper input {
+            padding-left: 42px;
+            font-size: 14px;
           }
 
           .selectedMemberGroup h2 {
