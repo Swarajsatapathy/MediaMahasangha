@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 
+const MEMBERS_PER_PAGE = 30;
+
 const DISTRICTS = [
   "Angul",
   "Balangir",
@@ -79,6 +81,8 @@ export default function MembersDirectory({
 
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   const filteredMembers = useMemo(() => {
     let committeeMembers: Member[] = [];
 
@@ -127,6 +131,37 @@ export default function MembersDirectory({
     searchQuery,
   ]);
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      filteredMembers.length / MEMBERS_PER_PAGE,
+    ),
+  );
+
+  const safeCurrentPage = Math.min(
+    currentPage,
+    totalPages,
+  );
+
+  const paginatedMembers = useMemo(() => {
+    const startIndex =
+      (safeCurrentPage - 1) * MEMBERS_PER_PAGE;
+
+    const endIndex = startIndex + MEMBERS_PER_PAGE;
+
+    return filteredMembers.slice(startIndex, endIndex);
+  }, [filteredMembers, safeCurrentPage]);
+
+  const startMemberNumber =
+    filteredMembers.length > 0
+      ? (safeCurrentPage - 1) * MEMBERS_PER_PAGE + 1
+      : 0;
+
+  const endMemberNumber = Math.min(
+    safeCurrentPage * MEMBERS_PER_PAGE,
+    filteredMembers.length,
+  );
+
   const handleCommitteeChange = (
     event: ChangeEvent<HTMLSelectElement>,
   ) => {
@@ -134,10 +169,43 @@ export default function MembersDirectory({
       event.target.value as CommitteeFilter;
 
     setCommitteeFilter(selectedValue);
+    setCurrentPage(1);
 
     if (selectedValue !== "district") {
       setSelectedDistrict("");
     }
+  };
+
+  const handleDistrictChange = (
+    event: ChangeEvent<HTMLSelectElement>,
+  ) => {
+    setSelectedDistrict(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    setSearchQuery(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const changePage = (page: number) => {
+    if (page < 1 || page > totalPages) {
+      return;
+    }
+
+    setCurrentPage(page);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const getSelectedTitle = () => {
@@ -195,9 +263,7 @@ export default function MembersDirectory({
                 id="memberSearch"
                 type="search"
                 value={searchQuery}
-                onChange={(event) =>
-                  setSearchQuery(event.target.value)
-                }
+                onChange={handleSearchChange}
                 placeholder="Search by name, district or designation"
                 autoComplete="off"
               />
@@ -206,7 +272,7 @@ export default function MembersDirectory({
                 <button
                   type="button"
                   className="clearSearchButton"
-                  onClick={() => setSearchQuery("")}
+                  onClick={clearSearch}
                   aria-label="Clear member search"
                 >
                   ×
@@ -225,7 +291,9 @@ export default function MembersDirectory({
               value={committeeFilter}
               onChange={handleCommitteeChange}
             >
-              <option value="all">All Members</option>
+              <option value="all">
+                All Members
+              </option>
 
               <option value="state">
                 State Committee
@@ -246,11 +314,7 @@ export default function MembersDirectory({
               <select
                 id="districtFilter"
                 value={selectedDistrict}
-                onChange={(event) =>
-                  setSelectedDistrict(
-                    event.target.value,
-                  )
-                }
+                onChange={handleDistrictChange}
               >
                 <option value="">
                   Select District Committee
@@ -276,24 +340,20 @@ export default function MembersDirectory({
             {committeeFilter === "district" &&
             !selectedDistrict
               ? "Select a district committee to view its members."
-              : searchQuery.trim()
-                ? `${filteredMembers.length} ${
+              : filteredMembers.length > 0
+                ? `Showing ${startMemberNumber}–${endMemberNumber} of ${filteredMembers.length} ${
                     filteredMembers.length === 1
-                      ? "member found"
-                      : "members found"
+                      ? "member"
+                      : "members"
                   }`
-                : `${filteredMembers.length} ${
-                    filteredMembers.length === 1
-                      ? "Member"
-                      : "Members"
-                  }`}
+                : "0 members"}
           </p>
         </div>
       </section>
 
       <section className="membersListingGrid">
-        {filteredMembers.length > 0 ? (
-          filteredMembers.map((member) => (
+        {paginatedMembers.length > 0 ? (
+          paginatedMembers.map((member) => (
             <Link
               href={`/members/${member._id}`}
               className="memberListingCard"
@@ -304,6 +364,8 @@ export default function MembersDirectory({
                   <img
                     src={member.photo.url}
                     alt={member.name || "ODMM Member"}
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <span>
@@ -337,6 +399,39 @@ export default function MembersDirectory({
           </p>
         )}
       </section>
+
+      {filteredMembers.length > MEMBERS_PER_PAGE && (
+        <nav
+          className="memberPagination"
+          aria-label="Members pagination"
+        >
+          <button
+            type="button"
+            onClick={() =>
+              changePage(safeCurrentPage - 1)
+            }
+            disabled={safeCurrentPage === 1}
+          >
+            Previous
+          </button>
+
+          <div className="paginationStatus">
+            Page{" "}
+            <strong>{safeCurrentPage}</strong> of{" "}
+            <strong>{totalPages}</strong>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              changePage(safeCurrentPage + 1)
+            }
+            disabled={safeCurrentPage === totalPages}
+          >
+            Next
+          </button>
+        </nav>
+      )}
 
       <style jsx>{`
         .memberFilterSection {
@@ -408,7 +503,8 @@ export default function MembersDirectory({
           padding: 11px 48px 11px 45px;
         }
 
-        .memberSearchInputWrapper input::-webkit-search-cancel-button {
+        .memberSearchInputWrapper
+          input::-webkit-search-cancel-button {
           display: none;
         }
 
@@ -462,6 +558,57 @@ export default function MembersDirectory({
           font-size: 14px;
         }
 
+        .memberPagination {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 18px;
+          max-width: 1200px;
+          margin: 35px auto 10px;
+          padding: 0 20px;
+        }
+
+        .memberPagination button {
+          min-width: 110px;
+          min-height: 44px;
+          padding: 10px 18px;
+          border: 1px solid #1565c0;
+          border-radius: 9px;
+          background: #1565c0;
+          color: #ffffff;
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease;
+        }
+
+        .memberPagination button:hover:not(:disabled) {
+          background: #0d4f9c;
+          border-color: #0d4f9c;
+          transform: translateY(-1px);
+        }
+
+        .memberPagination button:disabled {
+          border-color: #ccd5e0;
+          background: #e8edf3;
+          color: #8a97a7;
+          cursor: not-allowed;
+        }
+
+        .paginationStatus {
+          min-width: 120px;
+          color: #526174;
+          font-size: 14px;
+          text-align: center;
+        }
+
+        .paginationStatus strong {
+          color: #172536;
+        }
+
         @media (max-width: 650px) {
           .memberFilterSection {
             padding: 0 14px;
@@ -490,6 +637,23 @@ export default function MembersDirectory({
 
           .selectedMemberGroup h2 {
             font-size: 20px;
+          }
+
+          .memberPagination {
+            gap: 10px;
+            margin-top: 28px;
+            padding: 0 14px;
+          }
+
+          .memberPagination button {
+            min-width: 85px;
+            padding: 9px 12px;
+            font-size: 13px;
+          }
+
+          .paginationStatus {
+            min-width: auto;
+            font-size: 13px;
           }
         }
       `}</style>
