@@ -199,6 +199,8 @@ export default function MemberIdCardDownload({
               <h2>Odisha Digital Media Mahasangha</h2>
               <p>Official Member Identity Card</p>
             </div>
+
+            <div className="memberAtmPressBadge">PRESS</div>
           </div>
 
           <div className="memberAtmCardBody">
