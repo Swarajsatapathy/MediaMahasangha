@@ -181,13 +181,13 @@ export default async function HomePage() {
         />
 
         <HomeSectionSlider
-          title="Mentors"
+          title="Mentors & Founders"
           items={mentors}
           type="mentors"
         />
 
         <HomeSectionSlider
-          title="Members"
+          title="Management"
           items={members}
           type="members"
         />
