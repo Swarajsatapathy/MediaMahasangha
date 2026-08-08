@@ -76,11 +76,11 @@ export default async function MentorDetailsPage({ params }: PageProps) {
         </div>
 
         <div className="memberDetailsInfo">
-          <span className="memberDetailsBadge">ODMM Mentor or Founding Member</span>
+          <span className="memberDetailsBadge">ODMM Mentor or Founder</span>
 
           <h1>{mentor.name}</h1>
 
-          <SocialShare title={`${mentor.name} - ODMM Mentor or Founding Member`} />
+          <SocialShare title={`${mentor.name} - ODMM Mentor or Founder`} />
 
           <div className="memberDetailsRows">
 

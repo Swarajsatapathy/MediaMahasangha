@@ -25,8 +25,8 @@ export default async function MentorsPage() {
   return (
     <main className="listingPage">
       <section className="listingHeader">
-        <h1>Mentors And Founding Members</h1>
-        <p>Our Mentors and Founding Members</p>
+        <h1>Mentors & Founders</h1>
+        <p>Our Mentors & Founders</p>
       </section>
 
       <section className="membersListingGrid">
@@ -67,7 +67,7 @@ export default async function MentorsPage() {
             </Link>
           ))
         ) : (
-          <p className="emptyListing">No mentors or founding members available.</p>
+          <p className="emptyListing">No mentors or founders available.</p>
         )}
       </section>
     </main>
