@@ -44,7 +44,7 @@ export default function MobileNav() {
   Self Regulatory Body
 </Link>
               <Link href="/mentors" onClick={() => setOpen(false)}>
-  Mentors
+  Mentors And Founding Members
 </Link>
               <Link href="/members" onClick={() => setOpen(false)}>
   Members

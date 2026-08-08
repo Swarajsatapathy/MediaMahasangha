@@ -57,8 +57,8 @@ export default async function MentorDetailsPage({ params }: PageProps) {
     return (
       <main className="detailsPage">
         <div className="detailsContainer">
-          <h1>Mentor not found</h1>
-          <p>The mentor profile may have been deleted or is unavailable.</p>
+          <h1>Mentor or founding member not found</h1>
+          <p>The profile may have been deleted or is unavailable.</p>
         </div>
       </main>
     );
@@ -76,11 +76,11 @@ export default async function MentorDetailsPage({ params }: PageProps) {
         </div>
 
         <div className="memberDetailsInfo">
-          <span className="memberDetailsBadge">ODMM Mentor</span>
+          <span className="memberDetailsBadge">ODMM Mentor or Founding Member</span>
 
           <h1>{mentor.name}</h1>
 
-          <SocialShare title={`${mentor.name} - ODMM Mentor`} />
+          <SocialShare title={`${mentor.name} - ODMM Mentor or Founding Member`} />
 
           <div className="memberDetailsRows">
 
