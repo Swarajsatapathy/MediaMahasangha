@@ -76,7 +76,6 @@ export default async function MentorDetailsPage({ params }: PageProps) {
         </div>
 
         <div className="memberDetailsInfo">
-          <span className="memberDetailsBadge">ODMM Mentor or Founder</span>
 
           <h1>{mentor.name}</h1>
 

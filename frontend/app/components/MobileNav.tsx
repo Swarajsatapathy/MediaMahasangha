@@ -25,9 +25,6 @@ export default function MobileNav() {
 
             <div className="mobileSearch">
               <input type="text" placeholder="Search news..." />
-              <button>
-                <FaSearch />
-              </button>
             </div>
 
             <nav className="mobileLinks">
@@ -47,7 +44,7 @@ export default function MobileNav() {
   Mentors & Founders
 </Link>
               <Link href="/members" onClick={() => setOpen(false)}>
-  Members
+  Managements
 </Link>
               <Link href="/web-news" onClick={() => setOpen(false)}>
   Web News
