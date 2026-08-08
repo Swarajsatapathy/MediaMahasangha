@@ -23,7 +23,7 @@ export default async function MembersPage() {
   return (
     <main className="listingPage">
       <section className="listingHeader">
-        <h1>Managements</h1>
+        <h1>Management</h1>
         <p>Our Members</p>
       </section>
 

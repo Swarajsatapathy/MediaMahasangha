@@ -11,7 +11,7 @@ export default async function VideoNewsPage() {
     <main className="listingPage">
       <section className="listingHeader">
         <h1>Messages</h1>
-<p>Latest video messages and public updates from ODMM News.</p>
+        <p>Latest video messages and public updates.</p>
       </section>
 
       <section className="listingGrid">
