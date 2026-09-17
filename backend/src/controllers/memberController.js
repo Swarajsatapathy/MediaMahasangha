@@ -7,6 +7,8 @@ import {
   uploadToS3,
   deleteFromS3,
 } from "../utils/s3Upload.js";
+import MembershipApplication from "../models/MembershipApplication.js";
+import { notificationService } from "../utils/notificationService.js";
 
 const toBoolean = (value) =>
   value === "true" || value === true;
@@ -170,6 +172,7 @@ const createMember = asyncHandler(
       mobileNumber,
       validUpto,
       isActive,
+      applicationId,
     } = req.body;
 
     if (
@@ -240,6 +243,20 @@ const createMember = asyncHandler(
       );
     }
 
+    let application = null;
+    if (applicationId) {
+      application = await MembershipApplication.findById(applicationId);
+      if (!application) {
+        throw new ApiError(404, "Membership application not found");
+      }
+      if (application.applicationStatus !== "APPROVED") {
+        throw new ApiError(400, "Membership application must be approved before creating a member");
+      }
+      if (application.memberCreated) {
+        throw new ApiError(400, "Member has already been created from this application");
+      }
+    }
+
     let photo = {
       url: "",
       key: "",
@@ -256,6 +273,9 @@ const createMember = asyncHandler(
         url: uploaded.url,
         key: uploaded.key,
       };
+    } else if (application) {
+      // Use photo from application if not replaced
+      photo = application.photo;
     }
 
     const member = await Member.create({
@@ -275,7 +295,27 @@ const createMember = asyncHandler(
         isActive === undefined
           ? true
           : toBoolean(isActive),
+      createdFromApplicationId: application ? application._id : undefined,
     });
+
+    if (application) {
+      application.memberCreated = true;
+      application.createdMemberRecordId = member._id;
+      application.memberId = member.memberId;
+      await application.save();
+
+      // Send final member notification
+      await notificationService.sendEmail({
+        to: application.email,
+        subject: "Welcome to ODMM - Member Created",
+        text: `Dear ${member.name},\n\nYour ODMM member record has been officially created.\n\nMember ID: ${member.memberId}\nValid Upto: ${new Date(member.validUpto).toLocaleDateString("en-IN")}\n\nWelcome to Odisha Digital Media Mahasangha (ODMM).`,
+      });
+
+      await notificationService.sendWhatsApp({
+        to: application.whatsappNumber,
+        text: `Dear ${member.name}, Your ODMM member record has been created. Member ID: ${member.memberId}. Valid Upto: ${new Date(member.validUpto).toLocaleDateString("en-IN")}.`,
+      });
+    }
 
     return res.status(201).json(
       new ApiResponse(

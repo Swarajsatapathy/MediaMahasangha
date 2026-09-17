@@ -103,6 +103,10 @@ const memberSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    createdFromApplicationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MembershipApplication",
+    },
   },
   {
     timestamps: true,

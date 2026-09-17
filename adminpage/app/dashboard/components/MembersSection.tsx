@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 type CommitteeType = "" | "state" | "district";
 
@@ -60,13 +61,45 @@ export default function MembersSection() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const applicationId = searchParams.get("applicationId");
+  const [appPhotoUrl, setAppPhotoUrl] = useState<string | null>(null);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
 
   useEffect(() => {
     fetchMembers();
     fetchDistricts();
-  }, []);
+    if (applicationId) {
+      fetchApplicationData(applicationId);
+    }
+  }, [applicationId]);
+
+  const fetchApplicationData = async (appId: string) => {
+    const token = localStorage.getItem("odmm_admin_token");
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_URL}/api/membership-applications/${appId}/create-member-data`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setName(data.data.name || "");
+        setDistrict(data.data.district || "");
+        setMobileNumber(data.data.mobileNumber || "");
+        if (data.data.photo?.url) {
+          setAppPhotoUrl(data.data.photo.url);
+        }
+        setMessage("Form auto-filled from Membership Application.");
+      } else {
+        setMessage(data.message || "Failed to load application data.");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetchMembers = async () => {
     try {
@@ -137,6 +170,11 @@ export default function MembersSection() {
 
     if (fileInput) {
       fileInput.value = "";
+    }
+    
+    if (applicationId) {
+      // Clear URL parameter when form is reset (e.g. after successful submit)
+      router.replace("/dashboard?tab=members");
     }
   };
 
@@ -437,6 +475,10 @@ export default function MembersSection() {
 
       if (photo) {
         formData.append("photo", photo);
+      }
+      
+      if (applicationId && !editingMemberId) {
+        formData.append("applicationId", applicationId);
       }
 
       const url = editingMemberId
@@ -783,8 +825,14 @@ export default function MembersSection() {
             className="label"
             htmlFor="photo"
           >
-            Photo
+            Photo {applicationId && !editingMemberId && "(Reusing Application Photo unless changed)"}
           </label>
+          
+          {applicationId && !editingMemberId && appPhotoUrl && !photo && (
+            <div style={{ marginBottom: 10 }}>
+              <img src={appPhotoUrl} alt="Application" style={{ width: 100, height: "auto", borderRadius: 8, border: "2px solid #2a3a58" }} />
+            </div>
+          )}
 
           <input
             id="photo"

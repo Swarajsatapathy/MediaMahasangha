@@ -64,6 +64,10 @@ export default function Header() {
             <FaWhatsapp />
           </a>
         </div>
+
+        <Link href="/apply-membership" className="joinMemberBtn">
+          Apply For Membership
+        </Link>
       </div>
 
 <header className="siteHeader bannerHeader">

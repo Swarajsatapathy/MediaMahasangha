@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ArticlesSection from "./components/ArticlesSection";
 import VideosSection from "./components/VideosSection";
 import MembersSection from "./components/MembersSection";
@@ -9,6 +9,7 @@ import MentorsSection from "./components/MentorsSection";
 import MemberNewsChannelsSection from "./components/MemberNewsChannelSection";
 import SRBMemberSection from "./components/SRBMemberSection";
 import GallerySection from "./components/GallerySection";
+import MembershipApplicationsSection from "./components/MembershipApplicationsSection";
 
 type Admin = {
   id: string;
@@ -20,16 +21,19 @@ type ActiveTab =
   | "articles"
   | "videos"
   | "members"
+  | "membership-applications"
   | "mentors"
   | "member-news-channels"
   | "srb-members"
   | "gallery";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [admin, setAdmin] = useState<Admin | null>(null);
-  const [activeTab, setActiveTab] = useState<ActiveTab>("articles");
+  const initialTab = (searchParams.get("tab") as ActiveTab) || "articles";
+  const [activeTab, setActiveTab] = useState<ActiveTab>(initialTab);
 
   useEffect(() => {
     const token = localStorage.getItem("odmm_admin_token");
@@ -124,6 +128,13 @@ export default function DashboardPage() {
           </button>
 
           <button
+            className={activeTab === "membership-applications" ? "active" : ""}
+            onClick={() => setActiveTab("membership-applications")}
+          >
+            Membership Applications
+          </button>
+
+          <button
             className={activeTab === "mentors" ? "active" : ""}
             onClick={() => setActiveTab("mentors")}
           >
@@ -158,6 +169,8 @@ export default function DashboardPage() {
           {activeTab === "videos" && <VideosSection />}
 
           {activeTab === "members" && <MembersSection />}
+
+          {activeTab === "membership-applications" && <MembershipApplicationsSection />}
 
           {activeTab === "mentors" && <MentorsSection />}
 
@@ -319,5 +332,13 @@ export default function DashboardPage() {
         }
       `}</style>
     </main>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 }

@@ -8,6 +8,7 @@ export default function LoginPage() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -74,15 +75,24 @@ export default function LoginPage() {
           required
         />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="passwordWrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            className="togglePasswordBtn"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className="submitBtn">
           {loading ? "Signing In..." : "Sign In"}
         </button>
 
@@ -158,7 +168,34 @@ export default function LoginPage() {
           box-shadow: 0 0 0 2px rgba(0, 213, 255, 0.25);
         }
 
-        button {
+        .passwordWrapper {
+          position: relative;
+          width: 100%;
+        }
+
+        .togglePasswordBtn {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          color: #9db4da;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          height: auto;
+          width: auto;
+          padding: 4px 8px;
+          margin: 0;
+        }
+
+        .togglePasswordBtn:hover {
+          color: #00d5ff;
+          background: transparent;
+        }
+
+        .submitBtn {
           width: 100%;
           height: 54px;
           border: none;
@@ -171,11 +208,11 @@ export default function LoginPage() {
           margin-top: 2px;
         }
 
-        button:hover {
+        .submitBtn:hover {
           background: #18a0b8;
         }
 
-        button:disabled {
+        .submitBtn:disabled {
           opacity: 0.7;
           cursor: not-allowed;
         }
