@@ -268,6 +268,7 @@ function DashboardContent() {
           display: flex;
           gap: 8px;
           margin-bottom: 24px;
+          white-space: nowrap;
         }
 
         .tabBar button {
@@ -279,6 +280,7 @@ function DashboardContent() {
           font-size: 15px;
           font-weight: 700;
           cursor: pointer;
+          flex-shrink: 0;
         }
 
         .tabBar button.active {

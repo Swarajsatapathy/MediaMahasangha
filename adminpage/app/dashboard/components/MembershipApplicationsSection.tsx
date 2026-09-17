@@ -365,6 +365,8 @@ export default function MembershipApplicationsSection() {
         @media (max-width: 768px) {
           .detailGrid { grid-template-columns: 1fr; }
           .paymentGrid { flex-direction: column; }
+          .filters { flex-direction: column; gap: 10px; }
+          .filters select, .filters input { max-width: 100%; width: 100%; }
         }
       `}</style>
     </section>
