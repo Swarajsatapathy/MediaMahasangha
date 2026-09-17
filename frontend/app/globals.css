@@ -1275,19 +1275,25 @@ a {
 @media (max-width: 768px) {
   .topBar {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     padding: 8px 12px;
   }
 
   .clock {
     display: block;
-    text-align: center;
-    font-size: 13px;
+    text-align: left;
+    font-size: 12px;
   }
 
-  .joinMemberBtn,
   .topSocials {
     display: none;
+  }
+
+  .joinMemberBtn {
+    display: inline-flex;
+    padding: 4px 10px;
+    font-size: 12px;
   }
 
   .navBar {
