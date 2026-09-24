@@ -32,7 +32,6 @@ export default function ApplyMembershipPage() {
     paymentDate: "",
     paymentUtr: "",
     declarationAccepted: false,
-    paymentConfirmationAccepted: false,
   });
 
   const [photo, setPhoto] = useState<File | null>(null);
@@ -295,9 +294,7 @@ export default function ApplyMembershipPage() {
                 </div>
                 <p className="upiIdText"><strong>UPI ID:</strong> 45152766635@sbi</p>
                 <p>Scan the QR code using your UPI app to pay ₹300.</p>
-                <p className="mobilePayBtn">
-                  <a href="upi://pay?pa=45152766635@sbi&pn=ODISHA%20DIGITAL%20MEDIA%20MAHASANGHA&mc=8398&tr=&tn=&am=&cu=INR&url=&mode=02&purpose=00&orgid=180102&sign=MEUCIQD1ZWZ7y59+OOpkUSC1rXAo2S64Ij2FeFZyNSF4Xxkt8wIgd7NHRKiKQ5isp6dCCQ5a3DlmkCJPvSXN4f+zU+9qUpU=" className="payLink">Pay ₹300 with UPI App</a>
-                </p>
+
               </div>
 
               <div className="grid">
@@ -315,10 +312,6 @@ export default function ApplyMembershipPage() {
                 </div>
               </div>
 
-              <label className="checkboxLabel confirmationCheck">
-                <input type="checkbox" name="paymentConfirmationAccepted" checked={formData.paymentConfirmationAccepted} onChange={handleChange} required />
-                I confirm that I have completed the ₹300 payment.
-              </label>
             </div>
           </section>
 
@@ -379,8 +372,8 @@ export default function ApplyMembershipPage() {
         .qrImageContainer { margin: 0 auto 15px; padding: 10px; background: #fff; display: inline-block; border-radius: 8px; border: 1px solid #bae6fd; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .qrImage { display: block; width: 200px; height: 200px; }
         .upiIdText { font-size: 16px; color: #0f172a; margin-bottom: 10px; }
-        .payLink { display: inline-block; background: #0284c7; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; margin-top: 10px; }
-        .confirmationCheck { margin-top: 20px; font-weight: 600; color: #0369a1; }
+
+
         
         .declarationSection { border-bottom: none; }
         
