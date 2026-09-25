@@ -225,12 +225,12 @@ export default function ApplyMembershipPage() {
                 </select>
               </div>
               <div className="field">
-                <label>Block/NAC</label>
-                <input type="text" name="blockOrNac" value={formData.blockOrNac} onChange={handleChange} />
+                <label>Block/NAC *</label>
+                <input type="text" name="blockOrNac" value={formData.blockOrNac} onChange={handleChange} required />
               </div>
               <div className="field">
-                <label>Police Station</label>
-                <input type="text" name="policeStation" value={formData.policeStation} onChange={handleChange} />
+                <label>Police Station *</label>
+                <input type="text" name="policeStation" value={formData.policeStation} onChange={handleChange} required />
               </div>
               <div className="field">
                 <label>Pincode *</label>
@@ -242,16 +242,16 @@ export default function ApplyMembershipPage() {
           <section className="formSection">
             <h2>Professional Details</h2>
             <div className="field fullWidth">
-              <label>Name of News Agency</label>
-              <input type="text" name="newsAgencyName" value={formData.newsAgencyName} onChange={handleChange} />
+              <label>Name of News Agency *</label>
+              <input type="text" name="newsAgencyName" value={formData.newsAgencyName} onChange={handleChange} required />
             </div>
           </section>
 
           <section className="formSection">
             <h2>Nominee Details</h2>
             <div className="field fullWidth">
-              <label>Name of Nominee</label>
-              <input type="text" name="nomineeName" value={formData.nomineeName} onChange={handleChange} />
+              <label>Name of Nominee *</label>
+              <input type="text" name="nomineeName" value={formData.nomineeName} onChange={handleChange} required />
             </div>
           </section>
 

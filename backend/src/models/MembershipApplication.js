@@ -55,10 +55,12 @@ const membershipApplicationSchema = new mongoose.Schema(
     },
     blockOrNac: {
       type: String,
+      required: true,
       trim: true,
     },
     policeStation: {
       type: String,
+      required: true,
       trim: true,
     },
     pincode: {
@@ -68,10 +70,12 @@ const membershipApplicationSchema = new mongoose.Schema(
     },
     newsAgencyName: {
       type: String,
+      required: true,
       trim: true,
     },
     nomineeName: {
       type: String,
+      required: true,
       trim: true,
     },
     photo: {

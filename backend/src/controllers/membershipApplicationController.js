@@ -44,7 +44,11 @@ export const createApplication = asyncHandler(async (req, res) => {
     !email ||
     !address ||
     !district ||
+    !blockOrNac ||
+    !policeStation ||
     !pincode ||
+    !newsAgencyName ||
+    !nomineeName ||
     !paymentDate ||
     !paymentUtr ||
     declarationAccepted !== "true" ||
