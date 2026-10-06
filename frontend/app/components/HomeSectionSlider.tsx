@@ -8,15 +8,15 @@ type Props = {
   title: string;
   items: any[];
   type:
-    | "members"
-    | "memberNewsChannels"
-    | "mentors"
-    | "supremeCouncil"
-    | "womenCell"
-    | "articles"
-    | "videos"
-    | "srbMembers"
-    | "gallery";
+  | "members"
+  | "memberNewsChannels"
+  | "mentors"
+  | "supremeCouncil"
+  | "womenCell"
+  | "articles"
+  | "videos"
+  | "srbMembers"
+  | "gallery";
   badge?: string;
 };
 

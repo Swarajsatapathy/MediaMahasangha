@@ -15,7 +15,7 @@ async function fetchFromAPI<T>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<T | null> {
-  const { revalidate = 60, timeout = 12000 } = options;
+  const { revalidate = 0, timeout = 12000 } = options;
 
   if (!API_URL) {
     console.error("API Error: NEXT_PUBLIC_API_URL is missing");
@@ -87,19 +87,19 @@ export async function getArticles() {
     articles: any[];
     total?: number;
   }>("/api/articles", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
 export async function getFlashArticles() {
   return fetchFromAPI<any[]>("/api/articles/flash", {
-    revalidate: 30,
+    revalidate: 0,
   });
 }
 
 export async function getPresidentPicks() {
   return fetchFromAPI<any[]>("/api/articles/editors-picks", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
@@ -108,13 +108,13 @@ export async function getTrendingArticles() {
     articles: any[];
     total?: number;
   }>("/api/articles?trending=true", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
 export async function getFeaturedArticles() {
   return fetchFromAPI<any[]>("/api/articles/featured", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
@@ -122,7 +122,7 @@ export async function getArticleById(id: string) {
   return fetchFromAPI<any>(
     `/api/articles/${encodeURIComponent(id)}`,
     {
-      revalidate: 60,
+      revalidate: 0,
     }
   );
 }
@@ -136,19 +136,19 @@ export async function getVideos() {
     videos: any[];
     total?: number;
   }>("/api/videos", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
 export async function getFeaturedVideos() {
   return fetchFromAPI<any[]>("/api/videos/featured", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
 export async function getFlashVideos() {
   return fetchFromAPI<any[]>("/api/videos/flash", {
-    revalidate: 30,
+    revalidate: 0,
   });
 }
 
@@ -157,7 +157,7 @@ export async function getPresidentPickVideos() {
     videos: any[];
     total?: number;
   }>("/api/videos?editorsPick=true", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
@@ -166,7 +166,7 @@ export async function getTrendingVideos() {
     videos: any[];
     total?: number;
   }>("/api/videos?trending=true", {
-    revalidate: 60,
+    revalidate: 0,
   });
 }
 
@@ -174,7 +174,7 @@ export async function getVideoById(id: string) {
   return fetchFromAPI<any>(
     `/api/videos/${encodeURIComponent(id)}`,
     {
-      revalidate: 60,
+      revalidate: 0,
     }
   );
 }
@@ -188,7 +188,7 @@ export async function getMembers() {
     members: any[];
     total?: number;
   }>("/api/members", {
-    revalidate: 300,
+    revalidate: 0,
   });
 }
 
@@ -196,7 +196,7 @@ export async function getMemberById(id: string) {
   return fetchFromAPI<any>(
     `/api/members/${encodeURIComponent(id)}`,
     {
-      revalidate: 300,
+      revalidate: 0,
     }
   );
 }
@@ -210,7 +210,7 @@ export async function getMentors() {
     mentors: any[];
     total?: number;
   }>("/api/mentors", {
-    revalidate: 600,
+    revalidate: 0,
   });
 }
 
@@ -218,7 +218,7 @@ export async function getMentorById(id: string) {
   return fetchFromAPI<any>(
     `/api/mentors/${encodeURIComponent(id)}`,
     {
-      revalidate: 600,
+      revalidate: 0,
     }
   );
 }
@@ -232,7 +232,7 @@ export async function getMemberNewsChannels() {
     memberNewsChannels: any[];
     total?: number;
   }>("/api/member-news-channels", {
-    revalidate: 600,
+    revalidate: 0,
   });
 }
 
@@ -240,7 +240,7 @@ export async function getMemberNewsChannelById(id: string) {
   return fetchFromAPI<any>(
     `/api/member-news-channels/${encodeURIComponent(id)}`,
     {
-      revalidate: 600,
+      revalidate: 0,
     }
   );
 }
@@ -254,7 +254,7 @@ export async function getSrbMembers() {
     srbMembers: any[];
     total?: number;
   }>("/api/srb-members", {
-    revalidate: 600,
+    revalidate: 0,
   });
 }
 
@@ -262,7 +262,7 @@ export async function getSrbMemberById(id: string) {
   return fetchFromAPI<any>(
     `/api/srb-members/${encodeURIComponent(id)}`,
     {
-      revalidate: 600,
+      revalidate: 0,
     }
   );
 }
@@ -276,7 +276,7 @@ export async function getSupremeCouncilMembers() {
     members: any[];
     total?: number;
   }>("/api/supreme-council", {
-    revalidate: 600,
+    revalidate: 0,
   });
 }
 
@@ -284,7 +284,7 @@ export async function getSupremeCouncilMemberById(id: string) {
   return fetchFromAPI<any>(
     `/api/supreme-council/${encodeURIComponent(id)}`,
     {
-      revalidate: 600,
+      revalidate: 0,
     }
   );
 }
@@ -298,7 +298,7 @@ export async function getWomenCellMembers() {
     members: any[];
     total?: number;
   }>("/api/women-cell", {
-    revalidate: 600,
+    revalidate: 0,
   });
 }
 
@@ -306,7 +306,7 @@ export async function getWomenCellMemberById(id: string) {
   return fetchFromAPI<any>(
     `/api/women-cell/${encodeURIComponent(id)}`,
     {
-      revalidate: 600,
+      revalidate: 0,
     }
   );
 }
@@ -320,7 +320,7 @@ export async function getGalleryItems() {
     galleryItems: any[];
     total?: number;
   }>("/api/gallery", {
-    revalidate: 120,
+    revalidate: 0,
   });
 }
 
@@ -328,7 +328,7 @@ export async function getGalleryItemById(id: string) {
   return fetchFromAPI<any>(
     `/api/gallery/${encodeURIComponent(id)}`,
     {
-      revalidate: 120,
+      revalidate: 0,
     }
   );
 }
