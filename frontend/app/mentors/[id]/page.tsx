@@ -18,14 +18,14 @@ export async function generateMetadata({ params }: PageProps) {
 
   const description = mentor
     ? `${mentor.name} - ${mentor.designation}, ${mentor.district}`
-    : "ODMM Mentor Profile";
+    : "ODMM Advisory Board Profile";
 
   return {
-    title: mentor?.name || "ODMM Mentor",
+    title: mentor?.name || "ODMM Advisory Board",
     description,
 
     openGraph: {
-      title: mentor?.name || "ODMM Mentor",
+      title: mentor?.name || "ODMM Advisory Board",
       description,
       url: `${siteUrl}/mentors/${id}`,
       siteName: "ODMM - Odisha Digital Media Mahasangha",
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PageProps) {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: mentor?.name || "ODMM Mentor",
+          alt: mentor?.name || "ODMM Advisory Board",
         },
       ],
       type: "profile",
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps) {
 
     twitter: {
       card: "summary_large_image",
-      title: mentor?.name || "ODMM Mentor",
+      title: mentor?.name || "ODMM Advisory Board",
       description,
       images: [imageUrl],
     },
@@ -57,7 +57,7 @@ export default async function MentorDetailsPage({ params }: PageProps) {
     return (
       <main className="detailsPage">
         <div className="detailsContainer">
-          <h1>Mentor or founding member not found</h1>
+          <h1>Advisory Board member not found</h1>
           <p>The profile may have been deleted or is unavailable.</p>
         </div>
       </main>
@@ -71,7 +71,7 @@ export default async function MentorDetailsPage({ params }: PageProps) {
           {mentor.photo?.url ? (
             <img src={mentor.photo.url} alt={mentor.name} />
           ) : (
-            <span>{mentor.name?.charAt(0)?.toUpperCase() || "M"}</span>
+            <span>{mentor.name?.charAt(0)?.toUpperCase() || "A"}</span>
           )}
         </div>
 
@@ -79,7 +79,7 @@ export default async function MentorDetailsPage({ params }: PageProps) {
 
           <h1>{mentor.name}</h1>
 
-          <SocialShare title={`${mentor.name} - ODMM Mentor or Founder`} />
+          <SocialShare title={`${mentor.name} - ODMM Advisory Board`} />
 
           <div className="memberDetailsRows">
 

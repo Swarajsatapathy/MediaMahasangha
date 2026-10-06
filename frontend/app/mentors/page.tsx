@@ -4,8 +4,8 @@ import { getMentors } from "../../lib/api";
 export const revalidate = 600;
 
 export const metadata = {
-  title: "Mentors | ODMM",
-  description: "Mentors of Odisha Digital Media Mahasangha",
+  title: "Advisory Board | ODMM",
+  description: "Advisory Board of Odisha Digital Media Mahasangha",
 };
 
 export default async function MentorsPage() {
@@ -25,8 +25,8 @@ export default async function MentorsPage() {
   return (
     <main className="listingPage">
       <section className="listingHeader">
-        <h1>Mentors & Founders</h1>
-        <p>Our Mentors & Founders</p>
+        <h1>Advisory Board</h1>
+        <p>Advisory Board of Odisha Digital Media Mahasangha</p>
       </section>
 
       <section className="membersListingGrid">
@@ -67,7 +67,7 @@ export default async function MentorsPage() {
             </Link>
           ))
         ) : (
-          <p className="emptyListing">No mentors or founders available.</p>
+          <p className="emptyListing">No advisory board members available.</p>
         )}
       </section>
     </main>

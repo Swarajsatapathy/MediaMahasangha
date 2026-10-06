@@ -178,26 +178,43 @@ a {
 
 .navBar {
   background: var(--navy);
-  padding: 0 8%;
+  padding: 0 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 58px;
+  justify-content: flex-start;
+  gap: 2px;
+  min-height: 52px;
   overflow-x: auto;
   box-shadow: 0 6px 18px rgba(0, 51, 102, 0.22);
+  scrollbar-width: thin;
+  scrollbar-color: var(--yellow) transparent;
+}
+
+@media (min-width: 1440px) {
+  .navBar {
+    justify-content: center;
+    gap: 6px;
+  }
 }
 
 .navBar a {
   color: #ffffff;
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: 0.2px;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.1px;
   white-space: nowrap;
   cursor: pointer;
-  padding: 13px 20px;
+  padding: 11px 12px;
   border-radius: 6px;
-  transition: 0.25s ease;
+  transition: 0.2s ease;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1440px) {
+  .navBar a {
+    font-size: 14.5px;
+    padding: 11px 15px;
+  }
 }
 
 .navBar a:hover {

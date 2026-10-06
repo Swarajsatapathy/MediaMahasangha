@@ -41,7 +41,7 @@ export default function MobileNav() {
   Self Regulatory Body
 </Link>
               <Link href="/mentors" onClick={() => setOpen(false)}>
-  Mentors & Founders
+  Advisory Board
 </Link>
               <Link href="/supreme-council" onClick={() => setOpen(false)}>
   Supreme Council

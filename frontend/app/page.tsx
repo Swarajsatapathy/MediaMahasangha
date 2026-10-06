@@ -213,7 +213,7 @@ export default async function HomePage() {
         />
 
         <HomeSectionSlider
-          title="Mentors & Founders"
+          title="Advisory Board"
           items={mentors}
           type="mentors"
         />

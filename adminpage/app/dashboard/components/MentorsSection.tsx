@@ -208,8 +208,8 @@ export default function MentorsSection() {
     <section className="mentorsSection">
       <div className="sectionTop">
         <div>
-          <h1>Mentors</h1>
-          <p>Create and manage mentors</p>
+          <h1>Advisory Board</h1>
+          <p>Create and manage advisory board members</p>
         </div>
       </div>
 
@@ -217,7 +217,11 @@ export default function MentorsSection() {
 
       <div className="grid">
         <form className="card" onSubmit={handleSubmitMentor}>
-          <h2>{editingMentorId ? "Edit Mentor" : "Create Mentor"}</h2>
+          <h2>
+            {editingMentorId
+              ? "Edit Advisory Board Member"
+              : "Create Advisory Board Member"}
+          </h2>
 
           <input
             type="number"
@@ -229,7 +233,7 @@ export default function MentorsSection() {
 
           <input
             type="text"
-            placeholder="Mentor name"
+            placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -284,8 +288,8 @@ export default function MentorsSection() {
                 ? "Updating..."
                 : "Creating..."
               : editingMentorId
-              ? "Update Mentor"
-              : "Create Mentor"}
+              ? "Update Member"
+              : "Create Member"}
           </button>
 
           {editingMentorId && (
@@ -296,11 +300,11 @@ export default function MentorsSection() {
         </form>
 
         <div className="card">
-          <h2>Mentors ({mentors.length})</h2>
+          <h2>Advisory Board ({mentors.length})</h2>
 
           <div className="list">
             {mentors.length === 0 ? (
-              <p className="empty">No mentors found.</p>
+              <p className="empty">No advisory board members found.</p>
             ) : (
               mentors.map((mentor) => (
                 <div className="item" key={mentor._id}>

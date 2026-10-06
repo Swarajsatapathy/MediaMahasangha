@@ -23,7 +23,7 @@ export default function Footer() {
           <Link href="/contact-us">Contact Us</Link>
           <Link href="/member-news-channels">Member News Channels</Link>
           <Link href="/self-regulatory-body">Self Regulatory Body</Link>
-          <Link href="/mentors">Mentors & Founders</Link>
+          <Link href="/mentors">Advisory Board</Link>
           <Link href="/supreme-council">Supreme Council</Link>
           <Link href="/women-cell">Women Cell</Link>
           <Link href="/members">Management</Link>
