@@ -8,6 +8,7 @@ import {
   getMembers,
   getMentors,
   getSupremeCouncilMembers,
+  getWomenCellMembers,
   getMemberNewsChannels,
   getSrbMembers,
   getGalleryItems,
@@ -49,6 +50,7 @@ export default async function HomePage() {
     membersResult,
     mentorsResult,
     supremeCouncilResult,
+    womenCellResult,
     srbMembersResult,
     memberNewsChannelsResult,
     galleryResult,
@@ -59,6 +61,7 @@ export default async function HomePage() {
     getMembers(),
     getMentors(),
     getSupremeCouncilMembers(),
+    getWomenCellMembers(),
     getSrbMembers(),
     getMemberNewsChannels(),
     getGalleryItems(),
@@ -83,6 +86,10 @@ export default async function HomePage() {
   });
 
   const supremeCouncilData = getResultValue<any>(supremeCouncilResult, {
+    members: [],
+  });
+
+  const womenCellData = getResultValue<any>(womenCellResult, {
     members: [],
   });
 
@@ -132,6 +139,15 @@ export default async function HomePage() {
     : supremeCouncilData?.members || [];
 
   const supremeCouncilMembers = [...rawSupremeCouncil].sort(
+    (a: any, b: any) =>
+      (a.serialNumber || 9999) - (b.serialNumber || 9999)
+  );
+
+  const rawWomenCell: any[] = Array.isArray(womenCellData)
+    ? womenCellData
+    : womenCellData?.members || [];
+
+  const womenCellMembers = [...rawWomenCell].sort(
     (a: any, b: any) =>
       (a.serialNumber || 9999) - (b.serialNumber || 9999)
   );
@@ -206,6 +222,12 @@ export default async function HomePage() {
           title="Supreme Council"
           items={supremeCouncilMembers}
           type="supremeCouncil"
+        />
+
+        <HomeSectionSlider
+          title="State Women Cell"
+          items={womenCellMembers}
+          type="womenCell"
         />
 
         <HomeSectionSlider

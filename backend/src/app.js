@@ -13,6 +13,7 @@ import mentorRoutes from "./routes/mentorRoutes.js";
 import memberNewsChannelRoutes from "./routes/memberNewsChannelRoutes.js";
 import srbMemberRoutes from "./routes/srbMemberRoutes.js";
 import supremeCouncilRoutes from "./routes/supremeCouncilRoutes.js";
+import womenCellRoutes from "./routes/womenCellRoutes.js";
 import galleryRoutes from "./routes/galleryRoutes.js";
 import membershipApplicationRoutes from "./routes/membershipApplicationRoutes.js";
 
@@ -114,6 +115,7 @@ app.use("/api/locations", locationRoutes);
 app.use("/api/member-news-channels", memberNewsChannelRoutes);
 app.use("/api/srb-members", srbMemberRoutes);
 app.use("/api/supreme-council", supremeCouncilRoutes);
+app.use("/api/women-cell", womenCellRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/membership-applications", membershipApplicationRoutes);
 

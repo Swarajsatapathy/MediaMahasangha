@@ -290,6 +290,28 @@ export async function getSupremeCouncilMemberById(id: string) {
 }
 
 /* ======================================================
+   WOMEN CELL
+====================================================== */
+
+export async function getWomenCellMembers() {
+  return fetchFromAPI<{
+    members: any[];
+    total?: number;
+  }>("/api/women-cell", {
+    revalidate: 600,
+  });
+}
+
+export async function getWomenCellMemberById(id: string) {
+  return fetchFromAPI<any>(
+    `/api/women-cell/${encodeURIComponent(id)}`,
+    {
+      revalidate: 600,
+    }
+  );
+}
+
+/* ======================================================
    GALLERY
 ====================================================== */
 

@@ -12,6 +12,7 @@ type Props = {
     | "memberNewsChannels"
     | "mentors"
     | "supremeCouncil"
+    | "womenCell"
     | "articles"
     | "videos"
     | "srbMembers"
@@ -320,6 +321,55 @@ export default function HomeSectionSlider({
               </Link>
             ) : (
               <p>No supreme council members available</p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "womenCell") {
+    return (
+      <section className="homeBlock">
+        <div className="blockHeader">
+          <h2>{title}</h2>
+
+          <div className="arrows">
+            <button type="button" onClick={prev} aria-label="Previous">
+              <FaChevronLeft />
+            </button>
+
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
+          </div>
+        </div>
+
+        <div className="sliderStage">
+          <div
+            key={item?._id || index}
+            className={`sliderAnimatedCard ${direction}`}
+          >
+            {item ? (
+              <Link href={`/women-cell/${item._id}`} className="memberHomeCard">
+                <div className="memberPhotoBox">
+                  {item.photo?.url ? (
+                    <img src={item.photo.url} alt={item.name} />
+                  ) : (
+                    <span>{item.name?.charAt(0)?.toUpperCase() || "W"}</span>
+                  )}
+                </div>
+
+                <div className="memberInfo">
+                  <h3>{item.name}</h3>
+
+                  <p>{item.designation}</p>
+
+                  <span>{item.district}</span>
+                </div>
+              </Link>
+            ) : (
+              <p>No women cell members available</p>
             )}
           </div>
         </div>
