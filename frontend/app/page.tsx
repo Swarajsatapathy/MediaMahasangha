@@ -7,6 +7,7 @@ import {
   getVideos,
   getMembers,
   getMentors,
+  getSupremeCouncilMembers,
   getMemberNewsChannels,
   getSrbMembers,
   getGalleryItems,
@@ -47,6 +48,7 @@ export default async function HomePage() {
     videosResult,
     membersResult,
     mentorsResult,
+    supremeCouncilResult,
     srbMembersResult,
     memberNewsChannelsResult,
     galleryResult,
@@ -56,6 +58,7 @@ export default async function HomePage() {
     getVideos(),
     getMembers(),
     getMentors(),
+    getSupremeCouncilMembers(),
     getSrbMembers(),
     getMemberNewsChannels(),
     getGalleryItems(),
@@ -77,6 +80,10 @@ export default async function HomePage() {
 
   const mentorsData = getResultValue<any>(mentorsResult, {
     mentors: [],
+  });
+
+  const supremeCouncilData = getResultValue<any>(supremeCouncilResult, {
+    members: [],
   });
 
   const srbMembersData = getResultValue<any>(srbMembersResult, {
@@ -116,6 +123,15 @@ export default async function HomePage() {
     : flashData?.flashArticles || flashData?.articles || [];
 
   const mentors = [...(mentorsData?.mentors || [])].sort(
+    (a: any, b: any) =>
+      (a.serialNumber || 9999) - (b.serialNumber || 9999)
+  );
+
+  const rawSupremeCouncil: any[] = Array.isArray(supremeCouncilData)
+    ? supremeCouncilData
+    : supremeCouncilData?.members || [];
+
+  const supremeCouncilMembers = [...rawSupremeCouncil].sort(
     (a: any, b: any) =>
       (a.serialNumber || 9999) - (b.serialNumber || 9999)
   );
@@ -184,6 +200,12 @@ export default async function HomePage() {
           title="Mentors & Founders"
           items={mentors}
           type="mentors"
+        />
+
+        <HomeSectionSlider
+          title="Supreme Council"
+          items={supremeCouncilMembers}
+          type="supremeCouncil"
         />
 
         <HomeSectionSlider

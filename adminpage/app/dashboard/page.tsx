@@ -6,6 +6,7 @@ import ArticlesSection from "./components/ArticlesSection";
 import VideosSection from "./components/VideosSection";
 import MembersSection from "./components/MembersSection";
 import MentorsSection from "./components/MentorsSection";
+import SupremeCouncilSection from "./components/SupremeCouncilSection";
 import MemberNewsChannelsSection from "./components/MemberNewsChannelSection";
 import SRBMemberSection from "./components/SRBMemberSection";
 import GallerySection from "./components/GallerySection";
@@ -23,9 +24,115 @@ type ActiveTab =
   | "members"
   | "membership-applications"
   | "mentors"
+  | "supreme-council"
   | "member-news-channels"
   | "srb-members"
   | "gallery";
+
+type TabConfig = {
+  id: ActiveTab;
+  label: string;
+  icon: React.ReactNode;
+};
+
+const TABS: TabConfig[] = [
+  {
+    id: "articles",
+    label: "Articles",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+        <path d="M18 14h-8" />
+        <path d="M15 18h-5" />
+        <path d="M10 6h8v4h-8V6Z" />
+      </svg>
+    ),
+  },
+  {
+    id: "videos",
+    label: "Video News",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7" />
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+      </svg>
+    ),
+  },
+  {
+    id: "members",
+    label: "Members",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    id: "membership-applications",
+    label: "Applications",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+        <path d="M9 14h6" />
+        <path d="M9 18h6" />
+        <path d="M9 10h6" />
+      </svg>
+    ),
+  },
+  {
+    id: "mentors",
+    label: "Mentors",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+    ),
+  },
+  {
+    id: "supreme-council",
+    label: "Supreme Council",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: "member-news-channels",
+    label: "News Channels",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="7" width="20" height="15" rx="2" ry="2" />
+        <polyline points="17 2 12 7 7 2" />
+      </svg>
+    ),
+  },
+  {
+    id: "srb-members",
+    label: "SRB Members",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    ),
+  },
+  {
+    id: "gallery",
+    label: "Gallery",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      </svg>
+    ),
+  },
+];
 
 function DashboardContent() {
   const router = useRouter();
@@ -106,80 +213,31 @@ function DashboardContent() {
 
       <section className="content">
         <nav className="tabBar">
-          <button
-            className={activeTab === "articles" ? "active" : ""}
-            onClick={() => setActiveTab("articles")}
-          >
-            Articles
-          </button>
-
-          <button
-            className={activeTab === "videos" ? "active" : ""}
-            onClick={() => setActiveTab("videos")}
-          >
-            Video News
-          </button>
-
-          <button
-            className={activeTab === "members" ? "active" : ""}
-            onClick={() => setActiveTab("members")}
-          >
-            Members
-          </button>
-
-          <button
-            className={activeTab === "membership-applications" ? "active" : ""}
-            onClick={() => setActiveTab("membership-applications")}
-          >
-            Membership Applications
-          </button>
-
-          <button
-            className={activeTab === "mentors" ? "active" : ""}
-            onClick={() => setActiveTab("mentors")}
-          >
-            Mentors
-          </button>
-
-          <button
-            className={activeTab === "member-news-channels" ? "active" : ""}
-            onClick={() => setActiveTab("member-news-channels")}
-          >
-            Member News Channels
-          </button>
-
-          <button
-            className={activeTab === "srb-members" ? "active" : ""}
-            onClick={() => setActiveTab("srb-members")}
-          >
-            SRB Members
-          </button>
-
-          <button
-            className={activeTab === "gallery" ? "active" : ""}
-            onClick={() => setActiveTab("gallery")}
-          >
-            Gallery
-          </button>
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                className={`tabBtn ${isActive ? "active" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
+                type="button"
+              >
+                <span className="tabIcon">{tab.icon}</span>
+                <span className="tabText">{tab.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         <div className="section">
           {activeTab === "articles" && <ArticlesSection />}
-
           {activeTab === "videos" && <VideosSection />}
-
           {activeTab === "members" && <MembersSection />}
-
           {activeTab === "membership-applications" && <MembershipApplicationsSection />}
-
           {activeTab === "mentors" && <MentorsSection />}
-
-          {activeTab === "member-news-channels" && (
-            <MemberNewsChannelsSection />
-          )}
-
+          {activeTab === "supreme-council" && <SupremeCouncilSection />}
+          {activeTab === "member-news-channels" && <MemberNewsChannelsSection />}
           {activeTab === "srb-members" && <SRBMemberSection />}
-
           {activeTab === "gallery" && <GallerySection />}
         </div>
       </section>
@@ -247,6 +305,7 @@ function DashboardContent() {
           border-radius: 9px;
           cursor: pointer;
           font-weight: 600;
+          transition: all 0.2s ease;
         }
 
         .right button:hover {
@@ -255,7 +314,7 @@ function DashboardContent() {
         }
 
         .content {
-          max-width: 1320px;
+          max-width: 1360px;
           margin: 0 auto;
           padding: 28px 24px;
         }
@@ -264,59 +323,84 @@ function DashboardContent() {
           background: #101827;
           border: 1px solid #223047;
           border-radius: 14px;
-          padding: 8px;
+          padding: 6px;
           display: flex;
-          gap: 8px;
+          gap: 6px;
           margin-bottom: 24px;
-          white-space: nowrap;
+          overflow-x: auto;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 213, 255, 0.25) transparent;
         }
 
-        .tabBar button {
+        .tabBar::-webkit-scrollbar {
+          height: 4px;
+        }
+
+        .tabBar::-webkit-scrollbar-track {
           background: transparent;
-          color: #9db4da;
-          border: none;
-          padding: 12px 22px;
+        }
+
+        .tabBar::-webkit-scrollbar-thumb {
+          background: rgba(0, 213, 255, 0.25);
+          border-radius: 4px;
+        }
+
+        .tabBtn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: transparent;
+          color: #8ea2c4;
+          border: 1px solid transparent;
+          padding: 11px 18px;
           border-radius: 10px;
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 700;
           cursor: pointer;
           flex-shrink: 0;
+          white-space: nowrap;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .tabBar button.active {
-          background: #00d5ff;
+        .tabIcon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0.75;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .tabBtn:hover {
+          background: rgba(255, 255, 255, 0.04);
+          color: #ffffff;
+          border-color: rgba(42, 58, 88, 0.5);
+        }
+
+        .tabBtn:hover .tabIcon {
+          opacity: 1;
+          color: #00d5ff;
+          transform: scale(1.1);
+        }
+
+        .tabBtn.active {
+          background: linear-gradient(135deg, #00d5ff 0%, #009acc 100%);
+          color: #06111f;
+          border-color: rgba(0, 213, 255, 0.6);
+          box-shadow: 0 2px 14px rgba(0, 213, 255, 0.35);
+        }
+
+        .tabBtn.active .tabIcon {
+          opacity: 1;
           color: #06111f;
         }
 
-        .tabBar button:hover {
-          background: #122236;
-          color: #ffffff;
-        }
-
-        .tabBar button.active:hover {
-          background: #00d5ff;
+        .tabBtn.active:hover {
+          background: linear-gradient(135deg, #00e1ff 0%, #00a8e0 100%);
           color: #06111f;
         }
 
         .section {
           min-height: 500px;
-        }
-
-        .placeholder {
-          background: #101827;
-          border: 1px solid #223047;
-          border-radius: 16px;
-          padding: 28px;
-        }
-
-        .placeholder h2 {
-          margin: 0 0 8px;
-          font-size: 22px;
-        }
-
-        .placeholder p {
-          margin: 0;
-          color: #8ea2c4;
         }
 
         @media (max-width: 700px) {
@@ -344,3 +428,4 @@ export default function DashboardPage() {
     </Suspense>
   );
 }
+

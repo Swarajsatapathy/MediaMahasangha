@@ -268,6 +268,28 @@ export async function getSrbMemberById(id: string) {
 }
 
 /* ======================================================
+   SUPREME COUNCIL
+====================================================== */
+
+export async function getSupremeCouncilMembers() {
+  return fetchFromAPI<{
+    members: any[];
+    total?: number;
+  }>("/api/supreme-council", {
+    revalidate: 600,
+  });
+}
+
+export async function getSupremeCouncilMemberById(id: string) {
+  return fetchFromAPI<any>(
+    `/api/supreme-council/${encodeURIComponent(id)}`,
+    {
+      revalidate: 600,
+    }
+  );
+}
+
+/* ======================================================
    GALLERY
 ====================================================== */
 
