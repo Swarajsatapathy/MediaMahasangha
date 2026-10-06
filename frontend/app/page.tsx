@@ -200,22 +200,15 @@ export default async function HomePage() {
 
       <section className="homeGrid">
         <HomeSectionSlider
-          title="Member News Channels"
-          items={memberNewsChannels}
-          type="memberNewsChannels"
-          badge="Latest"
+          title="Members"
+          items={members}
+          type="members"
         />
 
         <HomeSectionSlider
-          title="SRB Members"
-          items={srbMembers}
-          type="srbMembers"
-        />
-
-        <HomeSectionSlider
-          title="Advisory Board"
-          items={mentors}
-          type="mentors"
+          title="Women Cell"
+          items={womenCellMembers}
+          type="womenCell"
         />
 
         <HomeSectionSlider
@@ -225,15 +218,22 @@ export default async function HomePage() {
         />
 
         <HomeSectionSlider
-          title="State Women Cell"
-          items={womenCellMembers}
-          type="womenCell"
+          title="Advisory Board"
+          items={mentors}
+          type="mentors"
         />
 
         <HomeSectionSlider
-          title="Management"
-          items={members}
-          type="members"
+          title="Self Regulatory Body (SRB)"
+          items={srbMembers}
+          type="srbMembers"
+        />
+
+        <HomeSectionSlider
+          title="Member News Channel"
+          items={memberNewsChannels}
+          type="memberNewsChannels"
+          badge="Latest"
         />
 
         <HomeSectionSlider
@@ -244,7 +244,7 @@ export default async function HomePage() {
         />
 
         <HomeSectionSlider
-          title="Messages"
+          title="Video Message"
           items={videos}
           type="videos"
           badge="Video"

@@ -32,7 +32,6 @@ export const createApplication = asyncHandler(async (req, res) => {
     paymentDate,
     paymentUtr,
     declarationAccepted,
-    paymentConfirmationAccepted,
   } = req.body;
 
   if (
@@ -51,8 +50,7 @@ export const createApplication = asyncHandler(async (req, res) => {
     !nomineeName ||
     !paymentDate ||
     !paymentUtr ||
-    declarationAccepted !== "true" ||
-    paymentConfirmationAccepted !== "true"
+    declarationAccepted !== "true"
   ) {
     throw new ApiError(400, "All required fields must be provided.");
   }
@@ -121,7 +119,6 @@ export const createApplication = asyncHandler(async (req, res) => {
     paymentAmount: 300,
     paymentDate,
     paymentUtr,
-    paymentConfirmationAccepted: true,
     paymentStatus: "PENDING_VERIFICATION",
     applicationStatus: "PENDING",
   });

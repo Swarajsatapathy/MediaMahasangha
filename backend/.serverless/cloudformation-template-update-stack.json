@@ -178,7 +178,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/odmm-backend/prod/1791266877359-2026-10-06T06:07:57.359Z/odmm-backend.zip"
+          "S3Key": "serverless/odmm-backend/prod/1791287014093-2026-10-06T11:43:34.093Z/odmm-backend.zip"
         },
         "Handler": "lambda.handler",
         "Runtime": "nodejs20.x",
@@ -211,14 +211,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionpknh5yYwLGqYv8AcgBHP5SH6qM5brCgabvyDpJgWL90": {
+    "ApiLambdaVersione4kcPqltViFnOxsbUybt0NE3z5w6grVUqOGhb2KGI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "r1v+e4W0NVeoypcJCaKEb2uy4O8MpFHUaPW1QxN84ds="
+        "CodeSha256": "3yaJhdHeaGrBhPejAgHaB4emUJvF9Yno5ziIkHisWPQ="
       }
     },
     "HttpApi": {
@@ -374,7 +374,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionpknh5yYwLGqYv8AcgBHP5SH6qM5brCgabvyDpJgWL90"
+        "Ref": "ApiLambdaVersione4kcPqltViFnOxsbUybt0NE3z5w6grVUqOGhb2KGI"
       },
       "Export": {
         "Name": "sls-odmm-backend-prod-ApiLambdaFunctionQualifiedArn"

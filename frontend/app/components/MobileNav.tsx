@@ -34,29 +34,29 @@ export default function MobileNav() {
               <Link href="/about-us" onClick={() => setOpen(false)}>
   About Us
 </Link>
-              <Link href="/member-news-channels" onClick={() => setOpen(false)}>
-  Member News Channels
-</Link>
-              <Link href="/self-regulatory-body" onClick={() => setOpen(false)}>
-  Self Regulatory Body
-</Link>
-              <Link href="/mentors" onClick={() => setOpen(false)}>
-  Advisory Board
-</Link>
-              <Link href="/supreme-council" onClick={() => setOpen(false)}>
-  Supreme Council
+              <Link href="/members" onClick={() => setOpen(false)}>
+  Members
 </Link>
               <Link href="/women-cell" onClick={() => setOpen(false)}>
   Women Cell
 </Link>
-              <Link href="/members" onClick={() => setOpen(false)}>
-  Management
+              <Link href="/supreme-council" onClick={() => setOpen(false)}>
+  Supreme Council
+</Link>
+              <Link href="/mentors" onClick={() => setOpen(false)}>
+  Advisory Board
+</Link>
+              <Link href="/self-regulatory-body" onClick={() => setOpen(false)}>
+  Self Regulatory Body (SRB)
+</Link>
+              <Link href="/member-news-channels" onClick={() => setOpen(false)}>
+  Member News Channel
 </Link>
               <Link href="/web-news" onClick={() => setOpen(false)}>
   Web News
 </Link>
               <Link href="/messages" onClick={() => setOpen(false)}>
-    Messages
+  Video Message
 </Link>
               <Link href="/gallery" onClick={() => setOpen(false)}>
   Gallery

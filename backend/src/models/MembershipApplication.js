@@ -109,10 +109,6 @@ const membershipApplicationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    paymentConfirmationAccepted: {
-      type: Boolean,
-      required: true,
-    },
     paymentStatus: {
       type: String,
       enum: ["PENDING_VERIFICATION", "VERIFIED", "REJECTED"],

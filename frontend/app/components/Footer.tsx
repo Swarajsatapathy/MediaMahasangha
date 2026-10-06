@@ -19,17 +19,18 @@ export default function Footer() {
 
         <div className="footerLinks">
           <h4>QUICK LINKS</h4>
+          <Link href="/">Home</Link>
           <Link href="/about-us">About Us</Link>
-          <Link href="/contact-us">Contact Us</Link>
-          <Link href="/member-news-channels">Member News Channels</Link>
-          <Link href="/self-regulatory-body">Self Regulatory Body</Link>
-          <Link href="/mentors">Advisory Board</Link>
-          <Link href="/supreme-council">Supreme Council</Link>
+          <Link href="/members">Members</Link>
           <Link href="/women-cell">Women Cell</Link>
-          <Link href="/members">Management</Link>
+          <Link href="/supreme-council">Supreme Council</Link>
+          <Link href="/mentors">Advisory Board</Link>
+          <Link href="/self-regulatory-body">Self Regulatory Body (SRB)</Link>
+          <Link href="/member-news-channels">Member News Channel</Link>
           <Link href="/web-news">Web News</Link>
-          <Link href="/messages">Messages</Link>
+          <Link href="/messages">Video Message</Link>
           <Link href="/gallery">Gallery</Link>
+          <Link href="/contact-us">Contact Us</Link>
         </div>
 
         <div className="footerContact">
