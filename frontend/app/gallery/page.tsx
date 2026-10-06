@@ -23,13 +23,16 @@ export default async function GalleryPage() {
               key={item._id}
             >
               {item.photo?.url && (
-                <img src={item.photo.url} alt={item.area} />
+                <img
+                  src={item.photo.url}
+                  alt={item.description || item.district || "Gallery"}
+                />
               )}
 
               <div className="listingBody">
                 <span>Gallery</span>
 
-                <h2>{item.area}</h2>
+                <h2>{item.description}</h2>
 
                 <p>
                   {item.district}

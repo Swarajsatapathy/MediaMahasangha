@@ -16,12 +16,6 @@ const gallerySchema = new mongoose.Schema(
       trim: true,
     },
 
-    area: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
     photo: {
       url: {
         type: String,

@@ -6,7 +6,6 @@ type GalleryItem = {
   _id: string;
   description: string;
   district: string;
-  area: string;
   photo?: {
     url: string;
     key: string;
@@ -20,7 +19,6 @@ export default function GallerySection() {
 
   const [description, setDescription] = useState("");
   const [district, setDistrict] = useState("");
-  const [area, setArea] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
 
   const [editingGalleryId, setEditingGalleryId] = useState<string | null>(null);
@@ -64,7 +62,6 @@ export default function GallerySection() {
   const resetForm = () => {
     setDescription("");
     setDistrict("");
-    setArea("");
     setPhoto(null);
     setEditingGalleryId(null);
 
@@ -76,7 +73,6 @@ export default function GallerySection() {
     setEditingGalleryId(item._id);
     setDescription(item.description || "");
     setDistrict(item.district || "");
-    setArea(item.area || "");
     setPhoto(null);
 
     const fileInput = document.getElementById("gallery-photo") as HTMLInputElement;
@@ -98,8 +94,8 @@ export default function GallerySection() {
       return;
     }
 
-    if (!description || !district || !area) {
-      setMessage("Description, district and area are required.");
+    if (!description || !district) {
+      setMessage("Description and district are required.");
       return;
     }
 
@@ -116,7 +112,6 @@ export default function GallerySection() {
 
       formData.append("description", description);
       formData.append("district", district);
-      formData.append("area", area);
 
       if (photo) {
         formData.append("photo", photo);
@@ -233,14 +228,6 @@ export default function GallerySection() {
             ))}
           </select>
 
-          <input
-            type="text"
-            placeholder="Area"
-            value={area}
-            onChange={(e) => setArea(e.target.value)}
-            required
-          />
-
           <label className="label">
             Photo {editingGalleryId ? "(upload only if you want to change)" : ""}
           </label>
@@ -287,8 +274,6 @@ export default function GallerySection() {
                   </div>
 
                   <div className="details">
-                    <h3>{item.area}</h3>
-
                     <p>{item.description}</p>
 
                     <p>

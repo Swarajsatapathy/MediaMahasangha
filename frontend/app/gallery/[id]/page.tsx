@@ -23,12 +23,16 @@ export async function generateMetadata({ params }: PageProps) {
       ?.replace(/\s+/g, " ")
       ?.slice(0, 160) || "Photo Gallery of Odisha Digital Media Mahasangha.";
 
+  const title = galleryItem?.district
+    ? `${galleryItem.district} Gallery | ODMM`
+    : "ODMM Gallery";
+
   return {
-    title: galleryItem?.area || "ODMM Gallery",
+    title,
     description,
 
     openGraph: {
-      title: galleryItem?.area || "ODMM Gallery",
+      title,
       description,
       url: `${siteUrl}/gallery/${id}`,
       siteName: "ODMM - Odisha Digital Media Mahasangha",
@@ -37,7 +41,7 @@ export async function generateMetadata({ params }: PageProps) {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: galleryItem?.area || "ODMM Gallery",
+          alt: galleryItem?.district || "ODMM Gallery",
         },
       ],
       type: "article",
@@ -45,7 +49,7 @@ export async function generateMetadata({ params }: PageProps) {
 
     twitter: {
       card: "summary_large_image",
-      title: galleryItem?.area || "ODMM Gallery",
+      title,
       description,
       images: [imageUrl],
     },
@@ -72,11 +76,10 @@ export default async function GalleryDetailsPage({ params }: PageProps) {
       <article className="detailsContainer">
         <div className="detailsBadge">Gallery</div>
 
-        <h1>{galleryItem.area}</h1>
+        <h1>{galleryItem.district ? `${galleryItem.district} Gallery` : "ODMM Gallery"}</h1>
 
         <div className="detailsMeta">
           <span>{galleryItem.district}</span>
-          <span>{galleryItem.area}</span>
           {galleryItem.createdAt && (
             <span>
               {new Date(galleryItem.createdAt).toLocaleDateString("en-IN", {
@@ -88,11 +91,14 @@ export default async function GalleryDetailsPage({ params }: PageProps) {
           )}
         </div>
 
-        <SocialShare title={`${galleryItem.area} - ${galleryItem.district}`} />
+        <SocialShare title={`${galleryItem.district || "ODMM"} Gallery - ODMM`} />
 
         {galleryItem.photo?.url && (
           <div className="galleryDetailsPhoto">
-            <img src={galleryItem.photo.url} alt={galleryItem.area} />
+            <img
+              src={galleryItem.photo.url}
+              alt={galleryItem.district || "ODMM Gallery"}
+            />
           </div>
         )}
 

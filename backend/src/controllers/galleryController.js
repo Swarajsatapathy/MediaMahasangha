@@ -6,10 +6,10 @@ import { uploadToS3, deleteFromS3 } from "../utils/s3Upload.js";
 
 // CREATE GALLERY ITEM
 const createGalleryItem = asyncHandler(async (req, res) => {
-  const { description, district, area } = req.body;
+  const { description, district } = req.body;
 
-  if (!description || !district || !area) {
-    throw new ApiError(400, "description, district and area are required");
+  if (!description || !district) {
+    throw new ApiError(400, "description and district are required");
   }
 
   if (!req.file) {
@@ -25,7 +25,6 @@ const createGalleryItem = asyncHandler(async (req, res) => {
   const galleryItem = await Gallery.create({
     description,
     district,
-    area,
     photo: {
       url: uploaded.url,
       key: uploaded.key,
@@ -41,7 +40,6 @@ const createGalleryItem = asyncHandler(async (req, res) => {
 const getGalleryItems = asyncHandler(async (req, res) => {
   const {
     district,
-    area,
     search,
     sortBy = "createdAt",
     order = "desc",
@@ -53,15 +51,10 @@ const getGalleryItems = asyncHandler(async (req, res) => {
     filter.district = district;
   }
 
-  if (area) {
-    filter.area = { $regex: area, $options: "i" };
-  }
-
   if (search) {
     filter.$or = [
       { description: { $regex: search, $options: "i" } },
       { district: { $regex: search, $options: "i" } },
-      { area: { $regex: search, $options: "i" } },
     ];
   }
 
@@ -104,11 +97,10 @@ const updateGalleryItem = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Gallery item not found");
   }
 
-  const { description, district, area } = req.body;
+  const { description, district } = req.body;
 
   if (description !== undefined) galleryItem.description = description;
   if (district !== undefined) galleryItem.district = district;
-  if (area !== undefined) galleryItem.area = area;
 
   if (req.file) {
     if (galleryItem.photo && galleryItem.photo.key) {

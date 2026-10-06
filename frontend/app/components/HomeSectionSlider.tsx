@@ -303,7 +303,10 @@ export default function HomeSectionSlider({
             >
               <div className="galleryHomeImage">
                 {item.photo?.url ? (
-                  <img src={item.photo.url} alt={item.area} />
+                  <img
+                    src={item.photo.url}
+                    alt={item.description || item.district || "Gallery"}
+                  />
                 ) : (
                   <span>Gallery</span>
                 )}
@@ -311,7 +314,7 @@ export default function HomeSectionSlider({
 
               <div className="galleryHomeOverlay">
                 <span>{item.district}</span>
-                <h3>{item.area}</h3>
+                <h3>{item.description}</h3>
               </div>
             </Link>
           ) : (
