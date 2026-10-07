@@ -155,8 +155,6 @@ export default function HomeSectionSlider({
                   {item.mobileNumber && (
                     <p className="memberPhone">📞 {item.mobileNumber}</p>
                   )}
-
-                  {item.email && <p className="memberPhone">✉️ {item.email}</p>}
                 </div>
               </Link>
             ) : (

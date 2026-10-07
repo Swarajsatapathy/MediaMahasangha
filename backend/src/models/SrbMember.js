@@ -35,14 +35,6 @@ const srbMemberSchema = new mongoose.Schema(
       trim: true,
     },
 
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-
     photo: {
       url: {
         type: String,

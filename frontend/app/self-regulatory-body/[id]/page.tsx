@@ -102,10 +102,6 @@ export default async function SrbMemberDetailsPage({ params }: PageProps) {
             </p>
 
             <p>
-              <strong>E-mail ID:</strong> {member.email}
-            </p>
-
-            <p>
               <strong>Status:</strong>{" "}
               {member.isActive ? "Active" : "Inactive"}
             </p>

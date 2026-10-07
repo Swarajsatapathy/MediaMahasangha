@@ -9,7 +9,7 @@ type SRBMember = {
   designation: string;
   district: string;
   mobileNumber: string;
-  email: string;
+  email?: string;
   photo?: {
     url: string;
     key: string;
@@ -26,7 +26,6 @@ export default function SRBMemberSection() {
   const [designation, setDesignation] = useState("");
   const [district, setDistrict] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
-  const [email, setEmail] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
 
@@ -76,7 +75,6 @@ export default function SRBMemberSection() {
     setDesignation("");
     setDistrict("");
     setMobileNumber("");
-    setEmail("");
     setPhoto(null);
     setIsActive(true);
     setEditingSRBMemberId(null);
@@ -95,7 +93,6 @@ export default function SRBMemberSection() {
     setDesignation(member.designation || "");
     setDistrict(member.district || "");
     setMobileNumber(member.mobileNumber || "");
-    setEmail(member.email || "");
     setIsActive(member.isActive ?? true);
     setPhoto(null);
 
@@ -128,8 +125,7 @@ export default function SRBMemberSection() {
       !name ||
       !designation ||
       !district ||
-      !mobileNumber ||
-      !email
+      !mobileNumber
     ) {
       setMessage("All required fields must be filled.");
       return;
@@ -146,7 +142,6 @@ export default function SRBMemberSection() {
       formData.append("designation", designation);
       formData.append("district", district);
       formData.append("mobileNumber", mobileNumber);
-      formData.append("email", email);
       formData.append("isActive", String(isActive));
 
       if (photo) {
@@ -286,23 +281,15 @@ export default function SRBMemberSection() {
           </select>
 
           <input
-  type="tel"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  placeholder="Mobile number"
-  value={mobileNumber}
-  onChange={(e) => {
-    const onlyNumbers = e.target.value.replace(/\D/g, "");
-    setMobileNumber(onlyNumbers);
-  }}
-  required
-/>
-
-          <input
-            type="email"
-            placeholder="Email ID"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Mobile number"
+            value={mobileNumber}
+            onChange={(e) => {
+              const onlyNumbers = e.target.value.replace(/\D/g, "");
+              setMobileNumber(onlyNumbers);
+            }}
             required
           />
 
@@ -369,8 +356,6 @@ export default function SRBMemberSection() {
                     <p>{member.district}</p>
 
                     <p>{member.mobileNumber}</p>
-
-                    <p>{member.email}</p>
 
                     <div className="actions">
                       <span className={member.isActive ? "active" : "inactive"}>

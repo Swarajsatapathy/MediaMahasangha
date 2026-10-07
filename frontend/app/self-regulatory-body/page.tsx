@@ -40,9 +40,9 @@ export default async function SelfRegulatoryBodyPage() {
 
                 <span>{member.district}</span>
 
-                {member.email && (
+                {member.mobileNumber && (
                   <p className="memberListingPhone">
-                    ✉️ {member.email}
+                    📞 {member.mobileNumber}
                   </p>
                 )}
               </div>

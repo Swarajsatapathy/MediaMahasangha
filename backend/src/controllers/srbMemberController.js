@@ -6,8 +6,6 @@ import { uploadToS3, deleteFromS3 } from "../utils/s3Upload.js";
 
 const toBoolean = (value) => value === "true" || value === true;
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 // CREATE SRB MEMBER
 const createSrbMember = asyncHandler(async (req, res) => {
   const {
@@ -16,7 +14,6 @@ const createSrbMember = asyncHandler(async (req, res) => {
     designation,
     district,
     mobileNumber,
-    email,
     isActive,
   } = req.body;
 
@@ -25,12 +22,11 @@ const createSrbMember = asyncHandler(async (req, res) => {
     !name ||
     !designation ||
     !district ||
-    !mobileNumber ||
-    !email
+    !mobileNumber
   ) {
     throw new ApiError(
       400,
-      "serialNumber, name, designation, district, mobileNumber and email are required"
+      "serialNumber, name, designation, district, and mobileNumber are required"
     );
   }
 
@@ -40,24 +36,12 @@ const createSrbMember = asyncHandler(async (req, res) => {
     throw new ApiError(400, "serialNumber must be a valid number greater than 0");
   }
 
-  if (!emailRegex.test(email)) {
-    throw new ApiError(400, "Please provide a valid email address");
-  }
-
   const existingSerialNumber = await SrbMember.findOne({
     serialNumber: parsedSerialNumber,
   });
 
   if (existingSerialNumber) {
     throw new ApiError(409, "Serial number already exists");
-  }
-
-  const existingEmail = await SrbMember.findOne({
-    email: email.toLowerCase(),
-  });
-
-  if (existingEmail) {
-    throw new ApiError(409, "Email ID already exists");
   }
 
   let photo = {
@@ -84,7 +68,6 @@ const createSrbMember = asyncHandler(async (req, res) => {
     designation,
     district,
     mobileNumber,
-    email: email.toLowerCase(),
     photo,
     isActive: isActive === undefined ? true : toBoolean(isActive),
   });
@@ -125,7 +108,6 @@ const getSrbMembers = asyncHandler(async (req, res) => {
       { designation: { $regex: search, $options: "i" } },
       { district: { $regex: search, $options: "i" } },
       { mobileNumber: { $regex: search, $options: "i" } },
-      { email: { $regex: search, $options: "i" } },
     ];
   }
 
@@ -174,7 +156,6 @@ const updateSrbMember = asyncHandler(async (req, res) => {
     designation,
     district,
     mobileNumber,
-    email,
     isActive,
   } = req.body;
 
@@ -200,23 +181,6 @@ const updateSrbMember = asyncHandler(async (req, res) => {
 
       srbMember.serialNumber = parsedSerialNumber;
     }
-  }
-
-  if (email !== undefined && email.toLowerCase() !== srbMember.email) {
-    if (!emailRegex.test(email)) {
-      throw new ApiError(400, "Please provide a valid email address");
-    }
-
-    const existingEmail = await SrbMember.findOne({
-      email: email.toLowerCase(),
-      _id: { $ne: srbMember._id },
-    });
-
-    if (existingEmail) {
-      throw new ApiError(409, "Email ID already exists");
-    }
-
-    srbMember.email = email.toLowerCase();
   }
 
   if (name !== undefined) srbMember.name = name;
