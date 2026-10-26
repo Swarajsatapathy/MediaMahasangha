@@ -9,40 +9,7 @@ import {
 
 const MEMBERS_PER_PAGE = 30;
 
-const DISTRICTS = [
-  "Angul",
-  "Balangir",
-  "Balasore",
-  "Bargarh",
-  "Bhadrak",
-  "Bhubaneswar",
-  "Boudh",
-  "Cuttack",
-  "Deogarh",
-  "Dhenkanal",
-  "Gajapati",
-  "Ganjam",
-  "Jagatsinghpur",
-  "Jajpur",
-  "Jharsuguda",
-  "Kalahandi",
-  "Kandhamal",
-  "Kendrapara",
-  "Keonjhar",
-  "Khordha",
-  "Koraput",
-  "Malkangiri",
-  "Mayurbhanj",
-  "Nabarangpur",
-  "Nayagarh",
-  "Nuapada",
-  "Puri",
-  "Rayagada",
-  "Rourkela",
-  "Sambalpur",
-  "Subarnapur",
-  "Sundargarh",
-];
+import { DISTRICTS, normalizeDistrict } from "../../lib/districts";
 
 type CommitteeFilter = "all" | "state" | "district";
 
@@ -99,7 +66,8 @@ export default function MembersDirectory({
       committeeMembers = members.filter(
         (member) =>
           member.committeeType === "district" &&
-          member.committeeDistrict === selectedDistrict,
+          (member.committeeDistrict === selectedDistrict ||
+            normalizeDistrict(member.committeeDistrict) === selectedDistrict),
       );
     }
 
@@ -114,13 +82,17 @@ export default function MembersDirectory({
     return committeeMembers.filter((member) => {
       const name = member.name?.toLowerCase() || "";
       const district =
-        member.district?.toLowerCase() || "";
+        normalizeDistrict(member.district)?.toLowerCase() ||
+        member.district?.toLowerCase() ||
+        "";
+      const rawDistrict = member.district?.toLowerCase() || "";
       const designation =
         member.designation?.toLowerCase() || "";
 
       return (
         name.includes(normalizedSearch) ||
         district.includes(normalizedSearch) ||
+        rawDistrict.includes(normalizedSearch) ||
         designation.includes(normalizedSearch)
       );
     });
@@ -383,7 +355,7 @@ export default function MembersDirectory({
 
                 <p>{member.designation}</p>
 
-                <span>{member.district}</span>
+                <span>{normalizeDistrict(member.district) || member.district}</span>
 
                 {member.mobileNumber && (
                   <p className="memberListingPhone">

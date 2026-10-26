@@ -1186,8 +1186,7 @@ a {
 .desktopSocialSidebar {
   position: fixed;
   left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  bottom: 60px;
   z-index: 99999;
   display: flex;
   flex-direction: column;
@@ -2773,15 +2772,30 @@ a {
 
 .siteHeader.bannerHeader {
   width: 100%;
+  max-width: 100%;
   height: auto;
   min-height: 0;
   margin: 0;
-  padding: 0;
-  display: block;
-  overflow: hidden;
+  padding: 16px 8%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: #ffffff;
   border: 0;
+  border-bottom: 1px solid var(--border);
+  box-sizing: border-box;
+}
+
+.bannerHeader .bannerLink {
+  display: block;
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
   line-height: 0;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .bannerHeader picture {
@@ -2789,7 +2803,7 @@ a {
   width: 100%;
   height: auto;
   min-height: 0;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   line-height: 0;
 }
@@ -2802,26 +2816,38 @@ a {
   min-height: 0;
   max-height: none;
   max-width: 100%;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   border: 0;
   object-fit: contain;
   object-position: center;
+  aspect-ratio: 993 / 206;
 }
 
-/* Mobile */
+/* Tablet */
+@media (max-width: 1024px) {
+  .siteHeader.bannerHeader {
+    padding: 14px 4%;
+  }
+}
+
+/* Mobile optimizations */
 @media (max-width: 768px) {
   .siteHeader.bannerHeader {
+    width: 100%;
     height: auto;
     min-height: 0;
     margin: 0;
-    padding: 0;
+    padding: 10px 14px;
+    display: block;
   }
 
+  .bannerHeader .bannerLink,
   .bannerHeader picture,
   .bannerHeader img,
   .headerBannerImage {
     width: 100%;
+    max-width: 100%;
     height: auto;
     min-height: 0;
     max-height: none;
@@ -2830,23 +2856,24 @@ a {
   }
 }
 
-/* Laptop and smaller desktop */
-@media (max-width: 1366px) {
-  .siteHeader.bannerHeader {
-    height: 125px;
-  }
-}
-
-/* Tablet */
-@media (max-width: 900px) {
-  .siteHeader.bannerHeader {
-    height: 115px;
-  }
-}
-
 /* Small mobile */
 @media (max-width: 480px) {
   .siteHeader.bannerHeader {
-    height: 135px;
+    padding: 8px 10px;
+  }
+}
+
+/* Ultra-wide screens: keep banner well-proportioned and centered */
+@media (min-width: 1921px) {
+  .siteHeader.bannerHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 8%;
+  }
+
+  .bannerHeader .bannerLink {
+    max-width: 1280px;
+    margin: 0 auto;
   }
 }

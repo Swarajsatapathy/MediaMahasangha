@@ -1,5 +1,5 @@
 import Member from "../models/Member.js";
-import DISTRICTS from "../constants/districts.js";
+import DISTRICTS, { normalizeDistrict } from "../constants/districts.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -75,7 +75,7 @@ const normalizeCommitteeData = (
 
   const normalizedCommitteeDistrict =
     typeof committeeDistrict === "string"
-      ? committeeDistrict.trim()
+      ? normalizeDistrict(committeeDistrict.trim())
       : "";
 
   if (!normalizedCommitteeDistrict) {
@@ -191,7 +191,9 @@ const createMember = asyncHandler(
       );
     }
 
-    if (!DISTRICTS.includes(district)) {
+    const normalizedDistrict = normalizeDistrict(district);
+
+    if (!DISTRICTS.includes(normalizedDistrict)) {
       throw new ApiError(
         400,
         "Invalid member district selected"
@@ -283,7 +285,7 @@ const createMember = asyncHandler(
       memberId: memberId.trim(),
       name: name.trim(),
       designation: designation.trim(),
-      district,
+      district: normalizedDistrict,
       committeeType:
         normalizedCommittee.committeeType,
       committeeDistrict:
@@ -348,14 +350,15 @@ const getMembers = asyncHandler(
       This filters by the member's normal/home district.
     */
     if (district) {
-      if (!DISTRICTS.includes(district)) {
+      const normalizedDistrict = normalizeDistrict(district);
+      if (!DISTRICTS.includes(normalizedDistrict)) {
         throw new ApiError(
           400,
           "Invalid member district"
         );
       }
 
-      filter.district = district;
+      filter.district = normalizedDistrict;
     }
 
     if (designation) {
@@ -372,7 +375,7 @@ const getMembers = asyncHandler(
       ?committeeType=state
 
       District Committee:
-      ?committeeType=district&committeeDistrict=Angul
+      ?committeeType=district&committeeDistrict=Anugola
     */
     if (committeeType) {
       const normalizedCommitteeType =
@@ -403,7 +406,10 @@ const getMembers = asyncHandler(
     }
 
     if (committeeDistrict) {
-      if (!DISTRICTS.includes(committeeDistrict)) {
+      const normalizedCommDistrict =
+        normalizeDistrict(committeeDistrict);
+
+      if (!DISTRICTS.includes(normalizedCommDistrict)) {
         throw new ApiError(
           400,
           "Invalid committee district"
@@ -416,7 +422,7 @@ const getMembers = asyncHandler(
       */
       filter.committeeType = "district";
       filter.committeeDistrict =
-        committeeDistrict;
+        normalizedCommDistrict;
     }
 
     if (active !== undefined) {
@@ -702,14 +708,15 @@ const updateMember = asyncHandler(
     }
 
     if (district !== undefined) {
-      if (!DISTRICTS.includes(district)) {
+      const normalizedDistrict = normalizeDistrict(district);
+      if (!DISTRICTS.includes(normalizedDistrict)) {
         throw new ApiError(
           400,
           "Invalid member district selected"
         );
       }
 
-      member.district = district;
+      member.district = normalizedDistrict;
     }
 
     /*

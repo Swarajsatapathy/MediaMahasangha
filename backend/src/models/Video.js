@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import DISTRICTS from "../constants/districts.js";
+import DISTRICTS, {
+  ALL_VALID_DISTRICTS,
+  normalizeDistrict,
+} from "../constants/districts.js";
 
 const videoSchema = new mongoose.Schema(
   {
@@ -33,7 +36,8 @@ const videoSchema = new mongoose.Schema(
     district: {
       type: String,
       required: true,
-      enum: DISTRICTS,
+      enum: ALL_VALID_DISTRICTS,
+      set: normalizeDistrict,
       trim: true,
     },
 

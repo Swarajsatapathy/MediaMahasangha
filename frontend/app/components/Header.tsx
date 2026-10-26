@@ -70,20 +70,24 @@ export default function Header() {
         </Link>
       </div>
 
-<header className="siteHeader bannerHeader">
-  <picture>
-    <source
-      media="(max-width: 768px)"
-      srcSet="/banner-mobile.jpg"
-    />
-
-    <img
-      src="/banner.png"
-      alt="Odisha Digital Media Mahasangha Banner"
-      className="headerBannerImage"
-    />
-  </picture>
-</header>
+      <header className="siteHeader bannerHeader">
+        <Link href="/" className="bannerLink" aria-label="Odisha Digital Media Mahasangha Home">
+          <picture>
+            <source
+              media="(max-width: 768px)"
+              srcSet="/banner-mobile.png"
+            />
+            <img
+              src="/banner.png"
+              alt="Odisha Digital Media Mahasangha Banner"
+              className="headerBannerImage"
+              width={1986}
+              height={412}
+              fetchPriority="high"
+            />
+          </picture>
+        </Link>
+      </header>
 
       <nav className="navBar">
         <Link href="/">Home</Link>

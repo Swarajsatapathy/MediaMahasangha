@@ -3,15 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
-const DISTRICTS = [
-  "Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak",
-  "Bhubaneswar", "Boudh", "Cuttack", "Deogarh", "Dhenkanal",
-  "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda",
-  "Kalahandi", "Kandhamal", "Kendrapara", "Keonjhar", "Khordha",
-  "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh",
-  "Nuapada", "Puri", "Rayagada", "Rourkela", "Sambalpur",
-  "Subarnapur", "Sundargarh"
-];
+import { DISTRICTS } from "../../lib/districts";
 
 export default function ApplyMembershipPage() {
   const [formData, setFormData] = useState({

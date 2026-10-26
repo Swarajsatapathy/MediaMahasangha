@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import DISTRICTS from "../constants/districts.js";
+import DISTRICTS, {
+  ALL_VALID_DISTRICTS,
+  normalizeDistrict,
+} from "../constants/districts.js";
 
 const memberSchema = new mongoose.Schema(
   {
@@ -36,7 +39,8 @@ const memberSchema = new mongoose.Schema(
     district: {
       type: String,
       required: true,
-      enum: DISTRICTS,
+      enum: ALL_VALID_DISTRICTS,
+      set: normalizeDistrict,
       trim: true,
     },
 
@@ -60,17 +64,18 @@ const memberSchema = new mongoose.Schema(
       Required only when committeeType is district.
 
       Stored value:
-      "Angul"
+      "Anugola"
 
       Frontend label:
-      "Angul District Committee"
+      "Anugola District Committee"
     */
     committeeDistrict: {
       type: String,
       enum: {
-        values: ["", ...DISTRICTS],
+        values: ["", ...ALL_VALID_DISTRICTS],
         message: "Invalid committee district",
       },
+      set: normalizeDistrict,
       default: "",
       trim: true,
     },
