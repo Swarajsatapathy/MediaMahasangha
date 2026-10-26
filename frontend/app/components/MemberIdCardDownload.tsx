@@ -30,24 +30,50 @@ function createSafeFileName(value: string) {
 
 function formatValidUpto(value?: string) {
   if (!value) {
-    return "Not specified";
+    return { day: "", suffix: "", monthYear: "Not specified", isFormatted: false };
   }
 
   const dateOnly = value.split("T")[0];
-  const [year, month, day] = dateOnly.split("-").map(Number);
+  const parts = dateOnly.split("-").map(Number);
+  let date: Date;
 
-  if (!year || !month || !day) {
-    return "Not specified";
+  if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+    date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+  } else {
+    date = new Date(value);
   }
 
-  const date = new Date(Date.UTC(year, month - 1, day));
+  if (Number.isNaN(date.getTime())) {
+    return { day: "", suffix: "", monthYear: "Not specified", isFormatted: false };
+  }
 
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
+  const day = date.getUTCDate();
+  const year = date.getUTCFullYear();
+  const month = date.toLocaleDateString("en-GB", {
+    month: "long",
     timeZone: "UTC",
   });
+
+  const getSuffix = (d: number) => {
+    if (d > 3 && d < 21) return "th";
+    switch (d % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  };
+
+  return {
+    day: String(day),
+    suffix: getSuffix(day),
+    monthYear: `${month}, ${year}`,
+    isFormatted: true,
+  };
 }
 
 async function convertImageToDataUrl(imageUrl: string) {
@@ -160,8 +186,8 @@ export default function MemberIdCardDownload({
         pixelRatio: 1,
         cacheBust: false,
         backgroundColor: "#ffffff",
-        width: 1011,
-        height: 638,
+        width: 591,
+        height: 1004,
         skipAutoScale: true,
       });
 
@@ -170,7 +196,7 @@ export default function MemberIdCardDownload({
 
       const downloadLink = document.createElement("a");
 
-      downloadLink.download = `${safeName}-odmm-atm-id-card.png`;
+      downloadLink.download = `${safeName}-odmm-id-card.png`;
       downloadLink.href = dataUrl;
 
       document.body.appendChild(downloadLink);
@@ -186,83 +212,141 @@ export default function MemberIdCardDownload({
     }
   };
 
+  const validity = formatValidUpto(member.validUpto);
+
   return (
     <div className="memberIdDownloadSection">
       <div className="memberIdCardCaptureArea" aria-hidden="true">
-        <div ref={idCardRef} className="memberAtmIdCard">
-          <div className="memberAtmCardHeader">
-            <div className="memberAtmLogo">
-              <img src="/odmm-logo.png" alt="Odisha Digital Media Mahasangha" />
-            </div>
+        <div ref={idCardRef} className="memberIdCard">
+          {/* Top Decorative Background Waves */}
+          <svg
+            className="memberIdCardTopBg"
+            viewBox="0 0 591 480"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            {/* Yellow Swoop */}
+            <path
+              d="M 0,0 L 591,0 L 591,352 C 500,412 400,437 295.5,437 C 191,437 91,412 0,352 Z"
+              fill="#FAD02C"
+            />
+            {/* Maroon Header */}
+            <path
+              d="M 0,0 L 591,0 L 591,310 C 500,370 400,395 295.5,395 C 191,395 91,370 0,310 Z"
+              fill="#800000"
+            />
+          </svg>
 
-            <div className="memberAtmOrganization">
-              <h2>Odisha Digital Media Mahasangha</h2>
-              <p>Official Member Identity Card</p>
-            </div>
-
-            <div className="memberAtmPressBadge">PRESS</div>
+          {/* Header Title */}
+          <div className="memberIdCardHeader">
+            <h1>ODISHA DIGITAL</h1>
+            <h2>MEDIA MAHASANGHA</h2>
           </div>
 
-          <div className="memberAtmCardBody">
-            <div className="memberAtmPhoto">
-              {downloadPhotoUrl ? (
-                <img src={downloadPhotoUrl} alt={member.name} />
-              ) : (
+          {/* Vertical PRESS Text */}
+          <div className="memberIdCardPress">
+            <span className="pressP">P</span>
+            <span className="pressR">R</span>
+            <span className="pressE">E</span>
+            <span className="pressS1">S</span>
+            <span className="pressS2">S</span>
+          </div>
+
+          {/* Center Member Photo */}
+          <div className="memberIdCardPhoto">
+            {downloadPhotoUrl ? (
+              <img src={downloadPhotoUrl} alt={member.name} />
+            ) : (
+              <div className="memberIdCardPhotoFallback">
                 <span>{member.name?.charAt(0).toUpperCase() || "M"}</span>
-              )}
-            </div>
-
-            <div className="memberAtmInformation">
-              <h3>{member.name}</h3>
-
-              <div className="memberAtmDetails">
-                <div>
-                  <strong>Member ID</strong>
-                  <span>{member.memberId}</span>
-                </div>
-
-                <div>
-                  <strong>Designation</strong>
-                  <span>{member.designation}</span>
-                </div>
-
-                <div>
-                  <strong>District</strong>
-                  <span>{member.district}</span>
-                </div>
-
-                <div>
-                  <strong>Mobile</strong>
-                  <span>{member.mobileNumber}</span>
-                </div>
               </div>
+            )}
+          </div>
+
+          {/* Member Name and Designation */}
+          <div className="memberIdCardIdentity">
+            <h3 className="memberIdCardName">
+              {member.name || "Member Name"}
+            </h3>
+            <p className="memberIdCardDesignation">
+              {member.designation || "Member"}
+            </p>
+          </div>
+
+          {/* Details Table */}
+          <div className="memberIdCardDetails">
+            <div className="memberIdCardRow">
+              <span className="memberIdCardLabel">ID No</span>
+              <span className="memberIdCardColon">:</span>
+              <span className="memberIdCardValue">{member.memberId}</span>
+            </div>
+
+            <div className="memberIdCardRow">
+              <span className="memberIdCardLabel">District</span>
+              <span className="memberIdCardColon">:</span>
+              <span className="memberIdCardValue">{member.district}</span>
+            </div>
+
+            <div className="memberIdCardRow">
+              <span className="memberIdCardLabel">Phone</span>
+              <span className="memberIdCardColon">:</span>
+              <span className="memberIdCardValue">{member.mobileNumber}</span>
+            </div>
+
+            <div className="memberIdCardRow">
+              <span className="memberIdCardLabel">Validity</span>
+              <span className="memberIdCardColon">:</span>
+              <span className="memberIdCardValue">
+                {validity.isFormatted ? (
+                  <>
+                    {validity.day}
+                    <sup>{validity.suffix}</sup> {validity.monthYear}
+                  </>
+                ) : (
+                  validity.monthYear
+                )}
+              </span>
             </div>
           </div>
 
-          <div className="memberAtmFooter">
-            <div className="memberAtmValidity">
-              <small>VALID UPTO</small>
-              <strong>{formatValidUpto(member.validUpto)}</strong>
+          {/* Authority and ODMM Logo */}
+          <div className="memberIdCardAuthoritySection">
+            <div className="memberIdCardLogo">
+              <img
+                src="/odmm-logo.png"
+                alt="Odisha Digital Media Mahasangha"
+              />
             </div>
 
-            <div className="memberAtmPresident">
-              <span className="memberAtmSignatureMark">-Sd-</span>
-              <strong>Manoj Satapathy</strong>
-              <small>State President</small>
+            <div className="memberIdCardAuthority">
+              <div className="memberIdCardAuthTitle">Issuing Authority</div>
+              <div className="memberIdCardAuthLine" />
+              <div className="memberIdCardAuthName">Manoj Satapathy</div>
+              <div className="memberIdCardAuthRole">State President</div>
             </div>
           </div>
 
-          <div className="memberAtmContactFooter">
-            <span>+91 78529 22654</span>
-
-            <span className="memberAtmFooterDivider">|</span>
-
-            <span>odmmdigital@gmail.com</span>
-
-            <span className="memberAtmFooterDivider">|</span>
-
-            <span>www.mediamahasangha.in</span>
+          {/* Contact Footer */}
+          <div className="memberIdCardFooter">
+            <div>+91 78529 22654</div>
+            <div>odmmdigital@gmail.com</div>
+            <div>www.mediamahasangha.in</div>
           </div>
+
+          {/* Bottom Yellow Swoop */}
+          <svg
+            className="memberIdCardBottomBg"
+            viewBox="0 0 591 108"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M 0,0 Q 25,91 50,91 L 541,91 Q 566,91 591,0 L 591,108 L 0,108 Z"
+              fill="#FAD02C"
+            />
+          </svg>
         </div>
       </div>
 
