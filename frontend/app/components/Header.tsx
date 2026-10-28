@@ -96,7 +96,7 @@ export default function Header() {
         <Link href="/women-cell">Women Cell</Link>
         <Link href="/supreme-council">Supreme Council</Link>
         <Link href="/mentors">Advisory Board</Link>
-        <Link href="/self-regulatory-body">Self Regulatory Body (SRB)</Link>
+        <Link href="/self-regulatory-body">Self Regulatory Body</Link>
         <Link href="/member-news-channels">Member News Channel</Link>
         <Link href="/web-news">Web News</Link>
         <Link href="/messages">Video Message</Link>

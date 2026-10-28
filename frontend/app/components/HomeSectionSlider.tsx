@@ -19,6 +19,7 @@ type Props = {
   | "gallery"
   | "notices";
   badge?: string;
+  className?: string;
 };
 
 export default function HomeSectionSlider({
@@ -26,6 +27,7 @@ export default function HomeSectionSlider({
   items,
   type,
   badge,
+  className = "",
 }: Props) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "prev">("next");
@@ -61,7 +63,7 @@ export default function HomeSectionSlider({
 
   if (type === "members") {
     return (
-      <section className="homeBlock">
+      <section className={`homeBlock ${className}`.trim()}>
         <div className="blockHeader">
           <h2>{title}</h2>
 
@@ -113,7 +115,7 @@ export default function HomeSectionSlider({
 
   if (type === "srbMembers") {
     return (
-      <section className="homeBlock">
+      <section className={`homeBlock ${className}`.trim()}>
         <div className="blockHeader">
           <h2>{title}</h2>
 
@@ -169,7 +171,7 @@ export default function HomeSectionSlider({
 
   if (type === "memberNewsChannels") {
     return (
-      <section className="homeBlock">
+      <section className={`homeBlock ${className}`.trim()}>
         <div className="blockHeader">
           <h2>{title}</h2>
 
@@ -231,7 +233,7 @@ export default function HomeSectionSlider({
 
   if (type === "mentors") {
     return (
-      <section className="homeBlock">
+      <section className={`homeBlock ${className}`.trim()}>
         <div className="blockHeader">
           <h2>{title}</h2>
 
@@ -280,7 +282,7 @@ export default function HomeSectionSlider({
 
   if (type === "supremeCouncil") {
     return (
-      <section className="homeBlock">
+      <section className={`homeBlock ${className}`.trim()}>
         <div className="blockHeader">
           <h2>{title}</h2>
 
@@ -329,7 +331,7 @@ export default function HomeSectionSlider({
 
   if (type === "womenCell") {
     return (
-      <section className="homeBlock">
+      <section className={`homeBlock ${className}`.trim()}>
         <div className="blockHeader">
           <h2>{title}</h2>
 
@@ -378,7 +380,7 @@ export default function HomeSectionSlider({
 
   if (type === "gallery") {
     return (
-      <section className="homeBlock">
+      <section className={`homeBlock ${className}`.trim()}>
         <div className="blockHeader">
           <h2>{title}</h2>
 
@@ -412,7 +414,7 @@ export default function HomeSectionSlider({
               </div>
 
               <div className="galleryHomeOverlay">
-                <span>{item.district}</span>
+                {item.district && <span>{item.district}</span>}
                 <h3>{item.description}</h3>
               </div>
             </Link>
@@ -425,107 +427,114 @@ export default function HomeSectionSlider({
   }
 
   if (type === "notices") {
-    const isNew =
-      item?.date &&
-      (Date.now() - new Date(item.date).getTime()) / (1000 * 3600 * 24) <= 15;
-    const formattedDate = item?.date
-      ? new Date(item.date).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        })
-      : "";
-
-    return (
-      <section className="homeBlock">
-        <div className="blockHeader">
-          <h2>{title}</h2>
-
-          <div className="arrows">
-            <button type="button" onClick={prev} aria-label="Previous">
-              <FaChevronLeft />
-            </button>
-
-            <button type="button" onClick={next} aria-label="Next">
-              <FaChevronRight />
-            </button>
+    const list = items || [];
+    if (list.length === 0) {
+      return (
+        <section className={`homeBlock ${className}`.trim()}>
+          <div className="blockHeader">
+            <h2>{title}</h2>
+            <Link href="/notice-board" className="noticeHeaderViewAll">
+              View All →
+            </Link>
           </div>
-        </div>
 
-        <div className="sliderStage">
-          {item ? (
-            <div
-              key={item?._id || index}
-              className={`noticeHomeCard sliderAnimatedCard ${direction}`}
-            >
-              <div className="noticeCardTop">
-                <span className="noticeBadge">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
-                  OFFICIAL NOTICE
-                </span>
-                {formattedDate && (
-                  <span className="noticeDate">📅 {formattedDate}</span>
-                )}
-              </div>
-
-              <div className="noticeCardBody">
-                <h3 className="noticeTitle">
-                  {item.title}
-                  {isNew && <span className="noticeNewPill">NEW</span>}
-                </h3>
-              </div>
-
-              <div className="noticeCardActions">
-                {item.pdf?.url ? (
-                  <a
-                    href={item.pdf.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="noticeDownloadBtn"
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7 10 12 15 17 10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    Download PDF
-                  </a>
-                ) : null}
-
-                <Link href="/notice-board" className="noticeViewAllBtn">
-                  All Notices →
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="noticeHomeCard emptyNoticeCard">
+          <div className="sliderStage">
+            <div className="noticeTickerEmpty">
               <p>No notices available</p>
-              <Link href="/notice-board" className="noticeViewAllBtn">
+              <Link href="/notice-board" className="noticeEmptyBtn">
                 View Notice Board →
               </Link>
             </div>
-          )}
+          </div>
+        </section>
+      );
+    }
+
+    // Build seamless looping list (at least 6 items for smooth continuous vertical scrolling)
+    const loopList =
+      list.length < 3
+        ? [...list, ...list, ...list, ...list]
+        : list.length < 6
+        ? [...list, ...list, ...list]
+        : [...list, ...list];
+
+    // Speed: approx 4 seconds per notice in the primary list
+    const duration = Math.max(16, list.length * 4);
+
+    return (
+      <section className={`homeBlock ${className}`.trim()}>
+        <div className="blockHeader">
+          <h2>{title}</h2>
+          <Link href="/notice-board" className="noticeHeaderViewAll">
+            View All →
+          </Link>
+        </div>
+
+        <div className="sliderStage">
+          <div className="noticeVerticalTickerWrap">
+            <div
+              className="noticeVerticalTickerTrack"
+              style={{ animationDuration: `${duration}s` }}
+            >
+              {loopList.map((notif: any, i: number) => {
+                const isNew =
+                  notif?.date &&
+                  (Date.now() - new Date(notif.date).getTime()) /
+                    (1000 * 3600 * 24) <=
+                    15;
+                const formattedDate = notif?.date
+                  ? new Date(notif.date).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })
+                  : "";
+                const href = notif.pdf?.url || "/notice-board";
+                const isExternal = Boolean(notif.pdf?.url);
+
+                return (
+                  <a
+                    key={`${notif._id || i}-${i}`}
+                    href={href}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    className="noticeTickerItem"
+                  >
+                    <div className="noticeTickerItemHeader">
+                      <span className="noticeBulletDot">●</span>
+                      <span className="noticeTickerTitle">{notif.title}</span>
+                      {isNew && <span className="noticeNewPill">NEW</span>}
+                    </div>
+                    <div className="noticeTickerItemMeta">
+                      {formattedDate && (
+                        <span className="noticeTickerDate">
+                          📅 {formattedDate}
+                        </span>
+                      )}
+                      {notif.pdf?.url && (
+                        <span className="noticeTickerPdfTag">
+                          <svg
+                            width="11"
+                            height="11"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                          </svg>
+                          PDF
+                        </span>
+                      )}
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
     );
@@ -544,7 +553,7 @@ export default function HomeSectionSlider({
     type === "videos" ? item?.thumbnailUrl : item?.images?.[0]?.url;
 
   return (
-    <section className="homeBlock">
+    <section className={`homeBlock ${className}`.trim()}>
       <div className="blockHeader">
         <h2>{title}</h2>
 

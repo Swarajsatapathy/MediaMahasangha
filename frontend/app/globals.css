@@ -178,42 +178,59 @@ a {
 
 .navBar {
   background: var(--navy);
-  padding: 0 16px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  flex-wrap: nowrap;
   gap: 2px;
-  min-height: 52px;
-  overflow-x: auto;
+  min-height: 50px;
   box-shadow: 0 6px 18px rgba(0, 51, 102, 0.22);
-  scrollbar-width: thin;
-  scrollbar-color: var(--yellow) transparent;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-@media (min-width: 1440px) {
-  .navBar {
-    justify-content: center;
-    gap: 6px;
-  }
+.navBar::-webkit-scrollbar {
+  display: none;
 }
 
 .navBar a {
   color: #ffffff;
   font-weight: 700;
-  font-size: 13.5px;
-  letter-spacing: 0.1px;
+  font-size: clamp(11px, 0.82vw, 13px);
+  letter-spacing: 0;
   white-space: nowrap;
   cursor: pointer;
-  padding: 11px 12px;
+  padding: 8px clamp(3px, 0.6vw, 10px);
   border-radius: 6px;
   transition: 0.2s ease;
   flex-shrink: 0;
+  line-height: 1.2;
 }
 
-@media (min-width: 1440px) {
+@media (min-width: 1400px) {
+  .navBar {
+    gap: 3px;
+    padding: 0 16px;
+  }
+
   .navBar a {
-    font-size: 14.5px;
-    padding: 11px 15px;
+    font-size: 13px;
+    padding: 9px 11px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .navBar {
+    gap: 5px;
+    padding: 0 24px;
+  }
+
+  .navBar a {
+    font-size: 14px;
+    padding: 10px 14px;
   }
 }
 
@@ -534,6 +551,125 @@ a {
 
   to {
     transform: translateX(-50%);
+  }
+}
+
+/* Homepage Top 3-Card Row (Members, Women Cell, Notice Board) */
+
+.homeTopRow {
+  width: min(1200px, 94%);
+  margin: 28px auto 0;
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr 1.15fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.homeTopRow .homeBlock {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.homeTopRow .sliderStage {
+  flex: 1;
+  display: flex;
+}
+
+.homeTopRow .sliderAnimatedCard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* Women Cell - a little small as requested */
+.womenCellSmallBlock .memberHomeCard {
+  grid-template-columns: 95px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px;
+}
+
+.womenCellSmallBlock .memberPhotoBox {
+  width: 95px;
+  height: 125px;
+  border-width: 2.5px;
+}
+
+.womenCellSmallBlock .memberInfo {
+  padding-left: 12px;
+}
+
+.womenCellSmallBlock .memberInfo h3 {
+  font-size: 16.5px;
+  margin: 0 0 5px;
+}
+
+.womenCellSmallBlock .memberInfo p {
+  font-size: 13.5px;
+  margin: 0 0 5px;
+}
+
+.womenCellSmallBlock .memberInfo span {
+  font-size: 13px;
+}
+
+.womenCellSmallBlock .blockHeader h2 {
+  font-size: 18.5px;
+}
+
+.womenCellSmallBlock .arrows button {
+  width: 40px;
+  height: 40px;
+}
+
+.womenCellSmallBlock .arrows button svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Notice Board Top Block */
+.noticeBoardTopBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.noticeBoardTopBlock .sliderStage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 160px;
+  max-height: 160px;
+  overflow: hidden;
+}
+
+.noticeBoardTopBlock .noticeVerticalTickerWrap {
+  height: 160px;
+  max-height: 160px;
+  min-height: 160px;
+  overflow: hidden;
+}
+
+@media (max-width: 1140px) {
+  .homeTopRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .homeTopRow .noticeBoardTopBlock {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .homeTopRow {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  .homeTopRow .noticeBoardTopBlock {
+    grid-column: auto;
   }
 }
 
@@ -1274,7 +1410,7 @@ a {
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1025px) {
   .navBar {
     display: flex;
   }
@@ -1285,6 +1421,16 @@ a {
 
   .desktopSocialSidebar {
     display: flex;
+  }
+}
+
+@media (max-width: 1024px) {
+  .navBar {
+    display: none;
+  }
+
+  .mobileNav {
+    display: block;
   }
 }
 
@@ -1310,14 +1456,6 @@ a {
     display: inline-flex;
     padding: 4px 10px;
     font-size: 12px;
-  }
-
-  .navBar {
-    display: none;
-  }
-
-  .mobileNav {
-    display: block;
   }
 
   .desktopSocialSidebar {
@@ -2327,6 +2465,10 @@ a {
   line-height: 1.25;
   font-weight: 900;
   text-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (max-width: 600px) {
@@ -2764,8 +2906,6 @@ a {
   }
 }
 
-
-
 /* =========================================
    RESPONSIVE HEADER BANNER
 ========================================= */
@@ -2879,127 +3019,203 @@ a {
 }
 
 /* ======================================================
-   NOTICE BOARD HOMEPAGE SLIDER
+   NOTICE BOARD HOMEPAGE VERTICAL TICKER
 ====================================================== */
 
-.noticeHomeCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 18px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #001a33 0%, #003366 100%);
-  padding: 20px 22px;
-  color: #ffffff;
-  border: 1px solid rgba(242, 201, 76, 0.35);
-  box-shadow: 0 10px 28px rgba(0, 51, 102, 0.16);
-  box-sizing: border-box;
-}
-
-.noticeCardTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.noticeBadge {
+.noticeHeaderViewAll {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(242, 201, 76, 0.18);
-  border: 1px solid #f2c94c;
-  color: #f2c94c;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
-
-.noticeDate {
+  gap: 4px;
+  color: var(--navy);
+  background: rgba(0, 51, 102, 0.08);
   font-size: 12.5px;
-  color: #cbd5e1;
-  font-weight: 600;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 51, 102, 0.12);
 }
 
-.noticeCardBody {
-  margin: 10px 0;
+.noticeHeaderViewAll:hover {
+  background: var(--navy);
+  color: var(--yellow);
+  transform: translateY(-1px);
+}
+
+.noticeVerticalTickerWrap {
+  position: relative;
+  height: 160px;
+  max-height: 160px;
+  min-height: 160px;
   overflow: hidden;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.noticeTitle {
-  margin: 0;
-  color: #ffffff;
-  font-size: 16.5px;
+.noticeVerticalTickerWrap::before,
+.noticeVerticalTickerWrap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.noticeVerticalTickerWrap::before {
+  top: 0;
+  background: linear-gradient(to bottom, #ffffff 15%, transparent);
+}
+
+.noticeVerticalTickerWrap::after {
+  bottom: 0;
+  background: linear-gradient(to top, #ffffff 15%, transparent);
+}
+
+.noticeVerticalTickerTrack {
+  display: flex;
+  flex-direction: column;
+  animation: noticeScrollUp 25s linear infinite;
+  will-change: transform;
+}
+
+.noticeVerticalTickerWrap:hover .noticeVerticalTickerTrack {
+  animation-play-state: paused;
+}
+
+@keyframes noticeScrollUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.noticeTickerItem {
+  display: block;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px dashed #e2e8f0;
+  transition: background 0.18s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.noticeTickerItem:hover {
+  background: #f8fafc;
+}
+
+.noticeTickerItemHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-bottom: 2px;
+}
+
+.noticeBulletDot {
+  color: var(--red);
+  font-size: 10px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.noticeTickerTitle {
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.45;
+  color: var(--navy);
+  line-height: 1.35;
+  transition: color 0.18s ease;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noticeTickerItem:hover .noticeTickerTitle {
+  color: var(--red);
 }
 
 .noticeNewPill {
   display: inline-block;
   background: #d71920;
   color: #ffffff;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 900;
-  padding: 2px 6px;
+  padding: 1px 5px;
   border-radius: 4px;
-  margin-left: 8px;
+  margin-left: 5px;
   border: 1px solid #f2c94c;
   vertical-align: middle;
+  flex-shrink: 0;
 }
 
-.noticeCardActions {
+.noticeTickerItemMeta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 6px;
+  gap: 8px;
+  padding-left: 17px;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
 }
 
-.noticeDownloadBtn {
+.noticeTickerPdfTag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: #f2c94c;
-  color: #002244;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  gap: 3px;
+  background: rgba(215, 25, 32, 0.08);
+  color: var(--red);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 10px;
   font-weight: 800;
-  text-decoration: none;
-  transition: 0.2s ease;
+  border: 1px solid rgba(215, 25, 32, 0.2);
 }
 
-.noticeDownloadBtn:hover {
-  background: #ffd768;
-  transform: translateY(-1px);
-}
-
-.noticeViewAllBtn {
-  color: #93c5fd;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.noticeViewAllBtn:hover {
-  color: #ffffff;
-  text-decoration: underline;
-}
-
-.emptyNoticeCard {
+.noticeTickerEmpty {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  height: 160px;
+  max-height: 160px;
+  min-height: 160px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 12px;
 }
+
+.noticeEmptyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #eef2f6;
+  color: var(--navy);
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.noticeEmptyBtn:hover {
+  background: var(--navy);
+  color: #ffffff;
+  border-color: var(--navy);
+}
+
+

@@ -206,19 +206,31 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="homeGrid">
+      <section className="homeTopRow">
         <HomeSectionSlider
           title="Members"
           items={members}
           type="members"
+          className="membersTopBlock"
         />
 
         <HomeSectionSlider
           title="Women Cell"
           items={womenCellMembers}
           type="womenCell"
+          className="womenCellSmallBlock"
         />
 
+        <HomeSectionSlider
+          title="Notice Board"
+          items={notices}
+          type="notices"
+          badge="Notice"
+          className="noticeBoardTopBlock"
+        />
+      </section>
+
+      <section className="homeGrid">
         <HomeSectionSlider
           title="Supreme Council"
           items={supremeCouncilMembers}
@@ -262,13 +274,6 @@ export default async function HomePage() {
           title="Gallery"
           items={galleryItems}
           type="gallery"
-        />
-
-        <HomeSectionSlider
-          title="Notice Board"
-          items={notices}
-          type="notices"
-          badge="Notice"
         />
       </section>
     </main>
