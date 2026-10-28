@@ -16,7 +16,8 @@ type Props = {
   | "articles"
   | "videos"
   | "srbMembers"
-  | "gallery";
+  | "gallery"
+  | "notices";
   badge?: string;
 };
 
@@ -417,6 +418,113 @@ export default function HomeSectionSlider({
             </Link>
           ) : (
             <p>No gallery photos available</p>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "notices") {
+    const isNew =
+      item?.date &&
+      (Date.now() - new Date(item.date).getTime()) / (1000 * 3600 * 24) <= 15;
+    const formattedDate = item?.date
+      ? new Date(item.date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })
+      : "";
+
+    return (
+      <section className="homeBlock">
+        <div className="blockHeader">
+          <h2>{title}</h2>
+
+          <div className="arrows">
+            <button type="button" onClick={prev} aria-label="Previous">
+              <FaChevronLeft />
+            </button>
+
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
+          </div>
+        </div>
+
+        <div className="sliderStage">
+          {item ? (
+            <div
+              key={item?._id || index}
+              className={`noticeHomeCard sliderAnimatedCard ${direction}`}
+            >
+              <div className="noticeCardTop">
+                <span className="noticeBadge">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                  OFFICIAL NOTICE
+                </span>
+                {formattedDate && (
+                  <span className="noticeDate">📅 {formattedDate}</span>
+                )}
+              </div>
+
+              <div className="noticeCardBody">
+                <h3 className="noticeTitle">
+                  {item.title}
+                  {isNew && <span className="noticeNewPill">NEW</span>}
+                </h3>
+              </div>
+
+              <div className="noticeCardActions">
+                {item.pdf?.url ? (
+                  <a
+                    href={item.pdf.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="noticeDownloadBtn"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Download PDF
+                  </a>
+                ) : null}
+
+                <Link href="/notice-board" className="noticeViewAllBtn">
+                  All Notices →
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="noticeHomeCard emptyNoticeCard">
+              <p>No notices available</p>
+              <Link href="/notice-board" className="noticeViewAllBtn">
+                View Notice Board →
+              </Link>
+            </div>
           )}
         </div>
       </section>

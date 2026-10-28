@@ -12,6 +12,7 @@ import {
   getMemberNewsChannels,
   getSrbMembers,
   getGalleryItems,
+  getNotices,
 } from "../lib/api";
 
 /*
@@ -54,6 +55,7 @@ export default async function HomePage() {
     srbMembersResult,
     memberNewsChannelsResult,
     galleryResult,
+    noticesResult,
   ] = await Promise.allSettled([
     getArticles(),
     getFlashArticles(),
@@ -65,6 +67,7 @@ export default async function HomePage() {
     getSrbMembers(),
     getMemberNewsChannels(),
     getGalleryItems(),
+    getNotices({ limit: 10 }),
   ]);
 
   const articlesData = getResultValue<any>(articlesResult, {
@@ -108,10 +111,15 @@ export default async function HomePage() {
     galleryItems: [],
   });
 
+  const noticesData = getResultValue<any>(noticesResult, {
+    notices: [],
+  });
+
   const articles = articlesData?.articles || [];
   const videos = videosData?.videos || [];
   const srbMembers = srbMembersData?.srbMembers || [];
   const galleryItems = galleryData?.galleryItems || [];
+  const notices = noticesData?.notices || [];
 
   const memberNewsChannels =
     memberNewsChannelsData?.memberNewsChannels || [];
@@ -254,6 +262,13 @@ export default async function HomePage() {
           title="Gallery"
           items={galleryItems}
           type="gallery"
+        />
+
+        <HomeSectionSlider
+          title="Notice Board"
+          items={notices}
+          type="notices"
+          badge="Notice"
         />
       </section>
     </main>

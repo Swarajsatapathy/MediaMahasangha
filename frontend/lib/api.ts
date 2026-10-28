@@ -332,3 +332,52 @@ export async function getGalleryItemById(id: string) {
     }
   );
 }
+
+/* ======================================================
+   NOTICES
+====================================================== */
+
+export interface Notice {
+  _id: string;
+  title: string;
+  pdf: {
+    url: string;
+    key: string;
+  };
+  date: string;
+  websiteLink?: string;
+  isActive: boolean;
+  createdAt?: string;
+}
+
+export async function getNotices(options: {
+  page?: number;
+  limit?: number;
+  search?: string;
+} = {}) {
+  const { page = 1, limit = 10, search = "" } = options;
+  const params = new URLSearchParams();
+  if (page) params.append("page", String(page));
+  if (limit) params.append("limit", String(limit));
+  if (search) params.append("search", search);
+
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return fetchFromAPI<{
+    notices: Notice[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }>(`/api/notices${query}`, {
+    revalidate: 0,
+  });
+}
+
+export async function getNoticeById(id: string) {
+  return fetchFromAPI<Notice>(
+    `/api/notices/${encodeURIComponent(id)}`,
+    {
+      revalidate: 0,
+    }
+  );
+}

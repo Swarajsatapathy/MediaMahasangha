@@ -61,6 +61,9 @@ export default function MobileNav() {
               <Link href="/gallery" onClick={() => setOpen(false)}>
   Gallery
 </Link>
+              <Link href="/notice-board" onClick={() => setOpen(false)}>
+  Notice Board
+</Link>
               <Link href="/contact-us" onClick={() => setOpen(false)}>
   Contact Us
 </Link>

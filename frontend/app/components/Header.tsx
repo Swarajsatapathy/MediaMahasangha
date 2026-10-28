@@ -101,6 +101,7 @@ export default function Header() {
         <Link href="/web-news">Web News</Link>
         <Link href="/messages">Video Message</Link>
         <Link href="/gallery">Gallery</Link>
+        <Link href="/notice-board">Notice Board</Link>
         <Link href="/contact-us">Contact Us</Link>
       </nav>
 
