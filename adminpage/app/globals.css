@@ -24,3 +24,207 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ======================================================
+   ADMIN GLOBAL SEARCH & HEADER STYLES
+====================================================== */
+
+.adminListHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.adminListHeader h2 {
+  margin: 0 !important;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.adminSearchBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 250px;
+  max-width: 360px;
+  flex: 1;
+}
+
+.adminSearchInput {
+  width: 100%;
+  background: #080f1d !important;
+  border: 1px solid #223047 !important;
+  color: #ffffff !important;
+  border-radius: 9px !important;
+  padding: 9px 34px 9px 34px !important;
+  font-size: 13px !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+  margin-bottom: 0 !important;
+}
+
+.adminSearchInput::placeholder {
+  color: #627796 !important;
+}
+
+.adminSearchInput:focus {
+  border-color: #00d5ff !important;
+  box-shadow: 0 0 12px rgba(0, 213, 255, 0.2) !important;
+}
+
+.adminSearchIcon {
+  position: absolute;
+  left: 11px;
+  color: #627796;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adminSearchClearBtn {
+  position: absolute;
+  right: 9px;
+  background: transparent;
+  border: none;
+  color: #8ea2c4;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.adminSearchClearBtn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.adminSearchEmpty {
+  text-align: center;
+  padding: 34px 20px;
+  color: #8ea2c4;
+  background: #080f1d;
+  border: 1px dashed #223047;
+  border-radius: 12px;
+  margin: 12px 0;
+}
+
+.adminSearchEmpty p {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.adminSearchEmpty button {
+  background: rgba(0, 213, 255, 0.12);
+  color: #00d5ff;
+  border: 1px solid rgba(0, 213, 255, 0.3);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adminSearchEmpty button:hover {
+  background: #00d5ff;
+  color: #06111f;
+}
+
+/* ======================================================
+   ADMIN PAGINATION
+====================================================== */
+
+.adminPagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 4px 6px;
+  margin-top: 14px;
+  border-top: 1px solid #1a273b;
+  flex-wrap: wrap;
+}
+
+.adminPageInfo {
+  font-size: 13px;
+  color: #8ea2c4;
+}
+
+.adminPageInfo strong {
+  color: #00d5ff;
+}
+
+.adminPageBtnGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adminPageBtn {
+  background: #111c2e;
+  color: #e2e8f0;
+  border: 1px solid #223047;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adminPageBtn:hover:not(:disabled) {
+  background: #00d5ff;
+  color: #06111f;
+  border-color: #00d5ff;
+  box-shadow: 0 0 10px rgba(0, 213, 255, 0.25);
+}
+
+.adminPageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #1a273b;
+}
+
+.adminPagePill {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 6px;
+  border: 1px solid #223047;
+  background: #111c2e;
+  color: #8ea2c4;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.adminPagePill:hover {
+  border-color: #00d5ff;
+  color: #00d5ff;
+}
+
+.adminPagePill.active {
+  background: #00d5ff;
+  color: #06111f;
+  border-color: #00d5ff;
+  font-weight: 800;
+}

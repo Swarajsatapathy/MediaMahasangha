@@ -98,6 +98,13 @@ const articleSchema = new mongoose.Schema(
   }
 );
 
+articleSchema.index({ isPublished: 1, isFlash: 1, publishedAt: -1 });
+articleSchema.index({ isPublished: 1, isFeatured: 1, publishedAt: -1 });
+articleSchema.index({ isPublished: 1, isTrending: 1, views: -1 });
+articleSchema.index({ isPublished: 1, isEditorsPick: 1, publishedAt: -1 });
+articleSchema.index({ isPublished: 1, publishedAt: -1 });
+articleSchema.index({ district: 1, isPublished: 1, publishedAt: -1 });
+
 const Article = mongoose.model("Article", articleSchema);
 
 export default Article;

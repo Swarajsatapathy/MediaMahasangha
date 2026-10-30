@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type MemberNewsChannel = {
   _id: string;
@@ -39,6 +40,7 @@ export default function MemberNewsChannelSection() {
   const [isActive, setIsActive] = useState(true);
 
   const [editingChannelId, setEditingChannelId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -246,6 +248,21 @@ export default function MemberNewsChannelSection() {
     }
   };
 
+  const filteredChannels = memberNewsChannels.filter((channel) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      channel.newsChannelName?.toLowerCase().includes(q) ||
+      channel.ownerName?.toLowerCase().includes(q) ||
+      channel.odmmRegistrationNo?.toLowerCase().includes(q) ||
+      channel.district?.toLowerCase().includes(q) ||
+      channel.mobileNumber?.includes(q) ||
+      channel.email?.toLowerCase().includes(q) ||
+      channel.websiteUrl?.toLowerCase().includes(q) ||
+      String(channel.serialNumber || "").includes(q)
+    );
+  });
+
   return (
     <section className="membersSection">
       <div className="sectionTop">
@@ -383,13 +400,32 @@ export default function MemberNewsChannelSection() {
         </form>
 
         <div className="card">
-          <h2>Member News Channels ({memberNewsChannels.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Member News Channels ({filteredChannels.length}
+              {searchQuery ? ` of ${memberNewsChannels.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search by channel, owner, district, reg no, mobile..."
+            />
+          </div>
 
           <div className="list">
-            {memberNewsChannels.length === 0 ? (
-              <p className="empty">No member news channels found.</p>
+            {filteredChannels.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No news channels matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No member news channels found.</p>
+              )
             ) : (
-              memberNewsChannels.map((channel) => (
+              filteredChannels.map((channel) => (
                 <div className="item" key={channel._id}>
                   <div className="avatar">
                     {channel.photo?.url ? (

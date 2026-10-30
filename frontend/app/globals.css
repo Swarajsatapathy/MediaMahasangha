@@ -821,6 +821,10 @@ a {
   right: 22px;
   bottom: 18px;
   z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
 }
 
 .overlay span {
@@ -1544,6 +1548,9 @@ a {
   text-decoration: none;
   color: inherit;
   transition: 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .listingCard:hover {
@@ -1551,15 +1558,44 @@ a {
   box-shadow: 0 16px 36px rgba(0, 51, 102, 0.14);
 }
 
+.listingCardMedia {
+  display: block;
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  text-decoration: none;
+  background: #f1f5f9;
+  position: relative;
+}
+
 .listingCard img {
   width: 100%;
   height: 190px;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease;
+}
+
+.listingCard:hover img {
+  transform: scale(1.03);
+}
+
+.listingCardTitleLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  flex: 1;
+}
+
+.listingCardTitleLink:hover h2 {
+  color: var(--red);
 }
 
 .listingBody {
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .listingBody span {
@@ -1579,13 +1615,194 @@ a {
   font-size: 19px;
   line-height: 1.35;
   font-weight: 900;
+  transition: color 0.2s ease;
 }
 
-.listingBody p {
+.listingCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 10px;
+  gap: 10px;
+  position: relative;
+}
+
+.listingCardFooter p {
   margin: 0;
   color: var(--text-muted);
   font-size: 14px;
   font-weight: 700;
+  line-height: 1.4;
+  flex: 1;
+}
+
+/* ======================================================
+   CARD SHARE COMPONENT
+====================================================== */
+
+.cardShareWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardShareBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+  color: var(--navy);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  padding: 0;
+}
+
+.cardShareBtn:hover,
+.cardShareBtn.active {
+  background: var(--navy);
+  color: #ffffff;
+  border-color: var(--navy);
+  box-shadow: 0 4px 12px rgba(0, 51, 102, 0.22);
+  transform: scale(1.06);
+}
+
+.cardSharePopover {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid rgba(0, 51, 102, 0.14);
+  border-radius: 12px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 12px 28px rgba(0, 51, 102, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
+  z-index: 50;
+  animation: cardShareFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+@keyframes cardShareFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cardSharePopover::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
+  border-right: 1px solid rgba(0, 51, 102, 0.14);
+  border-bottom: 1px solid rgba(0, 51, 102, 0.14);
+  transform: rotate(45deg);
+}
+
+.cardShareItem {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cardShareItem:hover {
+  transform: scale(1.1);
+  filter: brightness(1.08);
+}
+
+.cardShareItem.whatsapp {
+  background: #25D366;
+}
+
+.cardShareItem.facebook {
+  background: #1877F2;
+}
+
+.cardShareItem.twitter {
+  background: #000000;
+}
+
+.cardShareItem.copy {
+  background: var(--navy);
+}
+
+.cardShareItem.copied {
+  background: #16a34a;
+}
+
+.cardShareItem.more {
+  background: #64748b;
+}
+
+.copiedToast {
+  position: absolute;
+  top: -28px;
+  right: 0;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  animation: cardShareFadeIn 0.2s ease;
+}
+
+/* Slider Share Box (for Homepage Web News & Video Message) */
+.sliderShareWrapper {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.sliderShareWrapper .cardShareBtn {
+  background: rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.sliderShareWrapper .cardShareBtn:hover,
+.sliderShareWrapper .cardShareBtn.active {
+  background: #ffffff;
+  color: var(--navy);
+  border-color: #ffffff;
+}
+
+.overlayTextLink {
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  display: block;
 }
 
 .emptyListing {
@@ -3219,3 +3436,86 @@ a {
 }
 
 
+
+/* ======================================================
+   WEB NEWS & MESSAGES PAGINATION
+====================================================== */
+
+.webNewsPagination {
+  width: min(1200px, 94%);
+  margin: 36px auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.webNewsPagination .pageBtn {
+  background: #ffffff;
+  color: var(--navy);
+  border: 1px solid var(--border);
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 51, 102, 0.06);
+}
+
+.webNewsPagination .pageBtn:hover:not(:disabled) {
+  background: var(--navy);
+  color: #ffffff;
+  border-color: var(--navy);
+  box-shadow: 0 4px 14px rgba(0, 51, 102, 0.18);
+  transform: translateY(-1px);
+}
+
+.webNewsPagination .pageBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.webNewsPagination .pagePills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.webNewsPagination .pagePill {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 51, 102, 0.05);
+}
+
+.webNewsPagination .pagePill:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.webNewsPagination .pagePill.active {
+  background: var(--red);
+  color: #ffffff;
+  border-color: var(--red);
+  box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+}
+
+.webNewsPagination .pageEllipsis {
+  color: var(--text-muted);
+  font-weight: 700;
+  padding: 0 4px;
+}

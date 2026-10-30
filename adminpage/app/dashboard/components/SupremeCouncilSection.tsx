@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type SupremeCouncilMember = {
   _id: string;
@@ -27,6 +28,7 @@ export default function SupremeCouncilSection() {
   const [isActive, setIsActive] = useState(true);
 
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -206,6 +208,17 @@ export default function SupremeCouncilSection() {
     }
   };
 
+  const filteredMembers = members.filter((member) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      member.name?.toLowerCase().includes(q) ||
+      member.designation?.toLowerCase().includes(q) ||
+      member.district?.toLowerCase().includes(q) ||
+      String(member.serialNumber || "").includes(q)
+    );
+  });
+
   return (
     <section className="supremeCouncilSection">
       <div className="sectionTop">
@@ -302,13 +315,32 @@ export default function SupremeCouncilSection() {
         </form>
 
         <div className="card">
-          <h2>Supreme Council ({members.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Supreme Council ({filteredMembers.length}
+              {searchQuery ? ` of ${members.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search supreme council by name, designation, district..."
+            />
+          </div>
 
           <div className="list">
-            {members.length === 0 ? (
-              <p className="empty">No supreme council members found.</p>
+            {filteredMembers.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No supreme council members matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No supreme council members found.</p>
+              )
             ) : (
-              members.map((member) => (
+              filteredMembers.map((member) => (
                 <div className="item" key={member._id}>
                   <div className="avatar">
                     {member.photo?.url ? (

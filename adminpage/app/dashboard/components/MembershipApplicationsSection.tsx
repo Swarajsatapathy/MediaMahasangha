@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import SearchInput from "./SearchInput";
 
 type Application = {
   _id: string;
@@ -150,11 +151,10 @@ export default function MembershipApplicationsSection() {
           <option value="REJECTED">Rejected</option>
         </select>
 
-        <input 
-          type="text" 
-          placeholder="Search by ID, Name, Mobile..." 
-          value={search} 
-          onChange={(e) => setSearch(e.target.value)} 
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Search by ID, Name, Mobile..."
         />
       </div>
 

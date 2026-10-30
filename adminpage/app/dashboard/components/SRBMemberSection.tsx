@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type SRBMember = {
   _id: string;
@@ -32,6 +33,7 @@ export default function SRBMemberSection() {
   const [editingSRBMemberId, setEditingSRBMemberId] = useState<string | null>(
     null
   );
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -224,6 +226,19 @@ export default function SRBMemberSection() {
     }
   };
 
+  const filteredSRB = srbMembers.filter((member) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      member.name?.toLowerCase().includes(q) ||
+      member.designation?.toLowerCase().includes(q) ||
+      member.district?.toLowerCase().includes(q) ||
+      member.mobileNumber?.includes(q) ||
+      member.email?.toLowerCase().includes(q) ||
+      String(member.serialNumber || "").includes(q)
+    );
+  });
+
   return (
     <section className="membersSection">
       <div className="sectionTop">
@@ -330,13 +345,32 @@ export default function SRBMemberSection() {
         </form>
 
         <div className="card">
-          <h2>SRB Members ({srbMembers.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              SRB Members ({filteredSRB.length}
+              {searchQuery ? ` of ${srbMembers.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search SRB members by name, designation, district, mobile..."
+            />
+          </div>
 
           <div className="list">
-            {srbMembers.length === 0 ? (
-              <p className="empty">No SRB members found.</p>
+            {filteredSRB.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No SRB members matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No SRB members found.</p>
+              )
             ) : (
-              srbMembers.map((member) => (
+              filteredSRB.map((member) => (
                 <div className="item" key={member._id}>
                   <div className="avatar">
                     {member.photo?.url ? (

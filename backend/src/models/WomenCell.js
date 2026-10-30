@@ -54,4 +54,7 @@ const womenCellSchema = new mongoose.Schema(
   }
 );
 
+womenCellSchema.index({ isActive: 1, serialNumber: 1 });
+womenCellSchema.index({ district: 1, serialNumber: 1 });
+
 export default mongoose.model("WomenCell", womenCellSchema);

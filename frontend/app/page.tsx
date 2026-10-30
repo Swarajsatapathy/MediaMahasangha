@@ -57,9 +57,9 @@ export default async function HomePage() {
     galleryResult,
     noticesResult,
   ] = await Promise.allSettled([
-    getArticles(),
+    getArticles({ limit: 12, published: true }),
     getFlashArticles(),
-    getVideos(),
+    getVideos({ limit: 12, published: true }),
     getMembers(),
     getMentors(),
     getSupremeCouncilMembers(),

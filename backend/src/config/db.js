@@ -29,6 +29,8 @@ export const connectDB = async () => {
       cached.promise = mongoose.connect(uri, {
         dbName: "odmm-proper",
         bufferCommands: false,
+        maxPoolSize: 3,
+        minPoolSize: 0,
         serverSelectionTimeoutMS: 15000,
         socketTimeoutMS: 45000,
         connectTimeoutMS: 15000,

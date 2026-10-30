@@ -86,6 +86,9 @@ const memberNewsChannelSchema = new mongoose.Schema(
   }
 );
 
+memberNewsChannelSchema.index({ isActive: 1, serialNumber: 1 });
+memberNewsChannelSchema.index({ district: 1, serialNumber: 1 });
+
 const MemberNewsChannel = mongoose.model(
   "MemberNewsChannel",
   memberNewsChannelSchema

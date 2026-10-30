@@ -48,4 +48,7 @@ const mentorSchema = new mongoose.Schema(
   }
 );
 
+mentorSchema.index({ isActive: 1, serialNumber: 1 });
+mentorSchema.index({ district: 1, serialNumber: 1 });
+
 export default mongoose.model("Mentor", mentorSchema);

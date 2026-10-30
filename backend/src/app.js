@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import compression from "compression";
 
 import { connectDB } from "./config/db.js";
 
@@ -22,6 +23,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(compression());
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -36,8 +39,6 @@ const allowedOrigins = [
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-
-  console.log("Request Origin:", origin);
 
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
@@ -71,6 +72,9 @@ app.get("/", (req, res) => {
     message: "ODMM Serverless Backend Running",
   });
 });
+
+// Static location routes do not require a database connection
+app.use("/api/locations", locationRoutes);
 
 // DB status check
 app.get("/api/health", async (req, res) => {
@@ -112,7 +116,7 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/mentors", mentorRoutes);
-app.use("/api/locations", locationRoutes);
+app.use("/api/memberNewsChannels", memberNewsChannelRoutes);
 app.use("/api/member-news-channels", memberNewsChannelRoutes);
 app.use("/api/srb-members", srbMemberRoutes);
 app.use("/api/supreme-council", supremeCouncilRoutes);

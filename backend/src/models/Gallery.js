@@ -36,6 +36,9 @@ const gallerySchema = new mongoose.Schema(
   }
 );
 
+gallerySchema.index({ createdAt: -1 });
+gallerySchema.index({ district: 1, createdAt: -1 });
+
 const Gallery = mongoose.model("Gallery", gallerySchema);
 
 export default Gallery;

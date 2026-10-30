@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type Mentor = {
   _id: string;
@@ -27,6 +28,7 @@ export default function MentorsSection() {
   const [isActive, setIsActive] = useState(true);
 
   const [editingMentorId, setEditingMentorId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -204,6 +206,17 @@ export default function MentorsSection() {
     }
   };
 
+  const filteredMentors = mentors.filter((mentor) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      mentor.name?.toLowerCase().includes(q) ||
+      mentor.designation?.toLowerCase().includes(q) ||
+      mentor.district?.toLowerCase().includes(q) ||
+      String(mentor.serialNumber || "").includes(q)
+    );
+  });
+
   return (
     <section className="mentorsSection">
       <div className="sectionTop">
@@ -300,13 +313,32 @@ export default function MentorsSection() {
         </form>
 
         <div className="card">
-          <h2>Advisory Board ({mentors.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Advisory Board ({filteredMentors.length}
+              {searchQuery ? ` of ${mentors.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search advisory board by name, designation, district..."
+            />
+          </div>
 
           <div className="list">
-            {mentors.length === 0 ? (
-              <p className="empty">No advisory board members found.</p>
+            {filteredMentors.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No advisory board members matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No advisory board members found.</p>
+              )
             ) : (
-              mentors.map((mentor) => (
+              filteredMentors.map((mentor) => (
                 <div className="item" key={mentor._id}>
                   <div className="avatar">
                     {mentor.photo?.url ? (

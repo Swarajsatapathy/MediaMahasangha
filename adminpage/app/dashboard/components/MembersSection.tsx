@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 import { useSearchParams, useRouter } from "next/navigation";
 
 type CommitteeType = "" | "state" | "district";
@@ -58,6 +59,7 @@ export default function MembersSection() {
 
   const [editingMemberId, setEditingMemberId] =
     useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -577,6 +579,21 @@ export default function MembersSection() {
     }
   };
 
+  const filteredMembers = members.filter((member) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      member.name?.toLowerCase().includes(q) ||
+      member.memberId?.toLowerCase().includes(q) ||
+      member.designation?.toLowerCase().includes(q) ||
+      member.district?.toLowerCase().includes(q) ||
+      member.committeeDistrict?.toLowerCase().includes(q) ||
+      member.committeeType?.toLowerCase().includes(q) ||
+      member.mobileNumber?.includes(q) ||
+      String(member.serialNumber || "").includes(q)
+    );
+  });
+
   return (
     <section className="membersSection">
       <div className="sectionTop">
@@ -885,15 +902,34 @@ export default function MembersSection() {
         </form>
 
         <div className="card">
-          <h2>Members ({members.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Members ({filteredMembers.length}
+              {searchQuery ? ` of ${members.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search by name, member ID, mobile, designation, district..."
+            />
+          </div>
 
           <div className="list">
-            {members.length === 0 ? (
-              <p className="empty">
-                No members found.
-              </p>
+            {filteredMembers.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No members matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">
+                  No members found.
+                </p>
+              )
             ) : (
-              members.map((member) => {
+              filteredMembers.map((member) => {
                 const membershipStatus =
                   getMembershipStatus(member);
 

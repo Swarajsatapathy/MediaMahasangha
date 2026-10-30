@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type Video = {
   _id: string;
@@ -28,6 +29,9 @@ export default function VideosSection() {
   const [reporter, setReporter] = useState("");
   const [tags, setTags] = useState("");
   const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const VIDEOS_PER_PAGE = 12;
 
   const [isPublished, setIsPublished] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
@@ -47,7 +51,7 @@ export default function VideosSection() {
 
   const fetchVideos = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/videos`);
+      const res = await fetch(`${API_URL}/api/videos?all=true&limit=1000`);
       const data = await res.json();
 
       if (data?.data?.videos) {
@@ -84,6 +88,7 @@ export default function VideosSection() {
     setIsTrending(false);
     setIsEditorsPick(false);
     setEditingVideoId(null);
+    setCurrentPage(1);
   };
 
   const handleEditClick = (video: Video) => {
@@ -204,6 +209,24 @@ const res = await fetch(url, {
       }
     }
   };
+
+  const filteredVideos = videos.filter((video) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      video.title?.toLowerCase().includes(q) ||
+      video.reporter?.toLowerCase().includes(q) ||
+      video.district?.toLowerCase().includes(q) ||
+      video.description?.toLowerCase().includes(q)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredVideos.length / VIDEOS_PER_PAGE) || 1;
+  const validPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const paginatedVideos = filteredVideos.slice(
+    (validPage - 1) * VIDEOS_PER_PAGE,
+    validPage * VIDEOS_PER_PAGE
+  );
 
   return (
     <section className="videoSection">
@@ -335,13 +358,32 @@ const res = await fetch(url, {
         </form>
 
         <div className="card">
-          <h2>Videos ({videos.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Videos ({filteredVideos.length}
+              {searchQuery ? ` of ${videos.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={(val) => { setSearchQuery(val); setCurrentPage(1); }}
+              placeholder="Search videos by title, reporter, district..."
+            />
+          </div>
 
           <div className="list">
-            {videos.length === 0 ? (
-              <p className="empty">No videos found.</p>
+            {filteredVideos.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No videos matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No videos found.</p>
+              )
             ) : (
-              videos.map((video) => (
+              paginatedVideos.map((video) => (
                 <div className="item" key={video._id}>
                   {video.thumbnailUrl && (
                     <img src={video.thumbnailUrl} alt={video.title} />
@@ -384,6 +426,52 @@ const res = await fetch(url, {
               ))
             )}
           </div>
+
+          {filteredVideos.length > VIDEOS_PER_PAGE && (
+            <div className="adminPagination">
+              <span className="adminPageInfo">
+                Showing <strong>{(validPage - 1) * VIDEOS_PER_PAGE + 1}–{Math.min(validPage * VIDEOS_PER_PAGE, filteredVideos.length)}</strong> of <strong>{filteredVideos.length}</strong>
+              </span>
+
+              <div className="adminPageBtnGroup">
+                <button
+                  type="button"
+                  className="adminPageBtn"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={validPage === 1}
+                >
+                  ← Prev
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - validPage) <= 1)
+                  .map((p, idx, arr) => {
+                    const prevP = arr[idx - 1];
+                    return (
+                      <span key={p} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                        {prevP && p - prevP > 1 && <span style={{ color: "#627796", fontSize: 11 }}>...</span>}
+                        <button
+                          type="button"
+                          className={`adminPagePill ${p === validPage ? "active" : ""}`}
+                          onClick={() => setCurrentPage(p)}
+                        >
+                          {p}
+                        </button>
+                      </span>
+                    );
+                  })}
+
+                <button
+                  type="button"
+                  className="adminPageBtn"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={validPage === totalPages}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -239,22 +239,22 @@ export const approveApplication = asyncHandler(async (req, res) => {
 
   await application.save();
 
-  // Send notifications
-  await notificationService.sendEmail({
-    to: application.email,
-    subject: "ODMM Membership Application Approved",
-    text: `Dear ${application.name},\n\nYour ODMM membership application has been approved.\n\nApplication ID: ${application.applicationId}\n\nYour official member record will now be processed by the ODMM administration.\n\nRegards,\nOdisha Digital Media Mahasangha (ODMM)`,
-  });
-
-  await notificationService.sendWhatsApp({
-    to: application.whatsappNumber,
-    text: `Dear ${application.name}, Your ODMM membership application has been approved. Application ID: ${application.applicationId}. Your official member record will now be processed by the ODMM administration.`,
-  });
-
-  await notificationService.sendSMS({
-    to: application.mobileNumber,
-    text: `Dear ${application.name}, Your ODMM membership application has been approved. App ID: ${application.applicationId}. Regards, ODMM`,
-  });
+  // Send notifications in parallel to avoid sequential network latency
+  await Promise.allSettled([
+    notificationService.sendEmail({
+      to: application.email,
+      subject: "ODMM Membership Application Approved",
+      text: `Dear ${application.name},\n\nYour ODMM membership application has been approved.\n\nApplication ID: ${application.applicationId}\n\nYour official member record will now be processed by the ODMM administration.\n\nRegards,\nOdisha Digital Media Mahasangha (ODMM)`,
+    }),
+    notificationService.sendWhatsApp({
+      to: application.whatsappNumber,
+      text: `Dear ${application.name}, Your ODMM membership application has been approved. Application ID: ${application.applicationId}. Your official member record will now be processed by the ODMM administration.`,
+    }),
+    notificationService.sendSMS({
+      to: application.mobileNumber,
+      text: `Dear ${application.name}, Your ODMM membership application has been approved. App ID: ${application.applicationId}. Regards, ODMM`,
+    }),
+  ]);
 
   return res.status(200).json(new ApiResponse(200, application, "Application approved successfully"));
 });
@@ -277,22 +277,22 @@ export const rejectApplication = asyncHandler(async (req, res) => {
 
   await application.save();
 
-  // Send notifications
-  await notificationService.sendEmail({
-    to: application.email,
-    subject: "ODMM Membership Application Update",
-    text: `Dear ${application.name},\n\nYour ODMM membership application (ID: ${application.applicationId}) has been rejected for the following reason:\n\n${remarks}\n\nRegards,\nOdisha Digital Media Mahasangha (ODMM)`,
-  });
-
-  await notificationService.sendWhatsApp({
-    to: application.whatsappNumber,
-    text: `Dear ${application.name}, Your ODMM membership application (ID: ${application.applicationId}) has been rejected. Reason: ${remarks}.`,
-  });
-
-  await notificationService.sendSMS({
-    to: application.mobileNumber,
-    text: `Dear ${application.name}, Your ODMM application (ID: ${application.applicationId}) has been rejected. Reason: ${remarks}.`,
-  });
+  // Send notifications in parallel to avoid sequential network latency
+  await Promise.allSettled([
+    notificationService.sendEmail({
+      to: application.email,
+      subject: "ODMM Membership Application Update",
+      text: `Dear ${application.name},\n\nYour ODMM membership application (ID: ${application.applicationId}) has been rejected for the following reason:\n\n${remarks}\n\nRegards,\nOdisha Digital Media Mahasangha (ODMM)`,
+    }),
+    notificationService.sendWhatsApp({
+      to: application.whatsappNumber,
+      text: `Dear ${application.name}, Your ODMM membership application (ID: ${application.applicationId}) has been rejected. Reason: ${remarks}.`,
+    }),
+    notificationService.sendSMS({
+      to: application.mobileNumber,
+      text: `Dear ${application.name}, Your ODMM application (ID: ${application.applicationId}) has been rejected. Reason: ${remarks}.`,
+    }),
+  ]);
 
   return res.status(200).json(new ApiResponse(200, application, "Application rejected successfully"));
 });

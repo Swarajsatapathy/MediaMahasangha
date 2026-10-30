@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type GalleryItem = {
   _id: string;
@@ -22,6 +23,7 @@ export default function GallerySection() {
   const [photo, setPhoto] = useState<File | null>(null);
 
   const [editingGalleryId, setEditingGalleryId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -193,6 +195,16 @@ export default function GallerySection() {
     }
   };
 
+  const filteredGallery = galleryItems.filter((item) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      item.description?.toLowerCase().includes(q) ||
+      item.district?.toLowerCase().includes(q) ||
+      item.createdAt?.toLowerCase().includes(q)
+    );
+  });
+
   return (
     <section className="membersSection">
       <div className="sectionTop">
@@ -257,13 +269,32 @@ export default function GallerySection() {
         </form>
 
         <div className="card">
-          <h2>Gallery ({galleryItems.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Gallery ({filteredGallery.length}
+              {searchQuery ? ` of ${galleryItems.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search gallery by description, district..."
+            />
+          </div>
 
           <div className="list">
-            {galleryItems.length === 0 ? (
-              <p className="empty">No gallery items found.</p>
+            {filteredGallery.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No gallery items matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No gallery items found.</p>
+              )
             ) : (
-              galleryItems.map((item) => (
+              filteredGallery.map((item) => (
                 <div className="item" key={item._id}>
                   <div className="avatar galleryAvatar">
                     {item.photo?.url ? (

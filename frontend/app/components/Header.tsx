@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import LiveClock from "./LiveClock";
 import MobileNav from "./MobileNav";
 import SocialSidebar from "./SocialSidebar";
@@ -75,7 +74,16 @@ export default function Header() {
           <picture>
             <source
               media="(max-width: 768px)"
+              type="image/webp"
+              srcSet="/banner-mobile.webp"
+            />
+            <source
+              media="(max-width: 768px)"
               srcSet="/banner-mobile.png"
+            />
+            <source
+              type="image/webp"
+              srcSet="/banner.webp"
             />
             <img
               src="/banner.png"

@@ -163,6 +163,11 @@ const membershipApplicationSchema = new mongoose.Schema(
   }
 );
 
+membershipApplicationSchema.index({ applicationStatus: 1, createdAt: -1 });
+membershipApplicationSchema.index({ paymentStatus: 1, createdAt: -1 });
+membershipApplicationSchema.index({ mobileNumber: 1 });
+membershipApplicationSchema.index({ email: 1 });
+
 const MembershipApplication = mongoose.model(
   "MembershipApplication",
   membershipApplicationSchema

@@ -91,6 +91,13 @@ const videoSchema = new mongoose.Schema(
   }
 );
 
+videoSchema.index({ isPublished: 1, isFlash: 1, publishedAt: -1 });
+videoSchema.index({ isPublished: 1, isFeatured: 1, publishedAt: -1 });
+videoSchema.index({ isPublished: 1, isTrending: 1, views: -1 });
+videoSchema.index({ isPublished: 1, isEditorsPick: 1, publishedAt: -1 });
+videoSchema.index({ isPublished: 1, publishedAt: -1 });
+videoSchema.index({ district: 1, isPublished: 1, publishedAt: -1 });
+
 const Video = mongoose.model("Video", videoSchema);
 
 export default Video;

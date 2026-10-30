@@ -60,6 +60,9 @@ const srbMemberSchema = new mongoose.Schema(
   }
 );
 
+srbMemberSchema.index({ isActive: 1, serialNumber: 1 });
+srbMemberSchema.index({ district: 1, serialNumber: 1 });
+
 const SrbMember = mongoose.model("SrbMember", srbMemberSchema);
 
 export default SrbMember;

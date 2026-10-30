@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type NoticeItem = {
   _id: string;
@@ -189,9 +190,15 @@ export default function NoticeBoardSection() {
     }
   };
 
-  const filteredNotices = notices.filter((n) =>
-    n.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredNotices = notices.filter((n) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      n.title?.toLowerCase().includes(q) ||
+      n.date?.toLowerCase().includes(q) ||
+      n.websiteLink?.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="noticesSection">
@@ -270,20 +277,30 @@ export default function NoticeBoardSection() {
         </form>
 
         <div className="card">
-          <div className="listHeader">
-            <h2>Notices ({notices.length})</h2>
-            <input
-              type="text"
-              placeholder="Search notices..."
+          <div className="adminListHeader">
+            <h2>
+              Notices ({filteredNotices.length}
+              {searchQuery ? ` of ${notices.length}` : ""})
+            </h2>
+            <SearchInput
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="searchInput"
+              onChange={setSearchQuery}
+              placeholder="Search notices by title, date, link..."
             />
           </div>
 
           <div className="list">
             {filteredNotices.length === 0 ? (
-              <p className="empty">No notices found.</p>
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No notices matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No notices found.</p>
+              )
             ) : (
               filteredNotices.map((item) => (
                 <div className="item" key={item._id}>

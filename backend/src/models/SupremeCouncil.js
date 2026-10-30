@@ -48,4 +48,7 @@ const supremeCouncilSchema = new mongoose.Schema(
   }
 );
 
+supremeCouncilSchema.index({ isActive: 1, serialNumber: 1 });
+supremeCouncilSchema.index({ district: 1, serialNumber: 1 });
+
 export default mongoose.model("SupremeCouncil", supremeCouncilSchema);

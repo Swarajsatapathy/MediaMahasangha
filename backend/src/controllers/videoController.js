@@ -102,7 +102,7 @@ const createVideo = asyncHandler(async (req, res) => {
 const getVideos = asyncHandler(async (req, res) => {
   const {
     page = 1,
-    limit = 10,
+    limit = 12,
     district,
     reporter,
     tag,
@@ -114,6 +114,7 @@ const getVideos = asyncHandler(async (req, res) => {
     search,
     sortBy = "publishedAt",
     order = "desc",
+    all,
   } = req.query;
 
   const filter = {};
@@ -134,17 +135,24 @@ const getVideos = asyncHandler(async (req, res) => {
     ];
   }
 
-  const pageNum = Math.max(1, parseInt(page, 10));
-  const pageSize = Math.min(50, Math.max(1, parseInt(limit, 10)));
+  const isAll = all === "true" || parseInt(limit, 10) === 0;
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const pageSize = isAll ? 0 : Math.min(1000, Math.max(1, parseInt(limit, 10) || 12));
   const sortOrder = order === "asc" ? 1 : -1;
 
-  const [videos, total] = await Promise.all([
-    Video.find(filter)
-      .sort({ [sortBy]: sortOrder })
-      .skip((pageNum - 1) * pageSize)
-      .limit(pageSize)
-      .lean(),
+  const sortCriteria =
+    sortBy === "publishedAt"
+      ? { publishedAt: sortOrder, createdAt: sortOrder }
+      : { [sortBy]: sortOrder };
 
+  let query = Video.find(filter).sort(sortCriteria).lean();
+
+  if (pageSize > 0) {
+    query = query.skip((pageNum - 1) * pageSize).limit(pageSize);
+  }
+
+  const [videos, total] = await Promise.all([
+    query,
     Video.countDocuments(filter),
   ]);
 
@@ -154,8 +162,8 @@ const getVideos = asyncHandler(async (req, res) => {
       pagination: {
         total,
         page: pageNum,
-        limit: pageSize,
-        totalPages: Math.ceil(total / pageSize),
+        limit: pageSize > 0 ? pageSize : total,
+        totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 1,
       },
     })
   );
@@ -163,14 +171,15 @@ const getVideos = asyncHandler(async (req, res) => {
 
 // GET SINGLE VIDEO
 const getVideoById = asyncHandler(async (req, res) => {
-  const video = await Video.findById(req.params.id);
+  const video = await Video.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { views: 1 } },
+    { new: true }
+  );
 
   if (!video) {
     throw new ApiError(404, "Video not found");
   }
-
-  video.views += 1;
-  await video.save();
 
   return res.status(200).json(new ApiResponse(200, video));
 });

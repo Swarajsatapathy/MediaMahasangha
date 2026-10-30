@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import CardShare from "./CardShare";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 type Props = {
@@ -87,7 +88,7 @@ export default function HomeSectionSlider({
               <Link href={`/members/${item._id}`} className="memberHomeCard">
                 <div className="memberPhotoBox">
                   {item.photo?.url ? (
-                    <img src={item.photo.url} alt={item.name} />
+                    <img src={item.photo.url} alt={item.name} loading="lazy" decoding="async" />
                   ) : (
                     <span>{item.name?.charAt(0) || "M"}</span>
                   )}
@@ -142,7 +143,7 @@ export default function HomeSectionSlider({
               >
                 <div className="memberPhotoBox">
                   {item.photo?.url ? (
-                    <img src={item.photo.url} alt={item.name} />
+                    <img src={item.photo.url} alt={item.name} loading="lazy" decoding="async" />
                   ) : (
                     <span>{item.name?.charAt(0)?.toUpperCase() || "S"}</span>
                   )}
@@ -198,7 +199,7 @@ export default function HomeSectionSlider({
               >
                 <div className="memberPhotoBox channelHomeLogo">
                   {item.photo?.url ? (
-                    <img src={item.photo.url} alt={item.newsChannelName} />
+                    <img src={item.photo.url} alt={item.newsChannelName} loading="lazy" decoding="async" />
                   ) : (
                     <span>
                       {item.newsChannelName?.charAt(0)?.toUpperCase() || "N"}
@@ -257,7 +258,7 @@ export default function HomeSectionSlider({
               <Link href={`/mentors/${item._id}`} className="memberHomeCard">
                 <div className="memberPhotoBox">
                   {item.photo?.url ? (
-                    <img src={item.photo.url} alt={item.name} />
+                    <img src={item.photo.url} alt={item.name} loading="lazy" decoding="async" />
                   ) : (
                     <span>{item.name?.charAt(0)?.toUpperCase() || "M"}</span>
                   )}
@@ -306,7 +307,7 @@ export default function HomeSectionSlider({
               <Link href={`/supreme-council/${item._id}`} className="memberHomeCard">
                 <div className="memberPhotoBox">
                   {item.photo?.url ? (
-                    <img src={item.photo.url} alt={item.name} />
+                    <img src={item.photo.url} alt={item.name} loading="lazy" decoding="async" />
                   ) : (
                     <span>{item.name?.charAt(0)?.toUpperCase() || "S"}</span>
                   )}
@@ -355,7 +356,7 @@ export default function HomeSectionSlider({
               <Link href={`/women-cell/${item._id}`} className="memberHomeCard">
                 <div className="memberPhotoBox">
                   {item.photo?.url ? (
-                    <img src={item.photo.url} alt={item.name} />
+                    <img src={item.photo.url} alt={item.name} loading="lazy" decoding="async" />
                   ) : (
                     <span>{item.name?.charAt(0)?.toUpperCase() || "W"}</span>
                   )}
@@ -404,10 +405,7 @@ export default function HomeSectionSlider({
             >
               <div className="galleryHomeImage">
                 {item.photo?.url ? (
-                  <img
-                    src={item.photo.url}
-                    alt={item.description || item.district || "Gallery"}
-                  />
+                  <img src={item.photo.url} alt={item.description || item.district || "Gallery"} loading="lazy" decoding="async" />
                 ) : (
                   <span>Gallery</span>
                 )}
@@ -569,24 +567,36 @@ export default function HomeSectionSlider({
       </div>
 
       <div className="sliderStage">
-        <Link
+        <div
           key={item?._id || index}
-          href={href}
           className={`bigNewsCard sliderAnimatedCard ${direction}`}
         >
-          {imageUrl && <img src={imageUrl} alt={item?.title || title} />}
+          <Link href={href} className="bigNewsCardLink" aria-label={item?.title || title}>
+            {imageUrl && <img src={imageUrl} alt={item?.title || title} loading="lazy" decoding="async" />}
 
-          {type === "videos" && (
-            <div className="playButton">
-              <span>▶</span>
-            </div>
-          )}
+            {type === "videos" && (
+              <div className="playButton">
+                <span>▶</span>
+              </div>
+            )}
+          </Link>
 
           <div className="overlay">
-            <span>{badge || title}</span>
-            <h3>{item?.title || `No ${title} available`}</h3>
+            <Link href={href} className="overlayTextLink">
+              <span>{badge || title}</span>
+              <h3>{item?.title || `No ${title} available`}</h3>
+            </Link>
+
+            {(type === "articles" || type === "videos") && item?._id && (
+              <div className="sliderShareWrapper">
+                <CardShare
+                  title={item?.title || title}
+                  url={href}
+                />
+              </div>
+            )}
           </div>
-        </Link>
+        </div>
       </div>
     </section>
   );

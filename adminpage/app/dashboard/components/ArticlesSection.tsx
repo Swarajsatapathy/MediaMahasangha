@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 import { useRouter } from "next/navigation";
 
 type Article = {
@@ -30,6 +31,9 @@ export default function ArticlesSection() {
   const [images, setImages] = useState<FileList | null>(null);
 
   const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ARTICLES_PER_PAGE = 12;
 
   const [isPublished, setIsPublished] = useState(true);
   const [isFlash, setIsFlash] = useState(false);
@@ -56,7 +60,7 @@ export default function ArticlesSection() {
 
   const fetchArticles = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/articles`);
+      const res = await fetch(`${API_URL}/api/articles?all=true&limit=1000`);
       const data = await res.json();
 
       if (data?.data?.articles) {
@@ -93,6 +97,7 @@ export default function ArticlesSection() {
     setIsTrending(false);
     setIsEditorsPick(false);
     setEditingArticleId(null);
+    setCurrentPage(1);
 
     const fileInput = document.getElementById("images") as HTMLInputElement;
     if (fileInput) fileInput.value = "";
@@ -223,6 +228,24 @@ export default function ArticlesSection() {
       }
     }
   };
+
+  const filteredArticles = articles.filter((article) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      article.title?.toLowerCase().includes(q) ||
+      article.reporter?.toLowerCase().includes(q) ||
+      article.district?.toLowerCase().includes(q) ||
+      article.content?.toLowerCase().includes(q)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredArticles.length / ARTICLES_PER_PAGE) || 1;
+  const validPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const paginatedArticles = filteredArticles.slice(
+    (validPage - 1) * ARTICLES_PER_PAGE,
+    validPage * ARTICLES_PER_PAGE
+  );
 
   return (
     <main className="page">
@@ -355,13 +378,32 @@ export default function ArticlesSection() {
         </form>
 
         <div className="card">
-          <h2>Articles ({articles.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Articles ({filteredArticles.length}
+              {searchQuery ? ` of ${articles.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={(val) => { setSearchQuery(val); setCurrentPage(1); }}
+              placeholder="Search articles by title, reporter, district..."
+            />
+          </div>
 
           <div className="list">
-            {articles.length === 0 ? (
-              <p className="empty">No articles found.</p>
+            {filteredArticles.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No articles matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No articles found.</p>
+              )
             ) : (
-              articles.map((article) => (
+              paginatedArticles.map((article) => (
                 <div className="item" key={article._id}>
                   <h3>{article.title}</h3>
                   <p>
@@ -406,6 +448,52 @@ export default function ArticlesSection() {
               ))
             )}
           </div>
+
+          {filteredArticles.length > ARTICLES_PER_PAGE && (
+            <div className="adminPagination">
+              <span className="adminPageInfo">
+                Showing <strong>{(validPage - 1) * ARTICLES_PER_PAGE + 1}–{Math.min(validPage * ARTICLES_PER_PAGE, filteredArticles.length)}</strong> of <strong>{filteredArticles.length}</strong>
+              </span>
+
+              <div className="adminPageBtnGroup">
+                <button
+                  type="button"
+                  className="adminPageBtn"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={validPage === 1}
+                >
+                  ← Prev
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - validPage) <= 1)
+                  .map((p, idx, arr) => {
+                    const prevP = arr[idx - 1];
+                    return (
+                      <span key={p} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                        {prevP && p - prevP > 1 && <span style={{ color: "#627796", fontSize: 11 }}>...</span>}
+                        <button
+                          type="button"
+                          className={`adminPagePill ${p === validPage ? "active" : ""}`}
+                          onClick={() => setCurrentPage(p)}
+                        >
+                          {p}
+                        </button>
+                      </span>
+                    );
+                  })}
+
+                <button
+                  type="button"
+                  className="adminPageBtn"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={validPage === totalPages}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

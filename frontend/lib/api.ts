@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
 type APIResponse<T> = {
@@ -64,6 +66,15 @@ async function fetchFromAPI<T>(
 
     return data.data ?? null;
   } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "digest" in error &&
+      (error as { digest: string }).digest === "DYNAMIC_SERVER_USAGE"
+    ) {
+      throw error;
+    }
+
     if (error instanceof Error && error.name === "AbortError") {
       console.error(
         `API Timeout [${endpoint}]: Request exceeded ${timeout}ms`
@@ -82,11 +93,34 @@ async function fetchFromAPI<T>(
    ARTICLES
 ====================================================== */
 
-export async function getArticles() {
+export async function getArticles(
+  options: {
+    page?: number;
+    limit?: number;
+    all?: boolean;
+    published?: boolean;
+    search?: string;
+  } = {}
+) {
+  const params = new URLSearchParams();
+  if (options.page !== undefined) params.append("page", String(options.page));
+  if (options.limit !== undefined) params.append("limit", String(options.limit));
+  if (options.all) params.append("all", "true");
+  if (options.published !== undefined)
+    params.append("published", String(options.published));
+  if (options.search) params.append("search", options.search);
+  const qs = params.toString();
+
   return fetchFromAPI<{
     articles: any[];
     total?: number;
-  }>("/api/articles", {
+    pagination?: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  }>(`/api/articles${qs ? `?${qs}` : ""}`, {
     revalidate: 0,
   });
 }
@@ -118,24 +152,47 @@ export async function getFeaturedArticles() {
   });
 }
 
-export async function getArticleById(id: string) {
+export const getArticleById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/articles/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    VIDEOS
 ====================================================== */
 
-export async function getVideos() {
+export async function getVideos(
+  options: {
+    page?: number;
+    limit?: number;
+    all?: boolean;
+    published?: boolean;
+    search?: string;
+  } = {}
+) {
+  const params = new URLSearchParams();
+  if (options.page !== undefined) params.append("page", String(options.page));
+  if (options.limit !== undefined) params.append("limit", String(options.limit));
+  if (options.all) params.append("all", "true");
+  if (options.published !== undefined)
+    params.append("published", String(options.published));
+  if (options.search) params.append("search", options.search);
+  const qs = params.toString();
+
   return fetchFromAPI<{
     videos: any[];
     total?: number;
-  }>("/api/videos", {
+    pagination?: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  }>(`/api/videos${qs ? `?${qs}` : ""}`, {
     revalidate: 0,
   });
 }
@@ -170,14 +227,14 @@ export async function getTrendingVideos() {
   });
 }
 
-export async function getVideoById(id: string) {
+export const getVideoById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/videos/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    MEMBERS
@@ -192,14 +249,14 @@ export async function getMembers() {
   });
 }
 
-export async function getMemberById(id: string) {
+export const getMemberById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/members/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    MENTORS
@@ -214,14 +271,14 @@ export async function getMentors() {
   });
 }
 
-export async function getMentorById(id: string) {
+export const getMentorById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/mentors/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    MEMBER NEWS CHANNELS
@@ -236,14 +293,14 @@ export async function getMemberNewsChannels() {
   });
 }
 
-export async function getMemberNewsChannelById(id: string) {
+export const getMemberNewsChannelById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/member-news-channels/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    SRB MEMBERS
@@ -258,14 +315,14 @@ export async function getSrbMembers() {
   });
 }
 
-export async function getSrbMemberById(id: string) {
+export const getSrbMemberById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/srb-members/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    SUPREME COUNCIL
@@ -280,14 +337,14 @@ export async function getSupremeCouncilMembers() {
   });
 }
 
-export async function getSupremeCouncilMemberById(id: string) {
+export const getSupremeCouncilMemberById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/supreme-council/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    WOMEN CELL
@@ -302,14 +359,14 @@ export async function getWomenCellMembers() {
   });
 }
 
-export async function getWomenCellMemberById(id: string) {
+export const getWomenCellMemberById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/women-cell/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    GALLERY
@@ -324,14 +381,14 @@ export async function getGalleryItems() {
   });
 }
 
-export async function getGalleryItemById(id: string) {
+export const getGalleryItemById = cache(async (id: string) => {
   return fetchFromAPI<any>(
     `/api/gallery/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});
 
 /* ======================================================
    NOTICES
@@ -373,11 +430,11 @@ export async function getNotices(options: {
   });
 }
 
-export async function getNoticeById(id: string) {
+export const getNoticeById = cache(async (id: string) => {
   return fetchFromAPI<Notice>(
     `/api/notices/${encodeURIComponent(id)}`,
     {
       revalidate: 0,
     }
   );
-}
+});

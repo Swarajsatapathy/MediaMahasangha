@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchInput from "./SearchInput";
 
 type WomenCellMember = {
   _id: string;
@@ -29,6 +30,7 @@ export default function WomenCellSection() {
   const [isActive, setIsActive] = useState(true);
 
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -211,6 +213,18 @@ export default function WomenCellSection() {
     }
   };
 
+  const filteredMembers = members.filter((member) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      member.name?.toLowerCase().includes(q) ||
+      member.designation?.toLowerCase().includes(q) ||
+      member.wing?.toLowerCase().includes(q) ||
+      member.district?.toLowerCase().includes(q) ||
+      String(member.serialNumber || "").includes(q)
+    );
+  });
+
   return (
     <section className="womenCellSection">
       <div className="sectionTop">
@@ -315,13 +329,32 @@ export default function WomenCellSection() {
         </form>
 
         <div className="card">
-          <h2>Women Cell ({members.length})</h2>
+          <div className="adminListHeader">
+            <h2>
+              Women Cell ({filteredMembers.length}
+              {searchQuery ? ` of ${members.length}` : ""})
+            </h2>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search women cell by name, designation, district, wing..."
+            />
+          </div>
 
           <div className="list">
-            {members.length === 0 ? (
-              <p className="empty">No women cell members found.</p>
+            {filteredMembers.length === 0 ? (
+              searchQuery ? (
+                <div className="adminSearchEmpty">
+                  <p>No women cell members matching &ldquo;{searchQuery}&rdquo;</p>
+                  <button type="button" onClick={() => setSearchQuery("")}>
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <p className="empty">No women cell members found.</p>
+              )
             ) : (
-              members.map((member) => (
+              filteredMembers.map((member) => (
                 <div className="item" key={member._id}>
                   <div className="avatar">
                     {member.photo?.url ? (

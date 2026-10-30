@@ -88,7 +88,7 @@ const createArticle = asyncHandler(async (req, res) => {
 const getArticles = asyncHandler(async (req, res) => {
   const {
     page = 1,
-    limit = 10,
+    limit = 12,
     reporter,
     tag,
     featured,
@@ -99,6 +99,7 @@ const getArticles = asyncHandler(async (req, res) => {
     search,
     sortBy = "publishedAt",
     order = "desc",
+    all,
   } = req.query;
 
   const filter = {};
@@ -119,17 +120,24 @@ const getArticles = asyncHandler(async (req, res) => {
     ];
   }
 
-  const pageNum = Math.max(1, parseInt(page, 10));
-  const pageSize = Math.min(50, Math.max(1, parseInt(limit, 10)));
+  const isAll = all === "true" || parseInt(limit, 10) === 0;
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const pageSize = isAll ? 0 : Math.min(1000, Math.max(1, parseInt(limit, 10) || 12));
   const sortOrder = order === "asc" ? 1 : -1;
 
-  const [articles, total] = await Promise.all([
-    Article.find(filter)
-      .sort({ [sortBy]: sortOrder })
-      .skip((pageNum - 1) * pageSize)
-      .limit(pageSize)
-      .lean(),
+  const sortCriteria =
+    sortBy === "publishedAt"
+      ? { publishedAt: sortOrder, createdAt: sortOrder }
+      : { [sortBy]: sortOrder };
 
+  let query = Article.find(filter).sort(sortCriteria).lean();
+
+  if (pageSize > 0) {
+    query = query.skip((pageNum - 1) * pageSize).limit(pageSize);
+  }
+
+  const [articles, total] = await Promise.all([
+    query,
     Article.countDocuments(filter),
   ]);
 
@@ -139,8 +147,8 @@ const getArticles = asyncHandler(async (req, res) => {
       pagination: {
         total,
         page: pageNum,
-        limit: pageSize,
-        totalPages: Math.ceil(total / pageSize),
+        limit: pageSize > 0 ? pageSize : total,
+        totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 1,
       },
     })
   );
@@ -157,9 +165,6 @@ const getArticleById = asyncHandler(async (req, res) => {
   if (!article) {
     throw new ApiError(404, "Article not found");
   }
-
-  article.views += 1;
-  await article.save();
 
   return res.status(200).json(new ApiResponse(200, article));
 });

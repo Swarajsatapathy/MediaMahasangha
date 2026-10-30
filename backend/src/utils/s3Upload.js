@@ -11,11 +11,17 @@ const uploadToS3 = async (buffer, mimetype, folder = "uploads") => {
     Key: fileName,
     Body: buffer,
     ContentType: mimetype,
+    CacheControl: "public, max-age=31536000, immutable",
   });
 
   await s3.send(command);
 
-  const url = `https://${process.env.AWS_BUCKET_NAME.trim()}.s3.${process.env.AWS_REGION.trim()}.amazonaws.com/${fileName}`;
+  const region =
+    process.env.AWS_BUCKET_REGION?.trim() ||
+    process.env.AWS_REGION?.trim() ||
+    "ap-southeast-2";
+
+  const url = `https://${process.env.AWS_BUCKET_NAME.trim()}.s3.${region}.amazonaws.com/${fileName}`;
 
   return {
     url,
