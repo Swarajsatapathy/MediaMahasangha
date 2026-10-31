@@ -15,6 +15,11 @@ export default async function HomePage() {
   const notices = data?.notices || [];
   const memberNewsChannels = data?.memberNewsChannels || [];
 
+  const patrons = [...(data?.patrons || [])].sort(
+    (a: any, b: any) =>
+      (a.serialNumber || 9999) - (b.serialNumber || 9999)
+  );
+
   const mentors = [...(data?.mentors || [])].sort(
     (a: any, b: any) =>
       (a.serialNumber || 9999) - (b.serialNumber || 9999)
@@ -101,6 +106,12 @@ export default async function HomePage() {
       </section>
 
       <section className="homeGrid">
+        <HomeSectionSlider
+          title="Patron"
+          items={patrons}
+          type="patrons"
+        />
+
         <HomeSectionSlider
           title="Supreme Council"
           items={supremeCouncilMembers}

@@ -18,7 +18,8 @@ type Props = {
   | "videos"
   | "srbMembers"
   | "gallery"
-  | "notices";
+  | "notices"
+  | "patrons";
   badge?: string;
   className?: string;
 };
@@ -225,6 +226,63 @@ export default function HomeSectionSlider({
               </Link>
             ) : (
               <p>No member news channels available</p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "patrons") {
+    return (
+      <section className={`homeBlock ${className}`.trim()}>
+        <div className="blockHeader">
+          <h2>{title}</h2>
+
+          <div className="arrows">
+            <button type="button" onClick={prev} aria-label="Previous">
+              <FaChevronLeft />
+            </button>
+
+            <button type="button" onClick={next} aria-label="Next">
+              <FaChevronRight />
+            </button>
+          </div>
+        </div>
+
+        <div className="sliderStage">
+          <div
+            key={item?._id || index}
+            className={`sliderAnimatedCard ${direction}`}
+          >
+            {item ? (
+              <Link href={`/patron/${item._id}`} className="memberHomeCard">
+                <div className="memberPhotoBox">
+                  {item.photo?.url ? (
+                    <img src={item.photo.url} alt={item.name} loading="lazy" decoding="async" />
+                  ) : (
+                    <span>{item.name?.charAt(0)?.toUpperCase() || "P"}</span>
+                  )}
+                </div>
+
+                <div className="memberInfo">
+                  <h3>{item.name}</h3>
+
+                  <p>{item.designation}</p>
+
+                  {item.designation2 && (
+                    <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)" }}>
+                      {item.designation2}
+                    </p>
+                  )}
+
+                  {(item.area || item.district) && (
+                    <span>{item.area || item.district}</span>
+                  )}
+                </div>
+              </Link>
+            ) : (
+              <p>No patrons available</p>
             )}
           </div>
         </div>

@@ -19,6 +19,7 @@ import galleryRoutes from "./routes/galleryRoutes.js";
 import membershipApplicationRoutes from "./routes/membershipApplicationRoutes.js";
 import noticeRoutes from "./routes/noticeRoutes.js";
 import homepageRoutes from "./routes/homepageRoutes.js";
+import patronRoutes from "./routes/patronRoutes.js";
 
 dotenv.config();
 
@@ -126,6 +127,8 @@ app.use("/api/gallery", galleryRoutes);
 app.use("/api/membership-applications", membershipApplicationRoutes);
 app.use("/api/notices", noticeRoutes);
 app.use("/api/homepage", homepageRoutes);
+app.use("/api/patrons", patronRoutes);
+app.use("/api/patron", patronRoutes);
 
 app.use((err, req, res, next) => {
   console.error("API Error:", err);

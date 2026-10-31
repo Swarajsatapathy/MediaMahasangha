@@ -13,6 +13,7 @@ import SRBMemberSection from "./components/SRBMemberSection";
 import GallerySection from "./components/GallerySection";
 import MembershipApplicationsSection from "./components/MembershipApplicationsSection";
 import NoticeBoardSection from "./components/NoticeBoardSection";
+import PatronSection from "./components/PatronSection";
 
 type Admin = {
   id: string;
@@ -23,6 +24,7 @@ type Admin = {
 type ActiveTab =
   | "articles"
   | "videos"
+  | "patron"
   | "members"
   | "membership-applications"
   | "mentors"
@@ -59,6 +61,16 @@ const TABS: TabConfig[] = [
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polygon points="23 7 16 12 23 17 23 7" />
         <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+      </svg>
+    ),
+  },
+  {
+    id: "patron",
+    label: "Patron",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
       </svg>
     ),
   },
@@ -259,6 +271,7 @@ function DashboardContent() {
         <div className="section">
           {activeTab === "articles" && <ArticlesSection />}
           {activeTab === "videos" && <VideosSection />}
+          {activeTab === "patron" && <PatronSection />}
           {activeTab === "members" && <MembersSection />}
           {activeTab === "membership-applications" && <MembershipApplicationsSection />}
           {activeTab === "mentors" && <MentorsSection />}

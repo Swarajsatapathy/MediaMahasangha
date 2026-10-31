@@ -8,6 +8,7 @@ import SrbMember from "../models/SrbMember.js";
 import MemberNewsChannel from "../models/MemberNewsChannel.js";
 import Gallery from "../models/Gallery.js";
 import Notice from "../models/Notice.js";
+import Patron from "../models/Patron.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
@@ -25,6 +26,7 @@ export const getHomepageData = asyncHandler(async (_req, res) => {
     memberNewsChannels,
     galleryItems,
     notices,
+    patrons,
   ] = await Promise.all([
     // 12 latest published web news articles
     Article.find({ isPublished: true })
@@ -89,6 +91,11 @@ export const getHomepageData = asyncHandler(async (_req, res) => {
       .sort({ date: -1, createdAt: -1 })
       .limit(10)
       .lean(),
+
+    // Patrons
+    Patron.find({ isActive: true })
+      .sort({ serialNumber: 1 })
+      .lean(),
   ]);
 
   res.setHeader(
@@ -111,6 +118,7 @@ export const getHomepageData = asyncHandler(async (_req, res) => {
         memberNewsChannels,
         galleryItems,
         notices,
+        patrons,
       },
       "Homepage data fetched successfully"
     )

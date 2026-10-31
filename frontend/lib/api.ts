@@ -281,6 +281,28 @@ export const getMentorById = cache(async (id: string) => {
 });
 
 /* ======================================================
+   PATRONS
+====================================================== */
+
+export async function getPatrons() {
+  return fetchFromAPI<{
+    patrons: any[];
+    total?: number;
+  }>("/api/patrons", {
+    revalidate: 0,
+  });
+}
+
+export const getPatronById = cache(async (id: string) => {
+  return fetchFromAPI<any>(
+    `/api/patrons/${encodeURIComponent(id)}`,
+    {
+      revalidate: 0,
+    }
+  );
+});
+
+/* ======================================================
    MEMBER NEWS CHANNELS
 ====================================================== */
 
@@ -448,6 +470,7 @@ export interface HomepageData {
   flashArticles: any[];
   videos: any[];
   members: any[];
+  patrons?: any[];
   mentors: any[];
   supremeCouncil: any[];
   womenCell: any[];
@@ -481,6 +504,7 @@ export async function getHomepageData(): Promise<HomepageData | null> {
       memberNewsChannelsRes,
       galleryRes,
       noticesRes,
+      patronsRes,
     ] = await Promise.allSettled([
       getArticles({ limit: 12, published: true }),
       getFlashArticles(),
@@ -493,6 +517,7 @@ export async function getHomepageData(): Promise<HomepageData | null> {
       getMemberNewsChannels(),
       getGalleryItems(),
       getNotices({ limit: 10 }),
+      getPatrons(),
     ]);
 
     return {
@@ -547,6 +572,12 @@ export async function getHomepageData(): Promise<HomepageData | null> {
       notices:
         (noticesRes.status === "fulfilled" ? noticesRes.value?.notices : []) ||
         [],
+      patrons:
+        (patronsRes.status === "fulfilled"
+          ? Array.isArray(patronsRes.value)
+            ? patronsRes.value
+            : (patronsRes.value as any)?.patrons
+          : []) || [],
     };
   } catch {
     return null;
