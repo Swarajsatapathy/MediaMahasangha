@@ -168,11 +168,6 @@ function DashboardContent() {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const initialTab = (searchParams.get("tab") as ActiveTab) || "articles";
   const [activeTab, setActiveTab] = useState<ActiveTab>(initialTab);
-  const [tabFilter, setTabFilter] = useState("");
-
-  const filteredTabs = TABS.filter((tab) =>
-    tab.label.toLowerCase().includes(tabFilter.toLowerCase().trim())
-  );
 
   useEffect(() => {
     const token = localStorage.getItem("odmm_admin_token");
@@ -244,59 +239,22 @@ function DashboardContent() {
       </header>
 
       <section className="content">
-        <div className="tabHeaderRow">
-          <nav className="tabBar">
-            {filteredTabs.length > 0 ? (
-              filteredTabs.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    className={`tabBtn ${isActive ? "active" : ""}`}
-                    onClick={() => setActiveTab(tab.id)}
-                    type="button"
-                  >
-                    <span className="tabIcon">{tab.icon}</span>
-                    <span className="tabText">{tab.label}</span>
-                  </button>
-                );
-              })
-            ) : (
-              <span className="noTabsMatch">No sections match &ldquo;{tabFilter}&rdquo;</span>
-            )}
-          </nav>
-
-          <div className="tabSearchBox">
-            <span className="tabSearchIcon" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </span>
-            <input
-              type="text"
-              placeholder="Find section/tab..."
-              value={tabFilter}
-              onChange={(e) => setTabFilter(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && filteredTabs.length > 0) {
-                  setActiveTab(filteredTabs[0].id);
-                }
-              }}
-              className="tabSearchInput"
-            />
-            {tabFilter && (
+        <nav className="tabBar">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
               <button
+                key={tab.id}
+                className={`tabBtn ${isActive ? "active" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
                 type="button"
-                className="tabSearchClear"
-                onClick={() => setTabFilter("")}
-                title="Clear filter"
               >
-                ✕
+                <span className="tabIcon">{tab.icon}</span>
+                <span className="tabText">{tab.label}</span>
               </button>
-            )}
-          </div>
-        </div>
+            );
+          })}
+        </nav>
 
         <div className="section">
           {activeTab === "articles" && <ArticlesSection />}
@@ -388,88 +346,6 @@ function DashboardContent() {
           max-width: 1360px;
           margin: 0 auto;
           padding: 28px 24px;
-        }
-
-        .tabHeaderRow {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 16px;
-          margin-bottom: 24px;
-          flex-wrap: wrap;
-        }
-
-        .tabHeaderRow .tabBar {
-          margin-bottom: 0;
-          flex: 1;
-        }
-
-        .tabSearchBox {
-          position: relative;
-          display: flex;
-          align-items: center;
-          min-width: 190px;
-          max-width: 250px;
-        }
-
-        .tabSearchInput {
-          width: 100%;
-          background: #101827;
-          border: 1px solid #223047;
-          color: #ffffff;
-          border-radius: 9px;
-          padding: 9px 30px 9px 32px;
-          font-size: 13px;
-          outline: none;
-          transition: all 0.2s ease;
-        }
-
-        .tabSearchInput:focus {
-          border-color: #00d5ff;
-          box-shadow: 0 0 10px rgba(0, 213, 255, 0.2);
-        }
-
-        .tabSearchInput::placeholder {
-          color: #627796;
-        }
-
-        .tabSearchIcon {
-          position: absolute;
-          left: 10px;
-          color: #627796;
-          pointer-events: none;
-          display: flex;
-          align-items: center;
-        }
-
-        .tabSearchClear {
-          position: absolute;
-          right: 8px;
-          background: transparent;
-          border: none;
-          color: #8ea2c4;
-          font-size: 13px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          transition: all 0.15s ease;
-        }
-
-        .tabSearchClear:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.15);
-        }
-
-        .noTabsMatch {
-          color: #8ea2c4;
-          font-size: 13px;
-          padding: 8px 14px;
-          display: inline-flex;
-          align-items: center;
         }
 
         .tabBar {

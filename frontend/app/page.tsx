@@ -1,166 +1,36 @@
 import Link from "next/link";
 import HomeSectionSlider from "./components/HomeSectionSlider";
+import { getHomepageData } from "../lib/api";
 
-import {
-  getArticles,
-  getFlashArticles,
-  getVideos,
-  getMembers,
-  getMentors,
-  getSupremeCouncilMembers,
-  getWomenCellMembers,
-  getMemberNewsChannels,
-  getSrbMembers,
-  getGalleryItems,
-  getNotices,
-} from "../lib/api";
-
-/*
-  Cache the generated homepage for 60 seconds.
-
-  Do not use:
-  export const dynamic = "force-dynamic";
-
-  because it forces all API calls to run again for every page visit.
-*/
 export const revalidate = 60;
 
-function getResultValue<T>(
-  result: PromiseSettledResult<T>,
-  fallback: T
-): T {
-  if (result.status === "fulfilled") {
-    return result.value;
-  }
-
-  console.error("Homepage API request failed:", result.reason);
-  return fallback;
-}
-
 export default async function HomePage() {
-  /*
-    All requests now start together.
+  const data = await getHomepageData();
 
-    Promise.allSettled() is used instead of Promise.all() so that
-    one failed API section does not crash the whole homepage.
-  */
-  const [
-    articlesResult,
-    flashResult,
-    videosResult,
-    membersResult,
-    mentorsResult,
-    supremeCouncilResult,
-    womenCellResult,
-    srbMembersResult,
-    memberNewsChannelsResult,
-    galleryResult,
-    noticesResult,
-  ] = await Promise.allSettled([
-    getArticles({ limit: 12, published: true }),
-    getFlashArticles(),
-    getVideos({ limit: 12, published: true }),
-    getMembers(),
-    getMentors(),
-    getSupremeCouncilMembers(),
-    getWomenCellMembers(),
-    getSrbMembers(),
-    getMemberNewsChannels(),
-    getGalleryItems(),
-    getNotices({ limit: 10 }),
-  ]);
+  const articles = data?.articles || [];
+  const flashArticles = data?.flashArticles || [];
+  const videos = data?.videos || [];
+  const srbMembers = data?.srbMembers || [];
+  const galleryItems = data?.galleryItems || [];
+  const notices = data?.notices || [];
+  const memberNewsChannels = data?.memberNewsChannels || [];
 
-  const articlesData = getResultValue<any>(articlesResult, {
-    articles: [],
-  });
-
-  const flashData = getResultValue<any>(flashResult, []);
-
-  const videosData = getResultValue<any>(videosResult, {
-    videos: [],
-  });
-
-  const membersData = getResultValue<any>(membersResult, {
-    members: [],
-  });
-
-  const mentorsData = getResultValue<any>(mentorsResult, {
-    mentors: [],
-  });
-
-  const supremeCouncilData = getResultValue<any>(supremeCouncilResult, {
-    members: [],
-  });
-
-  const womenCellData = getResultValue<any>(womenCellResult, {
-    members: [],
-  });
-
-  const srbMembersData = getResultValue<any>(srbMembersResult, {
-    srbMembers: [],
-  });
-
-  const memberNewsChannelsData = getResultValue<any>(
-    memberNewsChannelsResult,
-    {
-      memberNewsChannels: [],
-    }
-  );
-
-  const galleryData = getResultValue<any>(galleryResult, {
-    galleryItems: [],
-  });
-
-  const noticesData = getResultValue<any>(noticesResult, {
-    notices: [],
-  });
-
-  const articles = articlesData?.articles || [];
-  const videos = videosData?.videos || [];
-  const srbMembers = srbMembersData?.srbMembers || [];
-  const galleryItems = galleryData?.galleryItems || [];
-  const notices = noticesData?.notices || [];
-
-  const memberNewsChannels =
-    memberNewsChannelsData?.memberNewsChannels || [];
-
-  /*
-    Supports both possible flash API response formats:
-
-    1. Direct array:
-       [{...}, {...}]
-
-    2. Object:
-       { flashArticles: [...] }
-  */
-  const flashArticles = Array.isArray(flashData)
-    ? flashData
-    : flashData?.flashArticles || flashData?.articles || [];
-
-  const mentors = [...(mentorsData?.mentors || [])].sort(
+  const mentors = [...(data?.mentors || [])].sort(
     (a: any, b: any) =>
       (a.serialNumber || 9999) - (b.serialNumber || 9999)
   );
 
-  const rawSupremeCouncil: any[] = Array.isArray(supremeCouncilData)
-    ? supremeCouncilData
-    : supremeCouncilData?.members || [];
-
-  const supremeCouncilMembers = [...rawSupremeCouncil].sort(
+  const supremeCouncilMembers = [...(data?.supremeCouncil || [])].sort(
     (a: any, b: any) =>
       (a.serialNumber || 9999) - (b.serialNumber || 9999)
   );
 
-  const rawWomenCell: any[] = Array.isArray(womenCellData)
-    ? womenCellData
-    : womenCellData?.members || [];
-
-  const womenCellMembers = [...rawWomenCell].sort(
+  const womenCellMembers = [...(data?.womenCell || [])].sort(
     (a: any, b: any) =>
       (a.serialNumber || 9999) - (b.serialNumber || 9999)
   );
 
-  const members = [...(membersData?.members || [])].sort(
+  const members = [...(data?.members || [])].sort(
     (a: any, b: any) =>
       (a.serialNumber || 9999) - (b.serialNumber || 9999)
   );

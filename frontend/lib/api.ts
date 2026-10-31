@@ -438,3 +438,117 @@ export const getNoticeById = cache(async (id: string) => {
     }
   );
 });
+
+/* ======================================================
+   HOMEPAGE CONSOLIDATED DATA
+====================================================== */
+
+export interface HomepageData {
+  articles: any[];
+  flashArticles: any[];
+  videos: any[];
+  members: any[];
+  mentors: any[];
+  supremeCouncil: any[];
+  womenCell: any[];
+  srbMembers: any[];
+  memberNewsChannels: any[];
+  galleryItems: any[];
+  notices: any[];
+}
+
+export async function getHomepageData(): Promise<HomepageData | null> {
+  const data = await fetchFromAPI<HomepageData>("/api/homepage", {
+    revalidate: 60,
+    timeout: 15000,
+  });
+
+  if (data && Array.isArray(data.members) && data.members.length > 0) {
+    return data;
+  }
+
+  // Graceful fallback to individual fetchers if /api/homepage is unavailable
+  try {
+    const [
+      articlesRes,
+      flashRes,
+      videosRes,
+      membersRes,
+      mentorsRes,
+      supremeCouncilRes,
+      womenCellRes,
+      srbMembersRes,
+      memberNewsChannelsRes,
+      galleryRes,
+      noticesRes,
+    ] = await Promise.allSettled([
+      getArticles({ limit: 12, published: true }),
+      getFlashArticles(),
+      getVideos({ limit: 12, published: true }),
+      getMembers(),
+      getMentors(),
+      getSupremeCouncilMembers(),
+      getWomenCellMembers(),
+      getSrbMembers(),
+      getMemberNewsChannels(),
+      getGalleryItems(),
+      getNotices({ limit: 10 }),
+    ]);
+
+    return {
+      articles:
+        (articlesRes.status === "fulfilled"
+          ? articlesRes.value?.articles
+          : []) || [],
+      flashArticles:
+        (flashRes.status === "fulfilled"
+          ? Array.isArray(flashRes.value)
+            ? flashRes.value
+            : (flashRes.value as any)?.flashArticles ||
+              (flashRes.value as any)?.articles
+          : []) || [],
+      videos:
+        (videosRes.status === "fulfilled" ? videosRes.value?.videos : []) || [],
+      members:
+        (membersRes.status === "fulfilled" ? membersRes.value?.members : []) ||
+        [],
+      mentors:
+        (mentorsRes.status === "fulfilled"
+          ? Array.isArray(mentorsRes.value)
+            ? mentorsRes.value
+            : (mentorsRes.value as any)?.mentors
+          : []) || [],
+      supremeCouncil:
+        (supremeCouncilRes.status === "fulfilled"
+          ? Array.isArray(supremeCouncilRes.value)
+            ? supremeCouncilRes.value
+            : (supremeCouncilRes.value as any)?.members
+          : []) || [],
+      womenCell:
+        (womenCellRes.status === "fulfilled"
+          ? Array.isArray(womenCellRes.value)
+            ? womenCellRes.value
+            : (womenCellRes.value as any)?.members
+          : []) || [],
+      srbMembers:
+        (srbMembersRes.status === "fulfilled"
+          ? Array.isArray(srbMembersRes.value)
+            ? srbMembersRes.value
+            : (srbMembersRes.value as any)?.srbMembers
+          : []) || [],
+      memberNewsChannels:
+        (memberNewsChannelsRes.status === "fulfilled"
+          ? (memberNewsChannelsRes.value as any)?.memberNewsChannels
+          : []) || [],
+      galleryItems:
+        (galleryRes.status === "fulfilled"
+          ? (galleryRes.value as any)?.galleryItems
+          : []) || [],
+      notices:
+        (noticesRes.status === "fulfilled" ? noticesRes.value?.notices : []) ||
+        [],
+    };
+  } catch {
+    return null;
+  }
+}

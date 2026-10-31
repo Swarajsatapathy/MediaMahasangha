@@ -18,6 +18,7 @@ import womenCellRoutes from "./routes/womenCellRoutes.js";
 import galleryRoutes from "./routes/galleryRoutes.js";
 import membershipApplicationRoutes from "./routes/membershipApplicationRoutes.js";
 import noticeRoutes from "./routes/noticeRoutes.js";
+import homepageRoutes from "./routes/homepageRoutes.js";
 
 dotenv.config();
 
@@ -124,6 +125,7 @@ app.use("/api/women-cell", womenCellRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/membership-applications", membershipApplicationRoutes);
 app.use("/api/notices", noticeRoutes);
+app.use("/api/homepage", homepageRoutes);
 
 app.use((err, req, res, next) => {
   console.error("API Error:", err);
