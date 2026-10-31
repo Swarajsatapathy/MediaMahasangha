@@ -256,7 +256,7 @@ export default function HomeSectionSlider({
             className={`sliderAnimatedCard ${direction}`}
           >
             {item ? (
-              <Link href={`/patron/${item._id}`} className="memberHomeCard">
+              <Link href={`/chief-patron/${item._id}`} className="memberHomeCard">
                 <div className="memberPhotoBox">
                   {item.photo?.url ? (
                     <img src={item.photo.url} alt={item.name} loading="lazy" decoding="async" />
@@ -268,10 +268,25 @@ export default function HomeSectionSlider({
                 <div className="memberInfo">
                   <h3>{item.name}</h3>
 
-                  <p>{item.designation}</p>
+                  <p
+                    style={{
+                      color: /chief patron/i.test(item.designation || "")
+                        ? "var(--navy, #003366)"
+                        : undefined,
+                      fontWeight: /chief patron/i.test(item.designation || "") ? 700 : undefined,
+                    }}
+                  >
+                    {item.designation}
+                  </p>
 
                   {item.designation2 && (
-                    <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)" }}>
+                    <p
+                      style={{
+                        fontSize: "12.5px",
+                        color: "var(--navy, #003366)",
+                        fontWeight: 700,
+                      }}
+                    >
                       {item.designation2}
                     </p>
                   )}
@@ -282,7 +297,7 @@ export default function HomeSectionSlider({
                 </div>
               </Link>
             ) : (
-              <p>No patrons available</p>
+              <p>No chief patrons available</p>
             )}
           </div>
         </div>

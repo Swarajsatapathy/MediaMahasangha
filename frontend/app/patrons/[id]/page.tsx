@@ -1,2 +1,1 @@
-export { default, generateMetadata } from "../../patron/[id]/page";
-
+export { default, generateMetadata } from "../../chief-patron/[id]/page";

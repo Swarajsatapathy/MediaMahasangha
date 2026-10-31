@@ -100,7 +100,7 @@ export default function Header() {
       <nav className="navBar">
         <Link href="/">Home</Link>
         <Link href="/about-us">About Us</Link>
-        <Link href="/patron">Patron</Link>
+        <Link href="/chief-patron">Chief Patron</Link>
         <Link href="/members">Members</Link>
         <Link href="/women-cell">Women Cell</Link>
         <Link href="/supreme-council">Supreme Council</Link>

@@ -34,6 +34,9 @@ export default function MobileNav() {
               <Link href="/about-us" onClick={() => setOpen(false)}>
   About Us
 </Link>
+              <Link href="/chief-patron" onClick={() => setOpen(false)}>
+  Chief Patron
+</Link>
               <Link href="/members" onClick={() => setOpen(false)}>
   Members
 </Link>

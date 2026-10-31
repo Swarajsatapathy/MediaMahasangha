@@ -1,2 +1,2 @@
 export const revalidate = 60;
-export { default, metadata } from "../patron/page";
+export { default, metadata } from "../chief-patron/page";

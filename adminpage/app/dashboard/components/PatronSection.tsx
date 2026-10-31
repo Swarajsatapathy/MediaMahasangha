@@ -57,7 +57,7 @@ export default function PatronSection() {
       }
     } catch (error) {
       console.error("Failed to fetch patrons:", error);
-      setMessage("Failed to fetch patrons.");
+      setMessage("Failed to fetch chief patrons.");
     }
   };
 
@@ -156,20 +156,20 @@ export default function PatronSection() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to save patron.");
+        throw new Error(data.message || "Failed to save chief patron.");
       }
 
       setMessage(
         editingPatronId
-          ? "Patron updated successfully!"
-          : "Patron created successfully!"
+          ? "Chief Patron updated successfully!"
+          : "Chief Patron created successfully!"
       );
 
       resetForm();
       fetchPatrons();
     } catch (error: any) {
       console.error("Save patron error:", error);
-      setMessage(error.message || "Failed to save patron.");
+      setMessage(error.message || "Failed to save chief patron.");
     } finally {
       setLoading(false);
     }
@@ -177,7 +177,7 @@ export default function PatronSection() {
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this patron?"
+      "Are you sure you want to delete this chief patron?"
     );
 
     if (!confirmDelete) return;
@@ -203,15 +203,15 @@ export default function PatronSection() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to delete patron.");
+        throw new Error(data.message || "Failed to delete chief patron.");
       }
 
-      setMessage("Patron deleted successfully!");
+      setMessage("Chief Patron deleted successfully!");
       if (editingPatronId === id) resetForm();
       fetchPatrons();
     } catch (error: any) {
       console.error("Delete patron error:", error);
-      setMessage(error.message || "Failed to delete patron.");
+      setMessage(error.message || "Failed to delete chief patron.");
     } finally {
       setLoading(false);
     }
@@ -271,8 +271,8 @@ export default function PatronSection() {
     <div className="sectionWrapper">
       <div className="sectionHeader">
         <div>
-          <h2>Patron</h2>
-          <p>Create and manage patrons with designations and photo</p>
+          <h2>Chief Patron</h2>
+          <p>Create and manage chief patrons with designations and photo</p>
         </div>
       </div>
 
@@ -282,7 +282,7 @@ export default function PatronSection() {
         {/* FORM */}
         <div className="card formCard">
           <div className="cardHeader">
-            <h3>{editingPatronId ? "Edit Patron" : "Create Patron"}</h3>
+            <h3>{editingPatronId ? "Edit Chief Patron" : "Create Chief Patron"}</h3>
           </div>
 
           <form onSubmit={handleSubmit} className="form">
@@ -302,7 +302,7 @@ export default function PatronSection() {
               <label>Name *</label>
               <input
                 type="text"
-                placeholder="Enter patron name"
+                placeholder="Enter chief patron name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -379,8 +379,8 @@ export default function PatronSection() {
                 {loading
                   ? "Saving..."
                   : editingPatronId
-                  ? "Update Patron"
-                  : "Save Patron"}
+                  ? "Update Chief Patron"
+                  : "Save Chief Patron"}
               </button>
 
               {editingPatronId && (
@@ -399,11 +399,11 @@ export default function PatronSection() {
         {/* LIST */}
         <div className="card listCard">
           <div className="cardHeader">
-            <h3>Patrons ({filteredPatrons.length})</h3>
+            <h3>Chief Patrons ({filteredPatrons.length})</h3>
             <SearchInput
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder="Search patrons by name, designation, area..."
+              placeholder="Search chief patrons by name, designation, area..."
             />
           </div>
 
@@ -470,7 +470,7 @@ export default function PatronSection() {
                 </div>
               ))
             ) : (
-              <p className="emptyMessage">No patrons found.</p>
+              <p className="emptyMessage">No chief patrons found.</p>
             )}
           </div>
         </div>

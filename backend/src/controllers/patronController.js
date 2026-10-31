@@ -68,7 +68,7 @@ const createPatron = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, patron, "Patron created successfully"));
+    .json(new ApiResponse(201, patron, "Chief Patron created successfully"));
 });
 
 // GET ALL PATRONS
@@ -133,7 +133,7 @@ const getPatrons = asyncHandler(async (req, res) => {
         patrons,
         total,
       },
-      "Patrons fetched successfully"
+      "Chief Patrons fetched successfully"
     )
   );
 });
@@ -143,7 +143,7 @@ const getPatronById = asyncHandler(async (req, res) => {
   const patron = await Patron.findById(req.params.id);
 
   if (!patron) {
-    throw new ApiError(404, "Patron not found");
+    throw new ApiError(404, "Chief Patron not found");
   }
 
   return res.status(200).json(new ApiResponse(200, patron));
@@ -154,7 +154,7 @@ const updatePatron = asyncHandler(async (req, res) => {
   const patron = await Patron.findById(req.params.id);
 
   if (!patron) {
-    throw new ApiError(404, "Patron not found");
+    throw new ApiError(404, "Chief Patron not found");
   }
 
   const { serialNumber, name, designation, designation2, area, district, isActive } = req.body;
@@ -214,7 +214,7 @@ const updatePatron = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, patron, "Patron updated successfully"));
+    .json(new ApiResponse(200, patron, "Chief Patron updated successfully"));
 });
 
 // DELETE PATRON
@@ -222,7 +222,7 @@ const deletePatron = asyncHandler(async (req, res) => {
   const patron = await Patron.findById(req.params.id);
 
   if (!patron) {
-    throw new ApiError(404, "Patron not found");
+    throw new ApiError(404, "Chief Patron not found");
   }
 
   if (patron.photo && patron.photo.key) {
@@ -233,7 +233,7 @@ const deletePatron = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "Patron deleted successfully"));
+    .json(new ApiResponse(200, null, "Chief Patron deleted successfully"));
 });
 
 export {

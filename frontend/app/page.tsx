@@ -83,17 +83,16 @@ export default async function HomePage() {
 
       <section className="homeTopRow">
         <HomeSectionSlider
+          title="Chief Patron"
+          items={patrons}
+          type="patrons"
+        />
+
+        <HomeSectionSlider
           title="Members"
           items={members}
           type="members"
           className="membersTopBlock"
-        />
-
-        <HomeSectionSlider
-          title="Women Cell"
-          items={womenCellMembers}
-          type="womenCell"
-          className="womenCellSmallBlock"
         />
 
         <HomeSectionSlider
@@ -103,14 +102,16 @@ export default async function HomePage() {
           badge="Notice"
           className="noticeBoardTopBlock"
         />
+
+        <HomeSectionSlider
+          title="Women Cell"
+          items={womenCellMembers}
+          type="womenCell"
+          className="womenCellSmallBlock"
+        />
       </section>
 
       <section className="homeGrid">
-        <HomeSectionSlider
-          title="Patron"
-          items={patrons}
-          type="patrons"
-        />
 
         <HomeSectionSlider
           title="Supreme Council"
